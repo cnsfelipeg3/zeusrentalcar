@@ -49,13 +49,10 @@ const galleryThumbMap = import.meta.glob("../assets/fleet/thumbs/*.{jpg,jpeg,png
 const galleryViews = ["front", "dashboard", "interior", "rear"] as const;
 
 const buildGallery = (slug: string) => {
-  const images = galleryViews.map((view) => galleryImageMap[`../assets/fleet/${slug}-${view}.jpg`]);
-  const thumbs = galleryViews.map(
-    (view, index) =>
-      galleryThumbMap[`../assets/fleet/thumbs/${slug}-${view}-thumb.jpg`] ?? images[index]
-  );
+  const front = galleryImageMap[`../assets/fleet/${slug}-front.jpg`];
+  const frontThumb = galleryThumbMap[`../assets/fleet/thumbs/${slug}-front-thumb.jpg`] ?? front;
 
-  return { images, thumbs };
+  return { images: [front], thumbs: [frontThumb] };
 };
 
 const buildSingleGallery = (slug: string) => {
