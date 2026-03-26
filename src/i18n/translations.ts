@@ -20,6 +20,7 @@ export const languageFlags: Record<Language, string> = {
 
 type TranslationKeys = {
   nav: {
+    about: string;
     fleet: string;
     howItWorks: string;
     whyZeus: string;
