@@ -11,6 +11,14 @@ const HeroSection = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-black via-background to-background" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(40,100%,48%,0.06)_0%,_transparent_70%)]" />
 
+      {/* Remove checkered pattern on mobile */}
+      <div className="absolute top-0 right-0 w-40 h-40 opacity-[0.03] hidden md:block"
+        style={{
+          backgroundImage: "repeating-conic-gradient(hsl(0,0%,100%) 0% 25%, transparent 0% 50%)",
+          backgroundSize: "20px 20px",
+        }}
+      />
+
       <svg className="absolute bottom-0 left-0 right-0 w-full opacity-10" viewBox="0 0 1440 200" fill="none">
         <path d="M0 200C240 100 480 50 720 80C960 110 1200 160 1440 120V200H0Z" fill="url(#goldGrad)" />
         <defs>
@@ -20,13 +28,6 @@ const HeroSection = () => {
           </linearGradient>
         </defs>
       </svg>
-
-      <div className="absolute top-0 right-0 w-40 h-40 opacity-[0.03]"
-        style={{
-          backgroundImage: "repeating-conic-gradient(hsl(0,0%,100%) 0% 25%, transparent 0% 50%)",
-          backgroundSize: "20px 20px",
-        }}
-      />
 
       <div className="relative z-10 container mx-auto px-4 text-center">
         <motion.img
@@ -42,7 +43,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-4xl sm:text-5xl font-black uppercase tracking-tight leading-tight max-w-5xl mx-auto lg:text-6xl"
+          className="text-2xl sm:text-4xl font-black uppercase tracking-tight leading-tight max-w-5xl mx-auto lg:text-6xl"
         >
           {t.hero.title}
           <span className="gold-text">{t.hero.titleHighlight}</span>
@@ -52,7 +53,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="mt-6 text-lg sm:text-xl text-muted-foreground font-light tracking-wide max-w-2xl mx-auto italic"
+          className="mt-6 text-sm sm:text-xl text-muted-foreground font-light tracking-wide max-w-2xl mx-auto italic"
         >
           {t.hero.subtitle}
         </motion.p>
