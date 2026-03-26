@@ -17,62 +17,6 @@ import outlanderCover from "@/assets/fleet/covers/outlander-cover.jpg";
 import tiguanCover from "@/assets/fleet/covers/tiguan-cover.jpg";
 import pacificaCover from "@/assets/fleet/covers/pacifica-cover.jpg";
 
-// Gallery images (real photos from catalog)
-import corvetteFront from "@/assets/fleet/corvette-front.jpg";
-import corvetteDashboard from "@/assets/fleet/corvette-dashboard.jpg";
-import corvetteInterior from "@/assets/fleet/corvette-interior.jpg";
-import corvetteRear from "@/assets/fleet/corvette-rear.jpg";
-
-import mustangFront from "@/assets/fleet/mustang-front.jpg";
-import mustangDashboard from "@/assets/fleet/mustang-dashboard.jpg";
-import mustangInterior from "@/assets/fleet/mustang-interior.jpg";
-import mustangRear from "@/assets/fleet/mustang-rear.jpg";
-
-import escaladeFront from "@/assets/fleet/escalade-front.jpg";
-import escaladeDashboard from "@/assets/fleet/escalade-dashboard.jpg";
-import escaladeInterior from "@/assets/fleet/escalade-interior.jpg";
-import escaladeRear from "@/assets/fleet/escalade-rear.jpg";
-
-import bmwX5Front from "@/assets/fleet/bmw-x5-front.jpg";
-import bmwX5Dashboard from "@/assets/fleet/bmw-x5-dashboard.jpg";
-import bmwX5Interior from "@/assets/fleet/bmw-x5-interior.jpg";
-import bmwX5Rear from "@/assets/fleet/bmw-x5-rear.jpg";
-
-import suburbanFront from "@/assets/fleet/suburban-front.jpg";
-import suburbanDashboard from "@/assets/fleet/suburban-dashboard.jpg";
-import suburbanInterior from "@/assets/fleet/suburban-interior.jpg";
-import suburbanRear from "@/assets/fleet/suburban-rear.jpg";
-
-import durangoFront from "@/assets/fleet/durango-front.jpg";
-import durangoDashboard from "@/assets/fleet/durango-dashboard.jpg";
-import durangoInterior from "@/assets/fleet/durango-interior.jpg";
-import durangoRear from "@/assets/fleet/durango-rear.jpg";
-
-import sorentoFront from "@/assets/fleet/sorento-front.jpg";
-import sorentoDashboard from "@/assets/fleet/sorento-dashboard.jpg";
-import sorentoInterior from "@/assets/fleet/sorento-interior.jpg";
-import sorentoRear from "@/assets/fleet/sorento-rear.jpg";
-
-import sportageFront from "@/assets/fleet/sportage-front.jpg";
-import sportageDashboard from "@/assets/fleet/sportage-dashboard.jpg";
-import sportageInterior from "@/assets/fleet/sportage-interior.jpg";
-import sportageRear from "@/assets/fleet/sportage-rear.jpg";
-
-import outlanderFront from "@/assets/fleet/outlander-front.jpg";
-import outlanderDashboard from "@/assets/fleet/outlander-dashboard.jpg";
-import outlanderInterior from "@/assets/fleet/outlander-interior.jpg";
-import outlanderRear from "@/assets/fleet/outlander-rear.jpg";
-
-import tiguanFront from "@/assets/fleet/tiguan-front.jpg";
-import tiguanDashboard from "@/assets/fleet/tiguan-dashboard.jpg";
-import tiguanInterior from "@/assets/fleet/tiguan-interior.jpg";
-import tiguanRear from "@/assets/fleet/tiguan-rear.jpg";
-
-import pacificaFront from "@/assets/fleet/pacifica-front.jpg";
-import pacificaDashboard from "@/assets/fleet/pacifica-dashboard.jpg";
-import pacificaInterior from "@/assets/fleet/pacifica-interior.jpg";
-import pacificaRear from "@/assets/fleet/pacifica-rear.jpg";
-
 export interface Vehicle {
   name: string;
   categoryKey: string;
@@ -80,20 +24,55 @@ export interface Vehicle {
   luggage?: number;
   coverImage: string;
   galleryImages: string[];
+  galleryThumbs: string[];
 }
 
+const galleryImageMap = import.meta.glob("../assets/fleet/*.{jpg,jpeg,png}", {
+  eager: true,
+  import: "default",
+}) as Record<string, string>;
+
+const galleryThumbMap = import.meta.glob("../assets/fleet/thumbs/*.{jpg,jpeg,png}", {
+  eager: true,
+  import: "default",
+}) as Record<string, string>;
+
+const galleryViews = ["front", "dashboard", "interior", "rear"] as const;
+
+const buildGallery = (slug: string) => {
+  const images = galleryViews.map((view) => galleryImageMap[`../assets/fleet/${slug}-${view}.jpg`]);
+  const thumbs = galleryViews.map(
+    (view, index) =>
+      galleryThumbMap[`../assets/fleet/thumbs/${slug}-${view}-thumb.jpg`] ?? images[index]
+  );
+
+  return { images, thumbs };
+};
+
+const corvetteGallery = buildGallery("corvette");
+const mustangGallery = buildGallery("mustang");
+const escaladeGallery = buildGallery("escalade");
+const bmwX5Gallery = buildGallery("bmw-x5");
+const suburbanGallery = buildGallery("suburban");
+const durangoGallery = buildGallery("durango");
+const sorentoGallery = buildGallery("sorento");
+const sportageGallery = buildGallery("sportage");
+const outlanderGallery = buildGallery("outlander");
+const tiguanGallery = buildGallery("tiguan");
+const pacificaGallery = buildGallery("pacifica");
+
 const vehicles: Vehicle[] = [
-  { name: "Corvette Stingray C8", categoryKey: "superSport", passengers: 2, coverImage: corvetteCover, galleryImages: [corvetteFront, corvetteDashboard, corvetteInterior, corvetteRear] },
-  { name: "Mustang Conversível", categoryKey: "sport", passengers: 4, coverImage: mustangCover, galleryImages: [mustangFront, mustangDashboard, mustangInterior, mustangRear] },
-  { name: "Cadillac Escalade", categoryKey: "suvPremium", passengers: 7, luggage: 5, coverImage: escaladeCover, galleryImages: [escaladeFront, escaladeDashboard, escaladeInterior, escaladeRear] },
-  { name: "BMW X5 M Sport", categoryKey: "suvPremium", passengers: 5, coverImage: bmwX5Cover, galleryImages: [bmwX5Front, bmwX5Dashboard, bmwX5Interior, bmwX5Rear] },
-  { name: "Chevrolet Suburban", categoryKey: "suvFullSize", passengers: 7, luggage: 5, coverImage: suburbanCover, galleryImages: [suburbanFront, suburbanDashboard, suburbanInterior, suburbanRear] },
-  { name: "Dodge Durango", categoryKey: "suv", passengers: 7, coverImage: durangoCover, galleryImages: [durangoFront, durangoDashboard, durangoInterior, durangoRear] },
-  { name: "Kia Sorento", categoryKey: "suv", passengers: 6, coverImage: sorentoCover, galleryImages: [sorentoFront, sorentoDashboard, sorentoInterior, sorentoRear] },
-  { name: "Kia Sportage", categoryKey: "suv", passengers: 5, coverImage: sportageCover, galleryImages: [sportageFront, sportageDashboard, sportageInterior, sportageRear] },
-  { name: "Mitsubishi Outlander", categoryKey: "suv", passengers: 7, coverImage: outlanderCover, galleryImages: [outlanderFront, outlanderDashboard, outlanderInterior, outlanderRear] },
-  { name: "Volkswagen Tiguan", categoryKey: "suv", passengers: 7, coverImage: tiguanCover, galleryImages: [tiguanFront, tiguanDashboard, tiguanInterior, tiguanRear] },
-  { name: "Chrysler Pacifica", categoryKey: "minivan", passengers: 7, coverImage: pacificaCover, galleryImages: [pacificaFront, pacificaDashboard, pacificaInterior, pacificaRear] },
+  { name: "Corvette Stingray C8", categoryKey: "superSport", passengers: 2, coverImage: corvetteCover, galleryImages: corvetteGallery.images, galleryThumbs: corvetteGallery.thumbs },
+  { name: "Mustang Conversível", categoryKey: "sport", passengers: 4, coverImage: mustangCover, galleryImages: mustangGallery.images, galleryThumbs: mustangGallery.thumbs },
+  { name: "Cadillac Escalade", categoryKey: "suvPremium", passengers: 7, luggage: 5, coverImage: escaladeCover, galleryImages: escaladeGallery.images, galleryThumbs: escaladeGallery.thumbs },
+  { name: "BMW X5 M Sport", categoryKey: "suvPremium", passengers: 5, coverImage: bmwX5Cover, galleryImages: bmwX5Gallery.images, galleryThumbs: bmwX5Gallery.thumbs },
+  { name: "Chevrolet Suburban", categoryKey: "suvFullSize", passengers: 7, luggage: 5, coverImage: suburbanCover, galleryImages: suburbanGallery.images, galleryThumbs: suburbanGallery.thumbs },
+  { name: "Dodge Durango", categoryKey: "suv", passengers: 7, coverImage: durangoCover, galleryImages: durangoGallery.images, galleryThumbs: durangoGallery.thumbs },
+  { name: "Kia Sorento", categoryKey: "suv", passengers: 6, coverImage: sorentoCover, galleryImages: sorentoGallery.images, galleryThumbs: sorentoGallery.thumbs },
+  { name: "Kia Sportage", categoryKey: "suv", passengers: 5, coverImage: sportageCover, galleryImages: sportageGallery.images, galleryThumbs: sportageGallery.thumbs },
+  { name: "Mitsubishi Outlander", categoryKey: "suv", passengers: 7, coverImage: outlanderCover, galleryImages: outlanderGallery.images, galleryThumbs: outlanderGallery.thumbs },
+  { name: "Volkswagen Tiguan", categoryKey: "suv", passengers: 7, coverImage: tiguanCover, galleryImages: tiguanGallery.images, galleryThumbs: tiguanGallery.thumbs },
+  { name: "Chrysler Pacifica", categoryKey: "minivan", passengers: 7, coverImage: pacificaCover, galleryImages: pacificaGallery.images, galleryThumbs: pacificaGallery.thumbs },
 ];
 
 const categoryKeys = ["all", "superSport", "sport", "suvPremium", "suvFullSize", "suv", "minivan"] as const;
@@ -166,9 +145,7 @@ const FleetSection = () => {
           </h2>
         </motion.div>
 
-        {/* Dropdown Filters */}
         <div className="mb-12 max-w-md mx-auto space-y-3">
-          {/* Category dropdown */}
           <div className="rounded-xl border border-border/60 bg-card/40 backdrop-blur-sm overflow-hidden">
             <button
               onClick={() => toggleFilter("category")}
@@ -224,7 +201,6 @@ const FleetSection = () => {
             </AnimatePresence>
           </div>
 
-          {/* Passengers dropdown */}
           <div className="rounded-xl border border-border/60 bg-card/40 backdrop-blur-sm overflow-hidden">
             <button
               onClick={() => toggleFilter("passengers")}
@@ -280,13 +256,11 @@ const FleetSection = () => {
             </AnimatePresence>
           </div>
 
-          {/* Result count */}
           <p className="text-center text-xs text-muted-foreground/70 tracking-wide pt-1">
             {activeCount} {activeCount === 1 ? "veículo" : "veículos"}
           </p>
         </div>
 
-        {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <AnimatePresence mode="popLayout">
             {filtered.map((v) => {
@@ -302,21 +276,18 @@ const FleetSection = () => {
                   className="group relative overflow-hidden rounded-xl cursor-pointer hover:scale-[1.02] transition-all duration-300"
                   onClick={() => setSelectedVehicle(v)}
                 >
-                  {/* Cinematic cover image */}
                   <div className="relative h-64 overflow-hidden">
                     <img
                       src={v.coverImage}
                       alt={v.name}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       loading="lazy"
+                      decoding="async"
                       width={1280}
                       height={720}
                     />
-                    {/* Gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-
-                    {/* Content overlay */}
                     <div className="absolute bottom-0 left-0 right-0 p-5">
                       <h3 className="text-xl font-black uppercase tracking-wider text-white">{v.name}</h3>
                       <p className="text-sm text-white/60 italic font-light mt-1">{vehicleT?.subtitle}</p>
@@ -351,7 +322,6 @@ const FleetSection = () => {
         )}
       </div>
 
-      {/* Vehicle Detail Modal with real photos */}
       <AnimatePresence>
         {selectedVehicle && (
           <VehicleModal
@@ -361,6 +331,7 @@ const FleetSection = () => {
               passengers: selectedVehicle.passengers,
               luggage: selectedVehicle.luggage,
               images: selectedVehicle.galleryImages,
+              thumbnails: selectedVehicle.galleryThumbs,
             }}
             categoryLabel={categoryLabels[selectedVehicle.categoryKey]}
             onClose={() => setSelectedVehicle(null)}
