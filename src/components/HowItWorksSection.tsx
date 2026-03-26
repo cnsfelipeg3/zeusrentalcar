@@ -218,9 +218,9 @@ const StepCard = ({ step, index }: { step: Step; index: number }) => {
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, x: index % 2 === 0 ? -40 : 40, y: 20 }}
-      animate={isInView ? { opacity: 1, x: 0, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
+      initial={{ opacity: 0, y: 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, delay: index * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
       className="relative group"
     >
       {/* Ambient glow behind card on hover */}
@@ -244,46 +244,43 @@ const StepCard = ({ step, index }: { step: Step; index: number }) => {
           }`}
         />
 
-        <div className="p-5 sm:p-7">
-          {/* Header row: icon + number + phase */}
-          <div className="flex items-center gap-3 mb-4">
-            {/* Icon circle */}
-            <motion.div
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              className={`flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                step.isFinal
-                  ? "gold-gradient text-primary-foreground shadow-[0_0_20px_hsl(38,72%,42%,0.3)]"
-                  : "bg-primary/[0.08] text-primary border border-primary/20 group-hover:bg-primary/[0.15] group-hover:shadow-[0_0_20px_hsl(38,72%,42%,0.15)]"
-              }`}
-            >
-              {step.isFinal ? <Check size={20} /> : step.icon}
-            </motion.div>
+        <div className="p-6 sm:p-8 flex flex-col items-center text-center">
+          {/* Icon circle */}
+          <motion.div
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-all duration-300 ${
+              step.isFinal
+                ? "gold-gradient text-primary-foreground shadow-[0_0_24px_hsl(38,72%,42%,0.35)]"
+                : "bg-primary/[0.08] text-primary border border-primary/20 group-hover:bg-primary/[0.15] group-hover:shadow-[0_0_24px_hsl(38,72%,42%,0.18)]"
+            }`}
+          >
+            {step.isFinal ? <Check size={22} /> : step.icon}
+          </motion.div>
 
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-primary/60 text-[11px] font-bold tracking-[3px] uppercase">
-                  Passo {step.number < 10 ? `0${step.number}` : step.number}
-                </span>
-                <span className="w-1 h-1 rounded-full bg-primary/30" />
-                <span className="text-muted-foreground text-[10px] uppercase tracking-[2px] font-medium">
-                  {step.phaseLabel}
-                </span>
-              </div>
-              {step.isStar && (
-                <span className="text-[10px] text-primary font-semibold tracking-wider uppercase mt-0.5 block">
-                  ⭐ Experiência VIP
-                </span>
-              )}
-            </div>
+          {/* Step number + phase label */}
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-primary/60 text-[11px] font-bold tracking-[3px] uppercase">
+              Passo {step.number < 10 ? `0${step.number}` : step.number}
+            </span>
+            <span className="w-1 h-1 rounded-full bg-primary/30" />
+            <span className="text-muted-foreground text-[10px] uppercase tracking-[2px] font-medium">
+              {step.phaseLabel}
+            </span>
           </div>
 
+          {step.isStar && (
+            <span className="text-[10px] text-primary font-semibold tracking-wider uppercase mt-1 mb-1">
+              ⭐ Experiência VIP
+            </span>
+          )}
+
           {/* Title */}
-          <h3 className="text-base sm:text-lg font-bold text-foreground mb-2.5 leading-snug tracking-tight">
+          <h3 className="text-lg sm:text-xl font-bold text-foreground mb-3 leading-snug tracking-tight mt-2">
             {step.title}
           </h3>
 
           {/* Description */}
-          <p className="text-[13px] sm:text-sm text-muted-foreground leading-[1.7] mb-4">
+          <p className="text-[13px] sm:text-sm text-muted-foreground leading-[1.8] mb-5 max-w-lg">
             {renderDescription()}
           </p>
 
@@ -293,10 +290,9 @@ const StepCard = ({ step, index }: { step: Step; index: number }) => {
               initial={{ opacity: 0 }}
               animate={isInView ? { opacity: 1 } : {}}
               transition={{ delay: 0.3 }}
-              className="relative mb-4 rounded-lg overflow-hidden"
+              className="relative mb-5 rounded-lg overflow-hidden w-full max-w-lg"
             >
-              <div className="absolute left-0 top-0 bottom-0 w-[3px] gold-gradient" />
-              <div className="bg-primary/[0.04] border border-primary/10 rounded-lg pl-4 pr-3 py-3">
+              <div className="bg-primary/[0.04] border border-primary/10 rounded-lg px-4 py-3">
                 <p className="text-xs text-muted-foreground/80 leading-relaxed italic">
                   {step.note}
                 </p>
@@ -305,7 +301,7 @@ const StepCard = ({ step, index }: { step: Step; index: number }) => {
           )}
 
           {/* Tags */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap justify-center gap-2">
             {step.tags.map((tag, i) => (
               <span
                 key={i}
