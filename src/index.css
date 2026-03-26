@@ -81,8 +81,8 @@
   }
 
   .gold-border-glow {
-    box-shadow: 0 0 20px hsl(40, 100%, 48%, 0.15), inset 0 0 20px hsl(40, 100%, 48%, 0.05);
-    border-color: hsl(40, 100%, 48%, 0.3);
+    box-shadow: 0 0 20px hsl(38, 72%, 42%, 0.15), inset 0 0 20px hsl(38, 72%, 42%, 0.05);
+    border-color: hsl(38, 72%, 42%, 0.3);
   }
 
   .section-divider {
