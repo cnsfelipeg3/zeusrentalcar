@@ -57,6 +57,7 @@ type TranslationKeys = {
     suvPremium: string;
     suvFullSize: string;
     suv: string;
+    suvCompact: string;
     minivan: string;
   };
   howItWorks: {
@@ -165,6 +166,7 @@ export const translations: Record<Language, TranslationKeys> = {
       suvPremium: "SUV Premium",
       suvFullSize: "SUV Full Size",
       suv: "SUV",
+      suvCompact: "SUV Compacto",
       minivan: "Minivan",
     },
     howItWorks: {
@@ -240,6 +242,14 @@ export const translations: Record<Language, TranslationKeys> = {
       "Mitsubishi Outlander": { subtitle: "Praticidade e economia", features: ["Teto Solar Panorâmico", "Espaço interno versátil", "Câmbio automático", "CarPlay"] },
       "Volkswagen Tiguan": { subtitle: "Versátil com ótimo espaço interno", features: ["Amplo espaço interno", "Câmbio automático", "CarPlay"] },
       "Chrysler Pacifica": { subtitle: "Ideal para grupos grandes", features: ["Máximo espaço interno", "Câmbio automático", "CarPlay"] },
+      "Lexus NX": { subtitle: "SUV premium com design sofisticado", features: ["Interior em couro", "Teto Solar", "Câmbio automático", "CarPlay"] },
+      "Audi Q7": { subtitle: "Luxo, espaço e tecnologia de ponta", features: ["7 passageiros", "Interior em couro premium", "Teto Solar Panorâmico", "Câmbio automático", "CarPlay"] },
+      "Volvo XC60": { subtitle: "Segurança e elegância escandinava", features: ["Interior em couro", "Teto Solar Panorâmico", "Câmbio automático", "CarPlay"] },
+      "Mustang Conversível Branco": { subtitle: "Dirija Orlando com exclusividade", features: ["Conversível", "Piloto automático", "Painel digital", "CarPlay"] },
+      "Volkswagen Tiguan Branco": { subtitle: "Versátil com ótimo espaço interno", features: ["Amplo espaço interno", "Câmbio automático", "CarPlay"] },
+      "Nissan Kicks": { subtitle: "Compacto, econômico e prático", features: ["Econômico", "Espaço interno versátil", "Câmbio automático", "CarPlay"] },
+      "Volkswagen Atlas": { subtitle: "Espaço máximo para famílias grandes", features: ["7 passageiros", "Amplo espaço interno", "Câmbio automático", "CarPlay"] },
+      "Mercedes-Benz GLA": { subtitle: "Compacto premium com DNA Mercedes", features: ["Interior em couro", "Design premium", "Câmbio automático", "CarPlay"] },
     },
   },
   en: {
@@ -281,6 +291,7 @@ export const translations: Record<Language, TranslationKeys> = {
       suvPremium: "SUV Premium",
       suvFullSize: "SUV Full Size",
       suv: "SUV",
+      suvCompact: "Compact SUV",
       minivan: "Minivan",
     },
     howItWorks: {
@@ -356,6 +367,14 @@ export const translations: Record<Language, TranslationKeys> = {
       "Mitsubishi Outlander": { subtitle: "Practicality and economy", features: ["Panoramic sunroof", "Versatile interior", "Automatic transmission", "CarPlay"] },
       "Volkswagen Tiguan": { subtitle: "Versatile with great interior space", features: ["Spacious interior", "Automatic transmission", "CarPlay"] },
       "Chrysler Pacifica": { subtitle: "Ideal for large groups", features: ["Maximum interior space", "Automatic transmission", "CarPlay"] },
+      "Lexus NX": { subtitle: "Premium SUV with sophisticated design", features: ["Leather interior", "Sunroof", "Automatic transmission", "CarPlay"] },
+      "Audi Q7": { subtitle: "Luxury, space and cutting-edge technology", features: ["7 passengers", "Premium leather interior", "Panoramic sunroof", "Automatic transmission", "CarPlay"] },
+      "Volvo XC60": { subtitle: "Scandinavian safety and elegance", features: ["Leather interior", "Panoramic sunroof", "Automatic transmission", "CarPlay"] },
+      "Mustang Conversível Branco": { subtitle: "Drive Orlando with exclusivity", features: ["Convertible", "Cruise control", "Digital dashboard", "CarPlay"] },
+      "Volkswagen Tiguan Branco": { subtitle: "Versatile with great interior space", features: ["Spacious interior", "Automatic transmission", "CarPlay"] },
+      "Nissan Kicks": { subtitle: "Compact, economical and practical", features: ["Fuel efficient", "Versatile interior", "Automatic transmission", "CarPlay"] },
+      "Volkswagen Atlas": { subtitle: "Maximum space for large families", features: ["7 passengers", "Spacious interior", "Automatic transmission", "CarPlay"] },
+      "Mercedes-Benz GLA": { subtitle: "Compact premium with Mercedes DNA", features: ["Leather interior", "Premium design", "Automatic transmission", "CarPlay"] },
     },
   },
   es: {
@@ -397,6 +416,7 @@ export const translations: Record<Language, TranslationKeys> = {
       suvPremium: "SUV Premium",
       suvFullSize: "SUV Full Size",
       suv: "SUV",
+      suvCompact: "SUV Compacto",
       minivan: "Minivan",
     },
     howItWorks: {
@@ -472,6 +492,14 @@ export const translations: Record<Language, TranslationKeys> = {
       "Mitsubishi Outlander": { subtitle: "Practicidad y economía", features: ["Techo solar panorámico", "Espacio interior versátil", "Transmisión automática", "CarPlay"] },
       "Volkswagen Tiguan": { subtitle: "Versátil con gran espacio interior", features: ["Amplio espacio interior", "Transmisión automática", "CarPlay"] },
       "Chrysler Pacifica": { subtitle: "Ideal para grupos grandes", features: ["Máximo espacio interior", "Transmisión automática", "CarPlay"] },
+      "Lexus NX": { subtitle: "SUV premium con diseño sofisticado", features: ["Interior en cuero", "Techo solar", "Transmisión automática", "CarPlay"] },
+      "Audi Q7": { subtitle: "Lujo, espacio y tecnología de punta", features: ["7 pasajeros", "Interior en cuero premium", "Techo solar panorámico", "Transmisión automática", "CarPlay"] },
+      "Volvo XC60": { subtitle: "Seguridad y elegancia escandinava", features: ["Interior en cuero", "Techo solar panorámico", "Transmisión automática", "CarPlay"] },
+      "Mustang Conversível Branco": { subtitle: "Conduce Orlando con exclusividad", features: ["Convertible", "Piloto automático", "Panel digital", "CarPlay"] },
+      "Volkswagen Tiguan Branco": { subtitle: "Versátil con gran espacio interior", features: ["Amplio espacio interior", "Transmisión automática", "CarPlay"] },
+      "Nissan Kicks": { subtitle: "Compacto, económico y práctico", features: ["Económico", "Espacio interior versátil", "Transmisión automática", "CarPlay"] },
+      "Volkswagen Atlas": { subtitle: "Espacio máximo para familias grandes", features: ["7 pasajeros", "Amplio espacio interior", "Transmisión automática", "CarPlay"] },
+      "Mercedes-Benz GLA": { subtitle: "Compacto premium con ADN Mercedes", features: ["Interior en cuero", "Diseño premium", "Transmisión automática", "CarPlay"] },
     },
   },
   it: {
@@ -513,6 +541,7 @@ export const translations: Record<Language, TranslationKeys> = {
       suvPremium: "SUV Premium",
       suvFullSize: "SUV Full Size",
       suv: "SUV",
+      suvCompact: "SUV Compatto",
       minivan: "Minivan",
     },
     howItWorks: {
@@ -588,6 +617,14 @@ export const translations: Record<Language, TranslationKeys> = {
       "Mitsubishi Outlander": { subtitle: "Praticità ed economia", features: ["Tetto panoramico", "Spazio interno versatile", "Cambio automatico", "CarPlay"] },
       "Volkswagen Tiguan": { subtitle: "Versatile con ottimo spazio interno", features: ["Ampio spazio interno", "Cambio automatico", "CarPlay"] },
       "Chrysler Pacifica": { subtitle: "Ideale per gruppi grandi", features: ["Massimo spazio interno", "Cambio automatico", "CarPlay"] },
+      "Lexus NX": { subtitle: "SUV premium dal design sofisticato", features: ["Interni in pelle", "Tetto apribile", "Cambio automatico", "CarPlay"] },
+      "Audi Q7": { subtitle: "Lusso, spazio e tecnologia all'avanguardia", features: ["7 passeggeri", "Interni in pelle premium", "Tetto panoramico", "Cambio automatico", "CarPlay"] },
+      "Volvo XC60": { subtitle: "Sicurezza ed eleganza scandinava", features: ["Interni in pelle", "Tetto panoramico", "Cambio automatico", "CarPlay"] },
+      "Mustang Conversível Branco": { subtitle: "Guida Orlando con esclusività", features: ["Convertibile", "Cruise control", "Cruscotto digitale", "CarPlay"] },
+      "Volkswagen Tiguan Branco": { subtitle: "Versatile con ottimo spazio interno", features: ["Ampio spazio interno", "Cambio automatico", "CarPlay"] },
+      "Nissan Kicks": { subtitle: "Compatto, economico e pratico", features: ["Economico", "Spazio interno versatile", "Cambio automatico", "CarPlay"] },
+      "Volkswagen Atlas": { subtitle: "Massimo spazio per famiglie numerose", features: ["7 passeggeri", "Ampio spazio interno", "Cambio automatico", "CarPlay"] },
+      "Mercedes-Benz GLA": { subtitle: "Compatto premium con DNA Mercedes", features: ["Interni in pelle", "Design premium", "Cambio automatico", "CarPlay"] },
     },
   },
   de: {
@@ -629,6 +666,7 @@ export const translations: Record<Language, TranslationKeys> = {
       suvPremium: "SUV Premium",
       suvFullSize: "SUV Full Size",
       suv: "SUV",
+      suvCompact: "Kompakt-SUV",
       minivan: "Minivan",
     },
     howItWorks: {
@@ -704,6 +742,14 @@ export const translations: Record<Language, TranslationKeys> = {
       "Mitsubishi Outlander": { subtitle: "Praktikabilität und Sparsamkeit", features: ["Panorama-Schiebedach", "Vielseitiger Innenraum", "Automatikgetriebe", "CarPlay"] },
       "Volkswagen Tiguan": { subtitle: "Vielseitig mit tollem Innenraum", features: ["Geräumiger Innenraum", "Automatikgetriebe", "CarPlay"] },
       "Chrysler Pacifica": { subtitle: "Ideal für große Gruppen", features: ["Maximaler Innenraum", "Automatikgetriebe", "CarPlay"] },
+      "Lexus NX": { subtitle: "Premium-SUV mit anspruchsvollem Design", features: ["Lederausstattung", "Schiebedach", "Automatikgetriebe", "CarPlay"] },
+      "Audi Q7": { subtitle: "Luxus, Platz und modernste Technologie", features: ["7 Passagiere", "Premium-Lederausstattung", "Panorama-Schiebedach", "Automatikgetriebe", "CarPlay"] },
+      "Volvo XC60": { subtitle: "Skandinavische Sicherheit und Eleganz", features: ["Lederausstattung", "Panorama-Schiebedach", "Automatikgetriebe", "CarPlay"] },
+      "Mustang Conversível Branco": { subtitle: "Fahren Sie Orlando mit Exklusivität", features: ["Cabriolet", "Tempomat", "Digitales Cockpit", "CarPlay"] },
+      "Volkswagen Tiguan Branco": { subtitle: "Vielseitig mit tollem Innenraum", features: ["Geräumiger Innenraum", "Automatikgetriebe", "CarPlay"] },
+      "Nissan Kicks": { subtitle: "Kompakt, sparsam und praktisch", features: ["Sparsam", "Vielseitiger Innenraum", "Automatikgetriebe", "CarPlay"] },
+      "Volkswagen Atlas": { subtitle: "Maximaler Platz für große Familien", features: ["7 Passagiere", "Geräumiger Innenraum", "Automatikgetriebe", "CarPlay"] },
+      "Mercedes-Benz GLA": { subtitle: "Kompakter Premium mit Mercedes-DNA", features: ["Lederausstattung", "Premium-Design", "Automatikgetriebe", "CarPlay"] },
     },
   },
   fr: {
@@ -745,6 +791,7 @@ export const translations: Record<Language, TranslationKeys> = {
       suvPremium: "SUV Premium",
       suvFullSize: "SUV Full Size",
       suv: "SUV",
+      suvCompact: "SUV Compact",
       minivan: "Minivan",
     },
     howItWorks: {
@@ -820,6 +867,14 @@ export const translations: Record<Language, TranslationKeys> = {
       "Mitsubishi Outlander": { subtitle: "Praticité et économie", features: ["Toit panoramique", "Intérieur polyvalent", "Transmission automatique", "CarPlay"] },
       "Volkswagen Tiguan": { subtitle: "Polyvalent avec excellent espace intérieur", features: ["Intérieur spacieux", "Transmission automatique", "CarPlay"] },
       "Chrysler Pacifica": { subtitle: "Idéal pour grands groupes", features: ["Espace intérieur maximum", "Transmission automatique", "CarPlay"] },
+      "Lexus NX": { subtitle: "SUV premium au design sophistiqué", features: ["Intérieur cuir", "Toit ouvrant", "Transmission automatique", "CarPlay"] },
+      "Audi Q7": { subtitle: "Luxe, espace et technologie de pointe", features: ["7 passagers", "Intérieur cuir premium", "Toit panoramique", "Transmission automatique", "CarPlay"] },
+      "Volvo XC60": { subtitle: "Sécurité et élégance scandinave", features: ["Intérieur cuir", "Toit panoramique", "Transmission automatique", "CarPlay"] },
+      "Mustang Conversível Branco": { subtitle: "Conduisez Orlando avec exclusivité", features: ["Cabriolet", "Régulateur de vitesse", "Tableau de bord numérique", "CarPlay"] },
+      "Volkswagen Tiguan Branco": { subtitle: "Polyvalent avec excellent espace intérieur", features: ["Intérieur spacieux", "Transmission automatique", "CarPlay"] },
+      "Nissan Kicks": { subtitle: "Compact, économique et pratique", features: ["Économique", "Intérieur polyvalent", "Transmission automatique", "CarPlay"] },
+      "Volkswagen Atlas": { subtitle: "Espace maximum pour grandes familles", features: ["7 passagers", "Intérieur spacieux", "Transmission automatique", "CarPlay"] },
+      "Mercedes-Benz GLA": { subtitle: "Compact premium avec ADN Mercedes", features: ["Intérieur cuir", "Design premium", "Transmission automatique", "CarPlay"] },
     },
   },
 };

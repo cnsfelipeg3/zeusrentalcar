@@ -16,6 +16,14 @@ import sportageCover from "@/assets/fleet/covers/sportage-cover.jpg";
 import outlanderCover from "@/assets/fleet/covers/outlander-cover.jpg";
 import tiguanCover from "@/assets/fleet/covers/tiguan-cover.jpg";
 import pacificaCover from "@/assets/fleet/covers/pacifica-cover.jpg";
+import lexusNxCover from "@/assets/fleet/covers/lexus-nx-cover.jpg";
+import audiQ7Cover from "@/assets/fleet/covers/audi-q7-cover.jpg";
+import volvoXc60Cover from "@/assets/fleet/covers/volvo-xc60-cover.jpg";
+import mustangWhiteCover from "@/assets/fleet/covers/mustang-white-cover.jpg";
+import tiguanWhiteCover from "@/assets/fleet/covers/tiguan-white-cover.jpg";
+import nissanKicksCover from "@/assets/fleet/covers/nissan-kicks-cover.jpg";
+import vwAtlasCover from "@/assets/fleet/covers/vw-atlas-cover.jpg";
+import mercedesGlaCover from "@/assets/fleet/covers/mercedes-gla-cover.jpg";
 
 export interface Vehicle {
   name: string;
@@ -49,6 +57,12 @@ const buildGallery = (slug: string) => {
   return { images, thumbs };
 };
 
+const buildSingleGallery = (slug: string) => {
+  const img = galleryImageMap[`../assets/fleet/${slug}-front.jpg`];
+  const thumb = galleryThumbMap[`../assets/fleet/thumbs/${slug}-front-thumb.jpg`] ?? img;
+  return { images: [img], thumbs: [thumb] };
+};
+
 const corvetteGallery = buildGallery("corvette");
 const mustangGallery = buildGallery("mustang");
 const escaladeGallery = buildGallery("escalade");
@@ -60,6 +74,14 @@ const sportageGallery = buildGallery("sportage");
 const outlanderGallery = buildGallery("outlander");
 const tiguanGallery = buildGallery("tiguan");
 const pacificaGallery = buildGallery("pacifica");
+const lexusNxGallery = buildSingleGallery("lexus-nx");
+const audiQ7Gallery = buildSingleGallery("audi-q7");
+const volvoXc60Gallery = buildSingleGallery("volvo-xc60");
+const mustangWhiteGallery = buildSingleGallery("mustang-white");
+const tiguanWhiteGallery = buildSingleGallery("tiguan-white");
+const nissanKicksGallery = buildSingleGallery("nissan-kicks");
+const vwAtlasGallery = buildSingleGallery("vw-atlas");
+const mercedesGlaGallery = buildSingleGallery("mercedes-gla");
 
 const vehicles: Vehicle[] = [
   { name: "Corvette Stingray C8", categoryKey: "superSport", passengers: 2, coverImage: corvetteCover, galleryImages: corvetteGallery.images, galleryThumbs: corvetteGallery.thumbs },
@@ -73,9 +95,17 @@ const vehicles: Vehicle[] = [
   { name: "Mitsubishi Outlander", categoryKey: "suv", passengers: 7, coverImage: outlanderCover, galleryImages: outlanderGallery.images, galleryThumbs: outlanderGallery.thumbs },
   { name: "Volkswagen Tiguan", categoryKey: "suv", passengers: 7, coverImage: tiguanCover, galleryImages: tiguanGallery.images, galleryThumbs: tiguanGallery.thumbs },
   { name: "Chrysler Pacifica", categoryKey: "minivan", passengers: 7, coverImage: pacificaCover, galleryImages: pacificaGallery.images, galleryThumbs: pacificaGallery.thumbs },
+  { name: "Lexus NX", categoryKey: "suvPremium", passengers: 5, coverImage: lexusNxCover, galleryImages: lexusNxGallery.images, galleryThumbs: lexusNxGallery.thumbs },
+  { name: "Audi Q7", categoryKey: "suvPremium", passengers: 7, coverImage: audiQ7Cover, galleryImages: audiQ7Gallery.images, galleryThumbs: audiQ7Gallery.thumbs },
+  { name: "Volvo XC60", categoryKey: "suvPremium", passengers: 5, coverImage: volvoXc60Cover, galleryImages: volvoXc60Gallery.images, galleryThumbs: volvoXc60Gallery.thumbs },
+  { name: "Mustang Conversível Branco", categoryKey: "sport", passengers: 4, coverImage: mustangWhiteCover, galleryImages: mustangWhiteGallery.images, galleryThumbs: mustangWhiteGallery.thumbs },
+  { name: "Volkswagen Tiguan Branco", categoryKey: "suv", passengers: 7, coverImage: tiguanWhiteCover, galleryImages: tiguanWhiteGallery.images, galleryThumbs: tiguanWhiteGallery.thumbs },
+  { name: "Nissan Kicks", categoryKey: "suvCompact", passengers: 5, coverImage: nissanKicksCover, galleryImages: nissanKicksGallery.images, galleryThumbs: nissanKicksGallery.thumbs },
+  { name: "Volkswagen Atlas", categoryKey: "suvFullSize", passengers: 7, coverImage: vwAtlasCover, galleryImages: vwAtlasGallery.images, galleryThumbs: vwAtlasGallery.thumbs },
+  { name: "Mercedes-Benz GLA", categoryKey: "suvPremium", passengers: 5, coverImage: mercedesGlaCover, galleryImages: mercedesGlaGallery.images, galleryThumbs: mercedesGlaGallery.thumbs },
 ];
 
-const categoryKeys = ["all", "superSport", "sport", "suvPremium", "suvFullSize", "suv", "minivan"] as const;
+const categoryKeys = ["all", "superSport", "sport", "suvPremium", "suvFullSize", "suv", "suvCompact", "minivan"] as const;
 const passengerFilters = ["all", "2", "4-5", "6-7"];
 
 const matchPassenger = (p: number, filter: string) => {
@@ -101,6 +131,7 @@ const FleetSection = () => {
     suvFullSize: t.fleet.suvFullSize,
     suv: t.fleet.suv,
     minivan: t.fleet.minivan,
+    suvCompact: t.fleet.suvCompact,
   };
 
   const passengerLabels: Record<string, string> = {
@@ -117,7 +148,7 @@ const FleetSection = () => {
   });
 
   const whatsappMsg = (name: string) =>
-    `https://wa.me/16892981754?text=${encodeURIComponent("Olá, venho do site da Zeus e gostaria de realizar uma reserva!")}`;
+    `https://wa.me/16892981754?text=${encodeURIComponent(t.fleet.whatsappMsg(name))}`;
 
   const activeCount = filtered.length;
   const isPortuguese = t.fleet.sectionTag.includes("Frota");
