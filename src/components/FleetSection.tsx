@@ -344,10 +344,9 @@ const FleetSection = () => {
                         <span className="flex items-center gap-1">
                           <Users size={13} className="text-primary" /> {v.passengers}
                         </span>
-                        {v.luggage && (
-                          <span className="flex items-center gap-1">
-                            <Briefcase size={13} className="text-primary" /> {v.luggage}
-                          </span>
+                        <span className="flex items-center gap-1">
+                          <Briefcase size={13} className="text-primary" /> {v.luggage}
+                        </span>
                         )}
                       </div>
                     </div>
