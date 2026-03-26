@@ -259,7 +259,7 @@ export const translations: Record<Language, TranslationKeys> = {
       about: "About Us",
       fleet: "Fleet",
       howItWorks: "How It Works",
-      whyZeus: "Why Zeus",
+      whyZeus: "Why Zeus?",
       contact: "Contact",
       book: "Book Now",
     },
