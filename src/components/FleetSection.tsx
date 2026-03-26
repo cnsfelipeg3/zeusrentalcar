@@ -222,17 +222,6 @@ const FleetSection = () => {
                     {/* Gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-                    {/* Category badge */}
-                    <div className="absolute top-4 left-4">
-                      <span className="gold-gradient text-primary-foreground text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
-                        {categoryLabels[v.categoryKey]}
-                      </span>
-                    </div>
-
-                    {/* Photo count */}
-                    <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white/80 text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
-                      📷 {v.galleryImages.length}
-                    </div>
 
                     {/* Content overlay */}
                     <div className="absolute bottom-0 left-0 right-0 p-5">

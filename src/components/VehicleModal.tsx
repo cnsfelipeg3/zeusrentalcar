@@ -90,12 +90,6 @@ const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleM
             ))}
           </div>
 
-          {/* Category badge */}
-          <div className="absolute top-4 left-4">
-            <span className="gold-gradient text-primary-foreground text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full">
-              {categoryLabel}
-            </span>
-          </div>
         </div>
 
         {/* Thumbnail strip */}
