@@ -43,7 +43,6 @@ const Navbar = () => {
           <span className="hidden md:inline">Home</span>
           <span className="md:hidden">Zeus</span>
         </a>
-        </a>
 
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
