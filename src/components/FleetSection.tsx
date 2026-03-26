@@ -148,7 +148,7 @@ const FleetSection = () => {
   });
 
   const whatsappMsg = (name: string) =>
-    `https://wa.me/16892981754?text=${encodeURIComponent("Olá, venho do site da Zeus e gostaria de realizar uma reserva!")}`;
+    `https://wa.me/16892981754?text=${encodeURIComponent(t.fleet.whatsappMsg(name))}`;
 
   const activeCount = filtered.length;
   const isPortuguese = t.fleet.sectionTag.includes("Frota");
