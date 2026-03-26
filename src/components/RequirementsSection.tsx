@@ -32,7 +32,7 @@ const RequirementsSection = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="glass-card p-8 sm:p-12 max-w-lg mx-auto"
         >
-          <div className="space-y-5">
+          <div className="space-y-5 flex flex-col items-center">
             {items.map((item, i) => (
               <div key={i} className="flex items-center gap-4">
                 <div className="w-8 h-8 rounded-full gold-gradient flex items-center justify-center flex-shrink-0">
