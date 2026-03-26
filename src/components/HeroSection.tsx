@@ -70,7 +70,7 @@ const HeroSection = () => {
             {t.hero.exploreFleet}
           </a>
           <a
-            href="https://wa.me/14075551234"
+            href="https://wa.me/16892981754"
             target="_blank"
             rel="noopener noreferrer"
             className="border-2 border-primary text-primary px-8 py-4 rounded-md text-sm font-bold uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all duration-300"
