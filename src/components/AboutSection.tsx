@@ -41,7 +41,7 @@ const AboutSection = () => {
               className="glass-card p-6 text-center hover:gold-border-glow hover:scale-[1.02] transition-all duration-300"
             >
               <span className="text-3xl">{emojis[i]}</span>
-              <p className="mt-3 text-[11px] sm:text-sm font-semibold uppercase tracking-wider whitespace-nowrap">{title}</p>
+              <p className="mt-3 text-[10px] sm:text-xs md:text-sm font-semibold uppercase tracking-wider leading-snug">{title}</p>
             </motion.div>
           ))}
         </div>
