@@ -1,12 +1,10 @@
 import { Instagram, MapPin, MessageCircle } from "lucide-react";
+import zeusLogo from "@/assets/zeus-logo.png";
 
 const Footer = () => (
   <footer id="contato" className="py-16 bg-black/50 border-t border-white/5">
     <div className="container mx-auto px-4 text-center">
-      <span className="text-3xl font-black uppercase tracking-wider gold-text">Zeus</span>
-      <span className="text-sm font-light tracking-[0.3em] text-muted-foreground uppercase ml-2">
-        Rental Car
-      </span>
+      <img src={zeusLogo} alt="Zeus Rental Car" className="h-16 w-auto mx-auto" />
 
       <p className="mt-4 text-muted-foreground font-light italic tracking-wide max-w-md mx-auto">
         Zeus Rental Car — Concierge premium para brasileiros em Orlando.
