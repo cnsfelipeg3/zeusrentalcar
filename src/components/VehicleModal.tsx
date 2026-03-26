@@ -131,15 +131,15 @@ const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleM
           </div>
 
           {/* Features */}
-          <div className="mt-6 flex flex-wrap gap-2">
-            {vehicleT?.features.map((feat) => (
-              <span
-                key={feat}
-                className="text-xs font-medium uppercase tracking-wider px-3 py-1.5 rounded-md bg-muted text-muted-foreground"
-              >
-                {feat}
-              </span>
-            ))}
+          <div className="mt-8 rounded-xl border border-border/60 bg-muted/30 px-4 py-2">
+            <div className="divide-y divide-border/50">
+              {vehicleT?.features.map((feat) => (
+                <div key={feat} className="flex items-center justify-between gap-3 py-3">
+                  <span className="text-sm font-medium tracking-wide text-foreground">{feat}</span>
+                  <span className="h-2.5 w-2.5 rounded-full bg-primary" aria-hidden="true" />
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* CTA */}
