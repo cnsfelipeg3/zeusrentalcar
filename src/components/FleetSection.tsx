@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Users, Briefcase, Smartphone, Settings, SlidersHorizontal, UserRound } from "lucide-react";
+import { Users, Briefcase, Smartphone, Settings, SlidersHorizontal, UserRound, ChevronDown, Check } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import VehicleModal from "./VehicleModal";
 
