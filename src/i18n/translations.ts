@@ -332,6 +332,12 @@ export const translations: Record<Language, TranslationKeys> = {
       t2Text: "We rented an Escalade for the family and it was perfect. Super simple process, no bureaucracy. We'll definitely be back!",
       t3Name: "Carlos A.",
       t3Text: "I fulfilled my dream of driving a Corvette in Orlando. Zeus made everything easy and safe. 10/10!",
+      t4Name: "Juliana P.",
+      t4Text: "Bruno's service was out of this world! He took care of everything with incredible attention, from the reservation to the car delivery. Exceeded all expectations!",
+      t5Name: "Marcos T.",
+      t5Text: "I've rented cars in Orlando many times, but never had service like Bruno's. He's extremely dedicated and makes sure everything is perfect. 1000/10!",
+      t6Name: "Ana Carolina R.",
+      t6Text: "Bruno transformed our car rental experience into something special. He gave us amazing tips about Orlando and the car was impeccable. Outstanding service!",
     },
     footer: {
       tagline: "Zeus Rental Car — Premium concierge for Brazilians in Orlando.",
