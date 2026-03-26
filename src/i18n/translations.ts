@@ -147,7 +147,7 @@ export const translations: Record<Language, TranslationKeys> = {
     about: {
       title: "Quem ",
       titleHighlight: "Somos",
-      description: "A Zeus Rental Car é referência em locação de veículos premium para brasileiros em Orlando. Oferecemos uma experiência de mobilidade de alto nível, com atendimento personalizado, frota selecionada e o melhor custo-benefício do mercado — porque serviço premium não precisa custar caro.",
+      description: "A Zeus Rental Car é referência em locação de veículos premium para brasileiros em Orlando. Oferecemos uma experiência de mobilidade de alto nível, com atendimento personalizado, frota selecionada e o melhor custo-benefício do mercado. porque serviço premium não precisa custar caro.",
       tagline: "Serviço premium com o melhor custo-benefício de Orlando.",
       feat1: "Atendimento 100% em português",
       feat2: "Veículos selecionados e revisados",
@@ -228,7 +228,7 @@ export const translations: Record<Language, TranslationKeys> = {
       t6Text: "O Bruno transformou nossa experiência de aluguel de carro em algo especial. Ele nos deu dicas incríveis sobre Orlando e o carro estava impecável. Atendimento fora da curva!",
     },
     footer: {
-      tagline: "Zeus Rental Car — Concierge premium para brasileiros em Orlando.",
+      tagline: "Zeus Rental Car. Concierge premium para brasileiros em Orlando.",
       whatsapp: "Fale Conosco no WhatsApp",
       rights: "© 2026 Zeus Rental Car. Todos os direitos reservados.",
     },
@@ -273,7 +273,7 @@ export const translations: Record<Language, TranslationKeys> = {
     about: {
       title: "Who ",
       titleHighlight: "We Are",
-      description: "Zeus Rental Car is a reference in premium vehicle rental for Brazilians in Orlando. We offer a high-level mobility experience with personalized service, a curated fleet, and the best value for money in the market — because premium service doesn't have to cost a fortune.",
+      description: "Zeus Rental Car is a reference in premium vehicle rental for Brazilians in Orlando. We offer a high-level mobility experience with personalized service, a curated fleet, and the best value for money in the market. because premium service doesn't have to cost a fortune.",
       tagline: "Premium service with Orlando's best value.",
       feat1: "100% Portuguese-speaking service",
       feat2: "Selected and inspected vehicles",
@@ -354,7 +354,7 @@ export const translations: Record<Language, TranslationKeys> = {
       t6Text: "Bruno transformed our car rental experience into something special. He gave us amazing tips about Orlando and the car was impeccable. Outstanding service!",
     },
     footer: {
-      tagline: "Zeus Rental Car — Premium concierge for Brazilians in Orlando.",
+      tagline: "Zeus Rental Car. Premium concierge for Brazilians in Orlando.",
       whatsapp: "Contact Us on WhatsApp",
       rights: "© 2026 Zeus Rental Car. All rights reserved.",
     },
@@ -399,7 +399,7 @@ export const translations: Record<Language, TranslationKeys> = {
     about: {
       title: "Quiénes ",
       titleHighlight: "Somos",
-      description: "Zeus Rental Car es referencia en alquiler de vehículos premium para brasileños en Orlando. Ofrecemos una experiencia de movilidad de alto nivel, con atención personalizada, flota seleccionada y la mejor relación calidad-precio del mercado — porque el servicio premium no tiene que ser caro.",
+      description: "Zeus Rental Car es referencia en alquiler de vehículos premium para brasileños en Orlando. Ofrecemos una experiencia de movilidad de alto nivel, con atención personalizada, flota seleccionada y la mejor relación calidad-precio del mercado. porque el servicio premium no tiene que ser caro.",
       tagline: "Servicio premium con la mejor relación calidad-precio de Orlando.",
       feat1: "Atención 100% en portugués",
       feat2: "Vehículos seleccionados y revisados",
@@ -480,7 +480,7 @@ export const translations: Record<Language, TranslationKeys> = {
       t6Text: "Bruno transformó nuestra experiencia de alquiler en algo especial. Nos dio consejos increíbles sobre Orlando y el auto estaba impecable. ¡Servicio fuera de serie!",
     },
     footer: {
-      tagline: "Zeus Rental Car — Concierge premium para brasileños en Orlando.",
+      tagline: "Zeus Rental Car. Concierge premium para brasileños en Orlando.",
       whatsapp: "Contáctenos por WhatsApp",
       rights: "© 2026 Zeus Rental Car. Todos los derechos reservados.",
     },
@@ -525,7 +525,7 @@ export const translations: Record<Language, TranslationKeys> = {
     about: {
       title: "Chi ",
       titleHighlight: "Siamo",
-      description: "Zeus Rental Car è un riferimento nel noleggio di veicoli premium per brasiliani a Orlando. Offriamo un'esperienza di mobilità di alto livello, con servizio personalizzato, flotta selezionata e il miglior rapporto qualità-prezzo sul mercato — perché il servizio premium non deve costare una fortuna.",
+      description: "Zeus Rental Car è un riferimento nel noleggio di veicoli premium per brasiliani a Orlando. Offriamo un'esperienza di mobilità di alto livello, con servizio personalizzato, flotta selezionata e il miglior rapporto qualità-prezzo sul mercato. perché il servizio premium non deve costare una fortuna.",
       tagline: "Servizio premium con il miglior rapporto qualità-prezzo di Orlando.",
       feat1: "Servizio 100% in portoghese",
       feat2: "Veicoli selezionati e revisionati",
@@ -606,7 +606,7 @@ export const translations: Record<Language, TranslationKeys> = {
       t6Text: "Bruno ha trasformato la nostra esperienza di noleggio in qualcosa di speciale. Ci ha dato consigli incredibili su Orlando e l'auto era impeccabile. Servizio straordinario!",
     },
     footer: {
-      tagline: "Zeus Rental Car — Concierge premium per brasiliani a Orlando.",
+      tagline: "Zeus Rental Car. Concierge premium per brasiliani a Orlando.",
       whatsapp: "Contattaci su WhatsApp",
       rights: "© 2026 Zeus Rental Car. Tutti i diritti riservati.",
     },
@@ -651,7 +651,7 @@ export const translations: Record<Language, TranslationKeys> = {
     about: {
       title: "Wer wir ",
       titleHighlight: "sind",
-      description: "Zeus Rental Car ist eine Referenz im Premium-Fahrzeugverleih für Brasilianer in Orlando. Wir bieten ein erstklassiges Mobilitätserlebnis mit persönlichem Service, einer ausgewählten Flotte und dem besten Preis-Leistungs-Verhältnis auf dem Markt — denn Premium-Service muss nicht teuer sein.",
+      description: "Zeus Rental Car ist eine Referenz im Premium-Fahrzeugverleih für Brasilianer in Orlando. Wir bieten ein erstklassiges Mobilitätserlebnis mit persönlichem Service, einer ausgewählten Flotte und dem besten Preis-Leistungs-Verhältnis auf dem Markt. denn Premium-Service muss nicht teuer sein.",
       tagline: "Premium-Service mit dem besten Preis-Leistungs-Verhältnis in Orlando.",
       feat1: "100% portugiesischsprachiger Service",
       feat2: "Ausgewählte und geprüfte Fahrzeuge",
@@ -732,7 +732,7 @@ export const translations: Record<Language, TranslationKeys> = {
       t6Text: "Bruno hat unser Mietwagen-Erlebnis in etwas Besonderes verwandelt. Er gab uns tolle Tipps zu Orlando und das Auto war makellos. Außergewöhnlicher Service!",
     },
     footer: {
-      tagline: "Zeus Rental Car — Premium-Concierge für Brasilianer in Orlando.",
+      tagline: "Zeus Rental Car. Premium-Concierge für Brasilianer in Orlando.",
       whatsapp: "Kontaktieren Sie Uns auf WhatsApp",
       rights: "© 2026 Zeus Rental Car. Alle Rechte vorbehalten.",
     },
@@ -777,7 +777,7 @@ export const translations: Record<Language, TranslationKeys> = {
     about: {
       title: "Qui ",
       titleHighlight: "Sommes-Nous",
-      description: "Zeus Rental Car est une référence en location de véhicules premium pour les Brésiliens à Orlando. Nous offrons une expérience de mobilité haut de gamme, avec un service personnalisé, une flotte sélectionnée et le meilleur rapport qualité-prix du marché — car le service premium ne doit pas coûter cher.",
+      description: "Zeus Rental Car est une référence en location de véhicules premium pour les Brésiliens à Orlando. Nous offrons une expérience de mobilité haut de gamme, avec un service personnalisé, une flotte sélectionnée et le meilleur rapport qualité-prix du marché. car le service premium ne doit pas coûter cher.",
       tagline: "Service premium avec le meilleur rapport qualité-prix d'Orlando.",
       feat1: "Service 100% en portugais",
       feat2: "Véhicules sélectionnés et révisés",
@@ -858,7 +858,7 @@ export const translations: Record<Language, TranslationKeys> = {
       t6Text: "Bruno a transformé notre expérience de location en quelque chose de spécial. Il nous a donné des conseils incroyables sur Orlando et la voiture était impeccable. Service exceptionnel !",
     },
     footer: {
-      tagline: "Zeus Rental Car — Concierge premium pour les Brésiliens à Orlando.",
+      tagline: "Zeus Rental Car. Concierge premium pour les Brésiliens à Orlando.",
       whatsapp: "Contactez-Nous sur WhatsApp",
       rights: "© 2026 Zeus Rental Car. Tous droits réservés.",
     },

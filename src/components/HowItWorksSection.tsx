@@ -37,7 +37,7 @@ const steps: Step[] = [
     phaseLabel: "Antes da viagem",
     title: "Escolha o carro ideal para sua viagem",
     description:
-      "Navegue pela frota e selecione o modelo perfeito — casal, família ou grupo. Esportivos, SUVs premium, full-size ou minivan.",
+      "Navegue pela frota e selecione o modelo perfeito. casal, família ou grupo. Esportivos, SUVs premium, full-size ou minivan.",
     icon: <Car size={20} />,
     tags: [
       { label: "11 modelos" },
@@ -82,7 +82,7 @@ const steps: Step[] = [
     description:
       "Ao desembarcar, um representante da Zeus estará na área de desembarque com uma plaquinha com seu nome. Sem procurar balcão, sem fila, sem estresse. Ele te conduz diretamente até o estacionamento.",
     highlight: "área de desembarque com uma plaquinha com seu nome",
-    note: "A entrega também pode ser feita em outro local combinado previamente — hotel, resort, Airbnb ou onde preferir.",
+    note: "A entrega também pode ser feita em outro local combinado previamente. hotel, resort, Airbnb ou onde preferir.",
     isStar: true,
     icon: <UserCheck size={20} />,
     tags: [
@@ -97,7 +97,7 @@ const steps: Step[] = [
     phaseLabel: "Chegou em Orlando",
     title: "Seu carro: limpo, higienizado e de tanque cheio",
     description:
-      "O representante te leva até o estacionamento onde o carro está pronto: lavado, higienizado e com o tanque cheio. Confira o veículo, receba as orientações e pronto — é só dirigir.",
+      "O representante te leva até o estacionamento onde o carro está pronto: lavado, higienizado e com o tanque cheio. Confira o veículo, receba as orientações e pronto. é só dirigir.",
     highlight: "lavado, higienizado e com o tanque cheio",
     icon: <Sparkles size={20} />,
     tags: [
@@ -113,7 +113,7 @@ const steps: Step[] = [
     phaseLabel: "Durante a viagem",
     title: "Aproveite Orlando com suporte a qualquer hora",
     description:
-      "Parques, outlets, restaurantes, praias — vá aonde quiser, na hora que quiser. Sem depender de Uber, sem filas. Se precisar de qualquer coisa, a Zeus está a uma mensagem de distância.",
+      "Parques, outlets, restaurantes, praias. vá aonde quiser, na hora que quiser. Sem depender de Uber, sem filas. Se precisar de qualquer coisa, a Zeus está a uma mensagem de distância.",
     highlight: "Zeus está a uma mensagem de distância",
     icon: <MapPin size={20} />,
     tags: [
@@ -390,7 +390,7 @@ const HowItWorksSection = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 px-6 pb-5 text-center">
               <p className="text-sm sm:text-base font-semibold text-foreground tracking-wide">
-                Recepção VIP no aeroporto — <span className="text-primary">com seu nome na placa</span>
+                Recepção VIP no aeroporto. <span className="text-primary">com seu nome na placa</span>
               </p>
             </div>
           </div>
