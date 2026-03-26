@@ -2,6 +2,18 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, Briefcase, Smartphone, Settings } from "lucide-react";
 
+import corvetteImg from "@/assets/fleet/corvette.jpg";
+import mustangImg from "@/assets/fleet/mustang.jpg";
+import escaladeImg from "@/assets/fleet/escalade.jpg";
+import bmwX5Img from "@/assets/fleet/bmw-x5.jpg";
+import suburbanImg from "@/assets/fleet/suburban.jpg";
+import durangoImg from "@/assets/fleet/durango.jpg";
+import sorentoImg from "@/assets/fleet/sorento.jpg";
+import sportageImg from "@/assets/fleet/sportage.jpg";
+import outlanderImg from "@/assets/fleet/outlander.jpg";
+import tiguanImg from "@/assets/fleet/tiguan.jpg";
+import pacificaImg from "@/assets/fleet/pacifica.jpg";
+
 interface Vehicle {
   name: string;
   category: string;
@@ -10,6 +22,7 @@ interface Vehicle {
   luggage?: number;
   subtitle: string;
   features: string[];
+  image: string;
 }
 
 const vehicles: Vehicle[] = [
@@ -20,6 +33,7 @@ const vehicles: Vehicle[] = [
     passengers: 2,
     subtitle: "Performance e estilo em cada detalhe",
     features: ["Motor V8", "Conversível", "Piloto automático", "Painel digital", "CarPlay"],
+    image: corvetteImg,
   },
   {
     name: "Mustang Conversível",
@@ -28,6 +42,7 @@ const vehicles: Vehicle[] = [
     passengers: 4,
     subtitle: "Dirija Orlando com exclusividade",
     features: ["Conversível", "Piloto automático", "Teto Solar Panorâmico", "Painel digital", "CarPlay"],
+    image: mustangImg,
   },
   {
     name: "Cadillac Escalade",
@@ -37,6 +52,7 @@ const vehicles: Vehicle[] = [
     luggage: 5,
     subtitle: "Luxo com máxima sofisticação",
     features: ["Interior em couro de alto padrão", "Teto Solar Panorâmico", "Câmbio automático", "CarPlay"],
+    image: escaladeImg,
   },
   {
     name: "BMW X5 M Sport",
@@ -45,6 +61,7 @@ const vehicles: Vehicle[] = [
     passengers: 5,
     subtitle: "SUV premium com praticidade",
     features: ["Interior em couro premium", "Teto Solar Panorâmico", "Câmbio automático", "CarPlay"],
+    image: bmwX5Img,
   },
   {
     name: "Chevrolet Suburban",
@@ -54,6 +71,7 @@ const vehicles: Vehicle[] = [
     luggage: 5,
     subtitle: "Grande ideal para famílias e grupos",
     features: ["Espaço interno amplo", "Teto Solar Panorâmico", "Câmbio automático", "CarPlay"],
+    image: suburbanImg,
   },
   {
     name: "Dodge Durango",
@@ -62,6 +80,7 @@ const vehicles: Vehicle[] = [
     passengers: 7,
     subtitle: "Espaçoso com conforto e desempenho",
     features: ["Interior em couro premium", "Teto Solar", "Câmbio automático", "CarPlay"],
+    image: durangoImg,
   },
   {
     name: "Kia Sorento",
@@ -70,6 +89,7 @@ const vehicles: Vehicle[] = [
     passengers: 6,
     subtitle: "Equilibrado com conforto e economia",
     features: ["Espaço interno versátil", "Teto Solar Panorâmico", "Câmbio automático", "CarPlay"],
+    image: sorentoImg,
   },
   {
     name: "Kia Sportage",
@@ -78,6 +98,7 @@ const vehicles: Vehicle[] = [
     passengers: 5,
     subtitle: "Praticidade e economia",
     features: ["Teto Solar Panorâmico", "Espaço interno versátil", "Câmbio automático", "CarPlay"],
+    image: sportageImg,
   },
   {
     name: "Mitsubishi Outlander",
@@ -86,6 +107,7 @@ const vehicles: Vehicle[] = [
     passengers: 7,
     subtitle: "Praticidade e economia",
     features: ["Teto Solar Panorâmico", "Espaço interno versátil", "Câmbio automático", "CarPlay"],
+    image: outlanderImg,
   },
   {
     name: "Volkswagen Tiguan",
@@ -94,6 +116,7 @@ const vehicles: Vehicle[] = [
     passengers: 7,
     subtitle: "Versátil com ótimo espaço interno",
     features: ["Amplo espaço interno", "Câmbio automático", "CarPlay"],
+    image: tiguanImg,
   },
   {
     name: "Chrysler Pacifica",
@@ -102,6 +125,7 @@ const vehicles: Vehicle[] = [
     passengers: 7,
     subtitle: "Ideal para grupos grandes",
     features: ["Máximo espaço interno", "Câmbio automático", "CarPlay"],
+    image: pacificaImg,
   },
 ];
 
@@ -196,11 +220,14 @@ const FleetSection = () => {
                 transition={{ duration: 0.3 }}
                 className="glass-card overflow-hidden group hover:gold-border-glow hover:scale-[1.02] transition-all duration-300"
               >
-                {/* Image placeholder */}
-                <div className="relative h-48 bg-gradient-to-br from-muted to-background flex items-center justify-center overflow-hidden">
-                  <span className="text-lg font-black uppercase tracking-wider text-muted-foreground/50">
-                    {v.name}
-                  </span>
+                {/* Car image */}
+                <div className="relative h-48 overflow-hidden">
+                  <img
+                    src={v.image}
+                    alt={v.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    loading="lazy"
+                  />
                   <div className="absolute top-3 right-3">
                     <span className="gold-gradient text-primary-foreground text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
                       {v.category}
