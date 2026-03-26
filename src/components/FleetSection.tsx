@@ -117,6 +117,7 @@ const FleetSection = () => {
     suvFullSize: t.fleet.suvFullSize,
     suv: t.fleet.suv,
     minivan: t.fleet.minivan,
+    suvCompact: t.fleet.suvCompact,
   };
 
   const passengerLabels: Record<string, string> = {
