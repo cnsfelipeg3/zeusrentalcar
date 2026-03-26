@@ -308,7 +308,7 @@ const FleetSection = () => {
                   className="group relative overflow-hidden rounded-xl cursor-pointer hover:scale-[1.02] transition-all duration-300"
                   onClick={() => setSelectedVehicle(v)}
                 >
-                  <div className="relative h-80 overflow-hidden">
+                  <div className="relative h-[22rem] overflow-hidden">
                     <img
                       src={v.coverImage}
                       alt={v.name}
@@ -318,7 +318,7 @@ const FleetSection = () => {
                       width={1280}
                       height={720}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                    <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.96)_0%,rgba(0,0,0,0.88)_22%,rgba(0,0,0,0.45)_48%,rgba(0,0,0,0)_68%)]" />
 
                     {v.preparing && (
                       <div className="absolute top-3 right-3 z-10">
@@ -328,7 +328,7 @@ const FleetSection = () => {
                       </div>
                     )}
 
-                    <div className="absolute bottom-0 left-0 right-0 p-5">
+                    <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 pt-12">
                       <h3 className="text-xl font-black uppercase tracking-wider text-white">{v.name}</h3>
                       <p className="text-sm text-white/60 italic font-light mt-1">{vehicleT?.subtitle}</p>
                       <div className="flex items-center gap-4 mt-3 text-xs text-white/50">
