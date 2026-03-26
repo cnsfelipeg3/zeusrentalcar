@@ -33,6 +33,7 @@ export interface Vehicle {
   coverImage: string;
   galleryImages: string[];
   galleryThumbs: string[];
+  preparing?: boolean;
 }
 
 const galleryImageMap = import.meta.glob("../assets/fleet/*.{jpg,jpeg,png}", {
