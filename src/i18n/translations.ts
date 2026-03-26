@@ -256,6 +256,7 @@ export const translations: Record<Language, TranslationKeys> = {
   },
   en: {
     nav: {
+      about: "About Us",
       fleet: "Fleet",
       howItWorks: "How It Works",
       whyZeus: "Why Zeus",
