@@ -28,13 +28,8 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto flex items-center justify-between py-4 px-4 lg:px-8">
-        <a href="#" className="flex items-center gap-2">
-          <span className="text-2xl font-black uppercase tracking-wider gold-text">
-            Zeus
-          </span>
-          <span className="text-xs font-light tracking-[0.3em] text-muted-foreground uppercase">
-            Rental Car
-          </span>
+        <a href="#" className="flex items-center">
+          <img src={zeusLogo} alt="Zeus Rental Car" className="h-12 w-auto" />
         </a>
 
         {/* Desktop */}
