@@ -76,7 +76,7 @@ const Navbar = () => {
           </DropdownMenu>
 
           <a
-            href="https://wa.me/14075551234"
+            href="https://wa.me/16892981754"
             target="_blank"
             rel="noopener noreferrer"
             className="gold-gradient text-primary-foreground px-5 py-2 rounded-md text-sm font-bold uppercase tracking-wider hover:opacity-90 transition-opacity"
