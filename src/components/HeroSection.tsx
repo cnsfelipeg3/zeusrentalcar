@@ -83,11 +83,11 @@ const HeroSection = () => {
 
       <motion.a
         href="#frota"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ repeat: Infinity, duration: 2 }}
-        className="absolute bottom-16 sm:bottom-8 left-1/2 -translate-x-1/2 cursor-pointer"
+        animate={{ y: [0, 6, 0] }}
+        transition={{ repeat: Infinity, duration: 2.5 }}
+        className="absolute bottom-16 sm:bottom-8 left-1/2 -translate-x-1/2 cursor-pointer opacity-30 hover:opacity-60 transition-opacity duration-300"
       >
-        <ChevronDown className="text-primary/50" size={32} />
+        <ChevronDown className="text-primary/50" size={24} />
       </motion.a>
     </section>
   );
