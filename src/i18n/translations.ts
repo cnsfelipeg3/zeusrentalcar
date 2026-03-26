@@ -645,8 +645,8 @@ export const translations: Record<Language, TranslationKeys> = {
     about: {
       title: "Wer wir ",
       titleHighlight: "sind",
-      description: "Zeus Rental Car ist eine Referenz im Premium-Fahrzeugverleih für Brasilianer in Orlando. Wir bieten ein erstklassiges Mobilitätserlebnis mit persönlichem Service und einer ausgewählten Flotte, um Ihre Reise zu verwandeln.",
-      tagline: "Premium-Mobilität für Brasilianer in Orlando.",
+      description: "Zeus Rental Car ist eine Referenz im Premium-Fahrzeugverleih für Brasilianer in Orlando. Wir bieten ein erstklassiges Mobilitätserlebnis mit persönlichem Service, einer ausgewählten Flotte und dem besten Preis-Leistungs-Verhältnis auf dem Markt — denn Premium-Service muss nicht teuer sein.",
+      tagline: "Premium-Service mit dem besten Preis-Leistungs-Verhältnis in Orlando.",
       feat1: "100% portugiesischsprachiger Service",
       feat2: "Ausgewählte und geprüfte Fahrzeuge",
       feat3: "Einfacher und schneller Prozess",
