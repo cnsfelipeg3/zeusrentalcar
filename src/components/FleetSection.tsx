@@ -16,6 +16,14 @@ import sportageCover from "@/assets/fleet/covers/sportage-cover.jpg";
 import outlanderCover from "@/assets/fleet/covers/outlander-cover.jpg";
 import tiguanCover from "@/assets/fleet/covers/tiguan-cover.jpg";
 import pacificaCover from "@/assets/fleet/covers/pacifica-cover.jpg";
+import lexusNxCover from "@/assets/fleet/covers/lexus-nx-cover.jpg";
+import audiQ7Cover from "@/assets/fleet/covers/audi-q7-cover.jpg";
+import volvoXc60Cover from "@/assets/fleet/covers/volvo-xc60-cover.jpg";
+import mustangWhiteCover from "@/assets/fleet/covers/mustang-white-cover.jpg";
+import tiguanWhiteCover from "@/assets/fleet/covers/tiguan-white-cover.jpg";
+import nissanKicksCover from "@/assets/fleet/covers/nissan-kicks-cover.jpg";
+import vwAtlasCover from "@/assets/fleet/covers/vw-atlas-cover.jpg";
+import mercedesGlaCover from "@/assets/fleet/covers/mercedes-gla-cover.jpg";
 
 export interface Vehicle {
   name: string;
