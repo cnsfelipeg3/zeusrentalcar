@@ -1,23 +1,34 @@
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Globe } from "lucide-react";
 import zeusLogo from "@/assets/zeus-logo.png";
-
-const navLinks = [
-  { label: "Frota", href: "#frota" },
-  { label: "Como Funciona", href: "#como-funciona" },
-  { label: "Por que a Zeus", href: "#por-que" },
-  { label: "Contato", href: "#contato" },
-];
+import { useLanguage } from "@/i18n/LanguageContext";
+import { Language, languageLabels, languageFlags } from "@/i18n/translations";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
+
+  const navLinks = [
+    { label: t.nav.fleet, href: "#frota" },
+    { label: t.nav.howItWorks, href: "#como-funciona" },
+    { label: t.nav.whyZeus, href: "#por-que" },
+    { label: t.nav.contact, href: "#contato" },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const languages: Language[] = ["pt", "en", "es", "it", "de", "fr"];
 
   return (
     <nav
@@ -43,13 +54,34 @@ const Navbar = () => {
               {link.label}
             </a>
           ))}
+
+          {/* Language Switcher */}
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors duration-300 outline-none">
+              <Globe size={18} />
+              <span className="text-sm font-medium uppercase tracking-wider">{languageFlags[language]}</span>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-background/95 backdrop-blur-xl border-white/10">
+              {languages.map((lang) => (
+                <DropdownMenuItem
+                  key={lang}
+                  onClick={() => setLanguage(lang)}
+                  className={`cursor-pointer gap-2 ${language === lang ? "text-primary font-semibold" : ""}`}
+                >
+                  <span>{languageFlags[lang]}</span>
+                  <span>{languageLabels[lang]}</span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <a
             href="https://wa.me/14075551234"
             target="_blank"
             rel="noopener noreferrer"
             className="gold-gradient text-primary-foreground px-5 py-2 rounded-md text-sm font-bold uppercase tracking-wider hover:opacity-90 transition-opacity"
           >
-            Reservar
+            {t.nav.book}
           </a>
         </div>
 
@@ -76,13 +108,31 @@ const Navbar = () => {
                 {link.label}
               </a>
             ))}
+
+            {/* Mobile language switcher */}
+            <div className="flex flex-wrap gap-2 pt-2 border-t border-white/5">
+              {languages.map((lang) => (
+                <button
+                  key={lang}
+                  onClick={() => setLanguage(lang)}
+                  className={`px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
+                    language === lang
+                      ? "gold-gradient text-primary-foreground"
+                      : "bg-muted text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {languageFlags[lang]} {languageLabels[lang]}
+                </button>
+              ))}
+            </div>
+
             <a
               href="https://wa.me/14075551234"
               target="_blank"
               rel="noopener noreferrer"
               className="gold-gradient text-primary-foreground px-5 py-3 rounded-md text-sm font-bold uppercase tracking-wider text-center"
             >
-              Reservar
+              {t.nav.book}
             </a>
           </div>
         </div>
