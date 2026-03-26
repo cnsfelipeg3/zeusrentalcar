@@ -320,6 +320,14 @@ const FleetSection = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
 
+                    {v.preparing && (
+                      <div className="absolute top-3 right-3 z-10">
+                        <span className="bg-primary/90 text-primary-foreground text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md backdrop-blur-sm shadow-lg">
+                          Em preparação
+                        </span>
+                      </div>
+                    )}
+
                     <div className="absolute bottom-0 left-0 right-0 p-5">
                       <h3 className="text-xl font-black uppercase tracking-wider text-white">{v.name}</h3>
                       <p className="text-sm text-white/60 italic font-light mt-1">{vehicleT?.subtitle}</p>
