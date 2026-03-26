@@ -4,7 +4,7 @@ import zeusLogo from "@/assets/zeus-logo.png";
 const Footer = () => (
   <footer id="contato" className="py-16 bg-black/50 border-t border-white/5">
     <div className="container mx-auto px-4 text-center">
-      <img src={zeusLogo} alt="Zeus Rental Car" className="h-16 w-auto mx-auto" />
+      <img src={zeusLogo} alt="Zeus Rental Car" className="h-28 w-auto mx-auto" />
 
       <p className="mt-4 text-muted-foreground font-light italic tracking-wide max-w-md mx-auto">
         Zeus Rental Car — Concierge premium para brasileiros em Orlando.
