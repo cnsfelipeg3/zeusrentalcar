@@ -33,6 +33,7 @@ export interface Vehicle {
   coverImage: string;
   galleryImages: string[];
   galleryThumbs: string[];
+  preparing?: boolean;
 }
 
 const galleryImageMap = import.meta.glob("../assets/fleet/*.{jpg,jpeg,png}", {
@@ -95,14 +96,14 @@ const vehicles: Vehicle[] = [
   { name: "Mitsubishi Outlander", categoryKey: "suv", passengers: 7, coverImage: outlanderCover, galleryImages: outlanderGallery.images, galleryThumbs: outlanderGallery.thumbs },
   { name: "Volkswagen Tiguan", categoryKey: "suv", passengers: 7, coverImage: tiguanCover, galleryImages: tiguanGallery.images, galleryThumbs: tiguanGallery.thumbs },
   { name: "Chrysler Pacifica", categoryKey: "minivan", passengers: 7, coverImage: pacificaCover, galleryImages: pacificaGallery.images, galleryThumbs: pacificaGallery.thumbs },
-  { name: "Lexus NX", categoryKey: "suvPremium", passengers: 5, coverImage: lexusNxCover, galleryImages: lexusNxGallery.images, galleryThumbs: lexusNxGallery.thumbs },
-  { name: "Audi Q7", categoryKey: "suvPremium", passengers: 7, coverImage: audiQ7Cover, galleryImages: audiQ7Gallery.images, galleryThumbs: audiQ7Gallery.thumbs },
-  { name: "Volvo XC60", categoryKey: "suvPremium", passengers: 5, coverImage: volvoXc60Cover, galleryImages: volvoXc60Gallery.images, galleryThumbs: volvoXc60Gallery.thumbs },
-  { name: "Mustang Conversível Branco", categoryKey: "sport", passengers: 4, coverImage: mustangWhiteCover, galleryImages: mustangWhiteGallery.images, galleryThumbs: mustangWhiteGallery.thumbs },
-  { name: "Volkswagen Tiguan Branco", categoryKey: "suv", passengers: 7, coverImage: tiguanWhiteCover, galleryImages: tiguanWhiteGallery.images, galleryThumbs: tiguanWhiteGallery.thumbs },
-  { name: "Nissan Kicks", categoryKey: "suvCompact", passengers: 5, coverImage: nissanKicksCover, galleryImages: nissanKicksGallery.images, galleryThumbs: nissanKicksGallery.thumbs },
-  { name: "Volkswagen Atlas", categoryKey: "suvFullSize", passengers: 7, coverImage: vwAtlasCover, galleryImages: vwAtlasGallery.images, galleryThumbs: vwAtlasGallery.thumbs },
-  { name: "Mercedes-Benz GLA", categoryKey: "suvPremium", passengers: 5, coverImage: mercedesGlaCover, galleryImages: mercedesGlaGallery.images, galleryThumbs: mercedesGlaGallery.thumbs },
+  { name: "Lexus NX", categoryKey: "suvPremium", passengers: 5, coverImage: lexusNxCover, galleryImages: lexusNxGallery.images, galleryThumbs: lexusNxGallery.thumbs, preparing: true },
+  { name: "Audi Q7", categoryKey: "suvPremium", passengers: 7, coverImage: audiQ7Cover, galleryImages: audiQ7Gallery.images, galleryThumbs: audiQ7Gallery.thumbs, preparing: true },
+  { name: "Volvo XC60", categoryKey: "suvPremium", passengers: 5, coverImage: volvoXc60Cover, galleryImages: volvoXc60Gallery.images, galleryThumbs: volvoXc60Gallery.thumbs, preparing: true },
+  { name: "Mustang Conversível Branco", categoryKey: "sport", passengers: 4, coverImage: mustangWhiteCover, galleryImages: mustangWhiteGallery.images, galleryThumbs: mustangWhiteGallery.thumbs, preparing: true },
+  { name: "Volkswagen Tiguan Branco", categoryKey: "suv", passengers: 7, coverImage: tiguanWhiteCover, galleryImages: tiguanWhiteGallery.images, galleryThumbs: tiguanWhiteGallery.thumbs, preparing: true },
+  { name: "Nissan Kicks", categoryKey: "suvCompact", passengers: 5, coverImage: nissanKicksCover, galleryImages: nissanKicksGallery.images, galleryThumbs: nissanKicksGallery.thumbs, preparing: true },
+  { name: "Volkswagen Atlas", categoryKey: "suvFullSize", passengers: 7, coverImage: vwAtlasCover, galleryImages: vwAtlasGallery.images, galleryThumbs: vwAtlasGallery.thumbs, preparing: true },
+  { name: "Mercedes-Benz GLA", categoryKey: "suvPremium", passengers: 5, coverImage: mercedesGlaCover, galleryImages: mercedesGlaGallery.images, galleryThumbs: mercedesGlaGallery.thumbs, preparing: true },
 ];
 
 const categoryKeys = ["all", "superSport", "sport", "suvPremium", "suvFullSize", "suv", "suvCompact", "minivan"] as const;
@@ -318,6 +319,14 @@ const FleetSection = () => {
                       height={720}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+
+                    {v.preparing && (
+                      <div className="absolute top-3 right-3 z-10">
+                        <span className="bg-primary/90 text-primary-foreground text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md backdrop-blur-sm shadow-lg">
+                          Em preparação
+                        </span>
+                      </div>
+                    )}
 
                     <div className="absolute bottom-0 left-0 right-0 p-5">
                       <h3 className="text-xl font-black uppercase tracking-wider text-white">{v.name}</h3>
