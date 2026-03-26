@@ -327,7 +327,7 @@ const FleetSection = () => {
                       width={1280}
                       height={720}
                     />
-                    <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.96)_0%,rgba(0,0,0,0.88)_22%,rgba(0,0,0,0.45)_48%,rgba(0,0,0,0)_68%)]" />
+                    <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.96)_0%,rgba(0,0,0,0.88)_22%,rgba(0,0,0,0.45)_48%,rgba(0,0,0,0)_68%)] opacity-65" />
 
                     {v.preparing && (
                       <div className="absolute top-3 right-3 z-10">
