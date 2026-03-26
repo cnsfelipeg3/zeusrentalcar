@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import zeusLogo from "@/assets/zeus-logo.png";
 
 const navLinks = [
   { label: "Frota", href: "#frota" },

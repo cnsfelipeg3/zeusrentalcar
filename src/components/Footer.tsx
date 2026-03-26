@@ -1,4 +1,5 @@
 import { Instagram, MapPin, MessageCircle } from "lucide-react";
+import zeusLogo from "@/assets/zeus-logo.png";
 
 const Footer = () => (
   <footer id="contato" className="py-16 bg-black/50 border-t border-white/5">
