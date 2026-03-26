@@ -309,7 +309,7 @@ const FleetSection = () => {
                     <img
                       src={v.coverImage}
                       alt={v.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="w-full h-full object-cover object-[center_40%] transition-transform duration-700 group-hover:scale-110"
                       loading="lazy"
                       decoding="async"
                       width={1280}
