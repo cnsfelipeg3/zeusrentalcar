@@ -110,7 +110,7 @@ const vehicles: Vehicle[] = [
   { name: "Volvo XC60", categoryKey: "suvPremium", passengers: 5, coverImage: volvoXc60Cover, galleryImages: volvoXc60Gallery.images, galleryThumbs: volvoXc60Gallery.thumbs, preparing: true },
   { name: "MUSTANG CONVERSÍVEL", categoryKey: "sport", passengers: 4, coverImage: mustangWhiteCover, galleryImages: mustangWhiteGallery.images, galleryThumbs: mustangWhiteGallery.thumbs, preparing: true },
   { name: "VOLKSWAGEN TIGUAN", categoryKey: "suv", passengers: 7, coverImage: tiguanWhiteCover, galleryImages: tiguanWhiteGallery.images, galleryThumbs: tiguanWhiteGallery.thumbs, preparing: true },
-  { name: "Nissan Kicks", categoryKey: "suvCompact", passengers: 5, coverImage: nissanKicksCover, galleryImages: nissanKicksGallery.images, galleryThumbs: nissanKicksGallery.thumbs, preparing: true }
+  { name: "Nissan Kicks", categoryKey: "suvCompact", passengers: 5, coverImage: nissanKicksCover, galleryImages: nissanKicksGallery.images, galleryThumbs: nissanKicksGallery.thumbs, preparing: true },
   { name: "Volkswagen Atlas", categoryKey: "suvFullSize", passengers: 7, coverImage: vwAtlasCover, galleryImages: vwAtlasGallery.images, galleryThumbs: vwAtlasGallery.thumbs, preparing: true },
   { name: "Mercedes-Benz GLA", categoryKey: "suvPremium", passengers: 5, coverImage: mercedesGlaCover, galleryImages: mercedesGlaGallery.images, galleryThumbs: mercedesGlaGallery.thumbs, preparing: true },
 ];
