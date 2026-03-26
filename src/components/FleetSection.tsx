@@ -111,6 +111,7 @@ const FleetSection = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [activePassengers, setActivePassengers] = useState("all");
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const [openFilter, setOpenFilter] = useState<"category" | "passengers" | null>(null);
   const { t } = useLanguage();
 
   const categoryLabels: Record<string, string> = {
@@ -140,6 +141,11 @@ const FleetSection = () => {
     `https://wa.me/16892981754?text=${encodeURIComponent("Olá, venho do site da Zeus e gostaria de realizar uma reserva!")}`;
 
   const activeCount = filtered.length;
+  const isPortuguese = t.fleet.sectionTag.includes("Frota");
+
+  const toggleFilter = (filter: "category" | "passengers") => {
+    setOpenFilter((prev) => (prev === filter ? null : filter));
+  };
 
   return (
     <section id="frota" className="py-24 relative">
@@ -160,69 +166,124 @@ const FleetSection = () => {
           </h2>
         </motion.div>
 
-        {/* Smart Filters */}
-        <div className="mb-12 max-w-3xl mx-auto">
-          <div className="rounded-2xl border border-border/60 bg-card/40 backdrop-blur-sm p-5 sm:p-6 space-y-5">
-            {/* Category row */}
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <SlidersHorizontal size={14} className="text-primary" />
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                  {t.fleet.sectionTag.includes("Frota") ? "Categoria" : "Category"}
+        {/* Dropdown Filters */}
+        <div className="mb-12 max-w-md mx-auto space-y-3">
+          {/* Category dropdown */}
+          <div className="rounded-xl border border-border/60 bg-card/40 backdrop-blur-sm overflow-hidden">
+            <button
+              onClick={() => toggleFilter("category")}
+              className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-muted/20 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <SlidersHorizontal size={16} className="text-primary" />
+                <span className="text-sm font-semibold uppercase tracking-[0.15em] text-foreground">
+                  {isPortuguese ? "Categoria" : "Category"}
                 </span>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {categoryKeys.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setActiveCategory(cat)}
-                    className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 border ${
-                      activeCategory === cat
-                        ? "gold-gradient text-primary-foreground border-transparent shadow-md shadow-primary/20"
-                        : "border-border/60 bg-transparent text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                    }`}
-                  >
-                    {categoryLabels[cat]}
-                  </button>
-                ))}
+              <div className="flex items-center gap-3">
+                {activeCategory !== "all" && (
+                  <span className="text-xs text-primary font-medium">{categoryLabels[activeCategory]}</span>
+                )}
+                <ChevronDown
+                  size={16}
+                  className={`text-muted-foreground transition-transform duration-300 ${openFilter === "category" ? "rotate-180" : ""}`}
+                />
               </div>
-            </div>
+            </button>
 
-            {/* Divider */}
-            <div className="h-px bg-border/40" />
+            <AnimatePresence>
+              {openFilter === "category" && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  className="overflow-hidden"
+                >
+                  <div className="border-t border-border/40 px-3 py-2">
+                    {categoryKeys.map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => {
+                          setActiveCategory(cat);
+                          setOpenFilter(null);
+                        }}
+                        className={`w-full flex items-center justify-between px-3 py-3 rounded-lg text-sm transition-colors ${
+                          activeCategory === cat
+                            ? "text-primary font-semibold bg-primary/5"
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                        }`}
+                      >
+                        <span className="tracking-wide">{categoryLabels[cat]}</span>
+                        {activeCategory === cat && <Check size={16} className="text-primary" />}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
-            {/* Passengers row */}
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <UserRound size={14} className="text-primary" />
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          {/* Passengers dropdown */}
+          <div className="rounded-xl border border-border/60 bg-card/40 backdrop-blur-sm overflow-hidden">
+            <button
+              onClick={() => toggleFilter("passengers")}
+              className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-muted/20 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <UserRound size={16} className="text-primary" />
+                <span className="text-sm font-semibold uppercase tracking-[0.15em] text-foreground">
                   {t.fleet.passengers.replace(":", "")}
                 </span>
               </div>
-              <div className="flex gap-2">
-                {passengerFilters.map((pf) => (
-                  <button
-                    key={pf}
-                    onClick={() => setActivePassengers(pf)}
-                    className={`min-w-[44px] px-3 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 border ${
-                      activePassengers === pf
-                        ? "gold-gradient text-primary-foreground border-transparent shadow-md shadow-primary/20"
-                        : "border-border/60 bg-transparent text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                    }`}
-                  >
-                    {passengerLabels[pf]}
-                  </button>
-                ))}
+              <div className="flex items-center gap-3">
+                {activePassengers !== "all" && (
+                  <span className="text-xs text-primary font-medium">{activePassengers} pass.</span>
+                )}
+                <ChevronDown
+                  size={16}
+                  className={`text-muted-foreground transition-transform duration-300 ${openFilter === "passengers" ? "rotate-180" : ""}`}
+                />
               </div>
-            </div>
+            </button>
 
-            {/* Result count */}
-            <div className="text-center pt-1">
-              <span className="text-xs text-muted-foreground/70 tracking-wide">
-                {activeCount} {activeCount === 1 ? "veículo" : "veículos"}
-              </span>
-            </div>
+            <AnimatePresence>
+              {openFilter === "passengers" && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  className="overflow-hidden"
+                >
+                  <div className="border-t border-border/40 px-3 py-2">
+                    {passengerFilters.map((pf) => (
+                      <button
+                        key={pf}
+                        onClick={() => {
+                          setActivePassengers(pf);
+                          setOpenFilter(null);
+                        }}
+                        className={`w-full flex items-center justify-between px-3 py-3 rounded-lg text-sm transition-colors ${
+                          activePassengers === pf
+                            ? "text-primary font-semibold bg-primary/5"
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                        }`}
+                      >
+                        <span className="tracking-wide">{passengerLabels[pf]}</span>
+                        {activePassengers === pf && <Check size={16} className="text-primary" />}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
+
+          {/* Result count */}
+          <p className="text-center text-xs text-muted-foreground/70 tracking-wide pt-1">
+            {activeCount} {activeCount === 1 ? "veículo" : "veículos"}
+          </p>
         </div>
 
         {/* Grid */}
