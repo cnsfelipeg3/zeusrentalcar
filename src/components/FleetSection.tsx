@@ -4,7 +4,20 @@ import { Users, Briefcase, Smartphone, Settings } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import VehicleModal from "./VehicleModal";
 
-// Main images (used as card thumbnail = front photo)
+// Cover images (cinematic)
+import corvetteCover from "@/assets/fleet/covers/corvette-cover.jpg";
+import mustangCover from "@/assets/fleet/covers/mustang-cover.jpg";
+import escaladeCover from "@/assets/fleet/covers/escalade-cover.jpg";
+import bmwX5Cover from "@/assets/fleet/covers/bmw-x5-cover.jpg";
+import suburbanCover from "@/assets/fleet/covers/suburban-cover.jpg";
+import durangoCover from "@/assets/fleet/covers/durango-cover.jpg";
+import sorentoCover from "@/assets/fleet/covers/sorento-cover.jpg";
+import sportageCover from "@/assets/fleet/covers/sportage-cover.jpg";
+import outlanderCover from "@/assets/fleet/covers/outlander-cover.jpg";
+import tiguanCover from "@/assets/fleet/covers/tiguan-cover.jpg";
+import pacificaCover from "@/assets/fleet/covers/pacifica-cover.jpg";
+
+// Gallery images (real photos from catalog)
 import corvetteFront from "@/assets/fleet/corvette-front.jpg";
 import corvetteDashboard from "@/assets/fleet/corvette-dashboard.jpg";
 import corvetteInterior from "@/assets/fleet/corvette-interior.jpg";
@@ -60,26 +73,27 @@ import pacificaDashboard from "@/assets/fleet/pacifica-dashboard.jpg";
 import pacificaInterior from "@/assets/fleet/pacifica-interior.jpg";
 import pacificaRear from "@/assets/fleet/pacifica-rear.jpg";
 
-interface Vehicle {
+export interface Vehicle {
   name: string;
   categoryKey: string;
   passengers: number;
   luggage?: number;
-  images: string[];
+  coverImage: string;
+  galleryImages: string[];
 }
 
 const vehicles: Vehicle[] = [
-  { name: "Corvette Stingray C8", categoryKey: "superSport", passengers: 2, images: [corvetteFront, corvetteDashboard, corvetteInterior, corvetteRear] },
-  { name: "Mustang Conversível", categoryKey: "sport", passengers: 4, images: [mustangFront, mustangDashboard, mustangInterior, mustangRear] },
-  { name: "Cadillac Escalade", categoryKey: "suvPremium", passengers: 7, luggage: 5, images: [escaladeFront, escaladeDashboard, escaladeInterior, escaladeRear] },
-  { name: "BMW X5 M Sport", categoryKey: "suvPremium", passengers: 5, images: [bmwX5Front, bmwX5Dashboard, bmwX5Interior, bmwX5Rear] },
-  { name: "Chevrolet Suburban", categoryKey: "suvFullSize", passengers: 7, luggage: 5, images: [suburbanFront, suburbanDashboard, suburbanInterior, suburbanRear] },
-  { name: "Dodge Durango", categoryKey: "suv", passengers: 7, images: [durangoFront, durangoDashboard, durangoInterior, durangoRear] },
-  { name: "Kia Sorento", categoryKey: "suv", passengers: 6, images: [sorentoFront, sorentoDashboard, sorentoInterior, sorentoRear] },
-  { name: "Kia Sportage", categoryKey: "suv", passengers: 5, images: [sportageFront, sportageDashboard, sportageInterior, sportageRear] },
-  { name: "Mitsubishi Outlander", categoryKey: "suv", passengers: 7, images: [outlanderFront, outlanderDashboard, outlanderInterior, outlanderRear] },
-  { name: "Volkswagen Tiguan", categoryKey: "suv", passengers: 7, images: [tiguanFront, tiguanDashboard, tiguanInterior, tiguanRear] },
-  { name: "Chrysler Pacifica", categoryKey: "minivan", passengers: 7, images: [pacificaFront, pacificaDashboard, pacificaInterior, pacificaRear] },
+  { name: "Corvette Stingray C8", categoryKey: "superSport", passengers: 2, coverImage: corvetteCover, galleryImages: [corvetteFront, corvetteDashboard, corvetteInterior, corvetteRear] },
+  { name: "Mustang Conversível", categoryKey: "sport", passengers: 4, coverImage: mustangCover, galleryImages: [mustangFront, mustangDashboard, mustangInterior, mustangRear] },
+  { name: "Cadillac Escalade", categoryKey: "suvPremium", passengers: 7, luggage: 5, coverImage: escaladeCover, galleryImages: [escaladeFront, escaladeDashboard, escaladeInterior, escaladeRear] },
+  { name: "BMW X5 M Sport", categoryKey: "suvPremium", passengers: 5, coverImage: bmwX5Cover, galleryImages: [bmwX5Front, bmwX5Dashboard, bmwX5Interior, bmwX5Rear] },
+  { name: "Chevrolet Suburban", categoryKey: "suvFullSize", passengers: 7, luggage: 5, coverImage: suburbanCover, galleryImages: [suburbanFront, suburbanDashboard, suburbanInterior, suburbanRear] },
+  { name: "Dodge Durango", categoryKey: "suv", passengers: 7, coverImage: durangoCover, galleryImages: [durangoFront, durangoDashboard, durangoInterior, durangoRear] },
+  { name: "Kia Sorento", categoryKey: "suv", passengers: 6, coverImage: sorentoCover, galleryImages: [sorentoFront, sorentoDashboard, sorentoInterior, sorentoRear] },
+  { name: "Kia Sportage", categoryKey: "suv", passengers: 5, coverImage: sportageCover, galleryImages: [sportageFront, sportageDashboard, sportageInterior, sportageRear] },
+  { name: "Mitsubishi Outlander", categoryKey: "suv", passengers: 7, coverImage: outlanderCover, galleryImages: [outlanderFront, outlanderDashboard, outlanderInterior, outlanderRear] },
+  { name: "Volkswagen Tiguan", categoryKey: "suv", passengers: 7, coverImage: tiguanCover, galleryImages: [tiguanFront, tiguanDashboard, tiguanInterior, tiguanRear] },
+  { name: "Chrysler Pacifica", categoryKey: "minivan", passengers: 7, coverImage: pacificaCover, galleryImages: [pacificaFront, pacificaDashboard, pacificaInterior, pacificaRear] },
 ];
 
 const categoryKeys = ["all", "superSport", "sport", "suvPremium", "suvFullSize", "suv", "minivan"] as const;
@@ -192,66 +206,55 @@ const FleetSection = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3 }}
-                  className="glass-card overflow-hidden group hover:gold-border-glow hover:scale-[1.02] transition-all duration-300 cursor-pointer"
+                  className="group relative overflow-hidden rounded-xl cursor-pointer hover:scale-[1.02] transition-all duration-300"
                   onClick={() => setSelectedVehicle(v)}
                 >
-                  <div className="relative h-48 overflow-hidden">
+                  {/* Cinematic cover image */}
+                  <div className="relative h-64 overflow-hidden">
                     <img
-                      src={v.images[0]}
+                      src={v.coverImage}
                       alt={v.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       loading="lazy"
+                      width={1280}
+                      height={720}
                     />
-                    <div className="absolute top-3 right-3">
+                    {/* Gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                    {/* Category badge */}
+                    <div className="absolute top-4 left-4">
                       <span className="gold-gradient text-primary-foreground text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
                         {categoryLabels[v.categoryKey]}
                       </span>
                     </div>
-                    {/* Photo count badge */}
-                    <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-md">
-                      📷 {v.images.length} fotos
+
+                    {/* Photo count */}
+                    <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white/80 text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+                      📷 {v.galleryImages.length}
                     </div>
-                  </div>
 
-                  <div className="p-5">
-                    <h3 className="text-lg font-black uppercase tracking-wider">{v.name}</h3>
-                    <p className="text-sm text-muted-foreground italic font-light mt-1">
-                      {vehicleT?.subtitle}
-                    </p>
-
-                    <div className="flex items-center gap-4 mt-4 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Users size={14} className="text-primary" /> {v.passengers}
-                      </span>
-                      {v.luggage && (
+                    {/* Content overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 p-5">
+                      <h3 className="text-xl font-black uppercase tracking-wider text-white">{v.name}</h3>
+                      <p className="text-sm text-white/60 italic font-light mt-1">{vehicleT?.subtitle}</p>
+                      <div className="flex items-center gap-4 mt-3 text-xs text-white/50">
                         <span className="flex items-center gap-1">
-                          <Briefcase size={14} className="text-primary" /> {v.luggage}
+                          <Users size={13} className="text-primary" /> {v.passengers}
                         </span>
-                      )}
-                      <span className="flex items-center gap-1">
-                        <Settings size={14} className="text-primary" /> Auto
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Smartphone size={14} className="text-primary" /> CarPlay
-                      </span>
-                    </div>
-
-                    <div className="mt-4 flex flex-wrap gap-1.5">
-                      {vehicleT?.features.slice(0, 4).map((feat) => (
-                        <span
-                          key={feat}
-                          className="text-[10px] font-medium uppercase tracking-wider px-2 py-1 rounded bg-muted text-muted-foreground"
-                        >
-                          {feat}
+                        {v.luggage && (
+                          <span className="flex items-center gap-1">
+                            <Briefcase size={13} className="text-primary" /> {v.luggage}
+                          </span>
+                        )}
+                        <span className="flex items-center gap-1">
+                          <Settings size={13} className="text-primary" /> Auto
                         </span>
-                      ))}
+                        <span className="flex items-center gap-1">
+                          <Smartphone size={13} className="text-primary" /> CarPlay
+                        </span>
+                      </div>
                     </div>
-
-                    <button
-                      className="mt-5 block w-full text-center gold-gradient text-primary-foreground py-3 rounded-md text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-opacity"
-                    >
-                      {t.fleet.book}
-                    </button>
                   </div>
                 </motion.div>
               );
@@ -266,11 +269,17 @@ const FleetSection = () => {
         )}
       </div>
 
-      {/* Vehicle Detail Modal */}
+      {/* Vehicle Detail Modal with real photos */}
       <AnimatePresence>
         {selectedVehicle && (
           <VehicleModal
-            vehicle={selectedVehicle}
+            vehicle={{
+              name: selectedVehicle.name,
+              categoryKey: selectedVehicle.categoryKey,
+              passengers: selectedVehicle.passengers,
+              luggage: selectedVehicle.luggage,
+              images: selectedVehicle.galleryImages,
+            }}
             categoryLabel={categoryLabels[selectedVehicle.categoryKey]}
             onClose={() => setSelectedVehicle(null)}
             whatsappUrl={whatsappMsg(selectedVehicle.name)}
