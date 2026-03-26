@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import zeusLogo from "@/assets/zeus-logo.png";
 
 const HeroSection = () => (
   <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -27,6 +28,15 @@ const HeroSection = () => (
     />
 
     <div className="relative z-10 container mx-auto px-4 text-center">
+      <motion.img
+        src={zeusLogo}
+        alt="Zeus Rental Car"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8 }}
+        className="h-32 sm:h-40 lg:h-48 w-auto mx-auto mb-8"
+      />
+
       <motion.h1
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
