@@ -120,22 +120,26 @@ const Navbar = () => {
               </a>
             ))}
 
-            {/* Mobile language switcher */}
-            <div className="flex flex-wrap gap-2 pt-2 border-t border-white/5">
-              {languages.map((lang) => (
-                <button
-                  key={lang}
-                  onClick={() => setLanguage(lang)}
-                  className={`px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
-                    language === lang
-                      ? "gold-gradient text-primary-foreground"
-                      : "bg-muted text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {languageFlags[lang]} {languageLabels[lang]}
-                </button>
-              ))}
-            </div>
+            {/* Mobile language switcher - same dropdown style as desktop */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-2 text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300 outline-none pt-2 border-t border-white/5 w-full">
+                <Globe size={16} />
+                <span>Trocar idioma</span>
+                <span className="ml-auto">{languageFlags[language]}</span>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-background/95 backdrop-blur-xl border-white/10">
+                {languages.map((lang) => (
+                  <DropdownMenuItem
+                    key={lang}
+                    onClick={() => setLanguage(lang)}
+                    className={`cursor-pointer gap-2 ${language === lang ? "text-primary font-semibold" : ""}`}
+                  >
+                    <span>{languageFlags[lang]}</span>
+                    <span>{languageLabels[lang]}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             <a
               href="https://wa.me/16892981754"
