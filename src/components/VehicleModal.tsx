@@ -49,7 +49,7 @@ const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleM
         </button>
 
         {/* Image Gallery */}
-        <div className="relative aspect-[16/10] overflow-hidden rounded-t-xl">
+        <div className="relative aspect-[16/10] sm:aspect-[16/9] overflow-hidden rounded-t-xl">
           <AnimatePresence mode="wait">
             <motion.img
               key={currentImage}
@@ -93,12 +93,12 @@ const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleM
         </div>
 
         {/* Thumbnail strip */}
-        <div className="flex gap-2 p-4 overflow-x-auto">
+        <div className="flex gap-2 p-3 sm:p-4 overflow-x-auto">
           {vehicle.images.map((img, i) => (
             <button
               key={i}
               onClick={() => setCurrentImage(i)}
-              className={`flex-shrink-0 w-20 h-14 rounded-md overflow-hidden border-2 transition-all ${
+              className={`flex-shrink-0 w-16 h-11 sm:w-20 sm:h-14 rounded-md overflow-hidden border-2 transition-all ${
                 i === currentImage ? "border-primary" : "border-transparent opacity-60 hover:opacity-100"
               }`}
             >
@@ -108,12 +108,14 @@ const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleM
         </div>
 
         {/* Content */}
-        <div className="p-6 pt-2">
-          <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-wider">{vehicle.name}</h2>
-          <p className="text-muted-foreground italic font-light mt-1 text-lg">{vehicleT?.subtitle}</p>
+        <div className="px-5 pb-6 pt-1 sm:px-8 sm:pb-8 sm:pt-2 space-y-5 sm:space-y-6">
+          <div>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-wider leading-tight">{vehicle.name}</h2>
+            <p className="text-muted-foreground italic font-light mt-1.5 text-base sm:text-lg">{vehicleT?.subtitle}</p>
+          </div>
 
           {/* Specs */}
-          <div className="flex flex-wrap items-center gap-6 mt-6 text-sm text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-muted-foreground">
             <span className="flex items-center gap-2">
               <Users size={16} className="text-primary" /> {vehicle.passengers} {t.fleet.passengers.replace(":", "")}
             </span>
@@ -131,12 +133,12 @@ const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleM
           </div>
 
           {/* Features */}
-          <div className="mt-8 rounded-xl border border-border/60 bg-muted/30 px-4 py-2">
+          <div className="rounded-xl border border-border/60 bg-muted/30 px-4 sm:px-5 py-2">
             <div className="divide-y divide-border/50">
               {vehicleT?.features.map((feat) => (
-                <div key={feat} className="flex items-center justify-between gap-3 py-3">
-                  <span className="text-sm font-medium tracking-wide text-foreground">{feat}</span>
-                  <span className="h-2.5 w-2.5 rounded-full bg-primary" aria-hidden="true" />
+                <div key={feat} className="flex items-center justify-between gap-3 py-3.5 sm:py-3">
+                  <span className="text-sm sm:text-base font-medium tracking-wide text-foreground">{feat}</span>
+                  <span className="h-2.5 w-2.5 rounded-full bg-primary flex-shrink-0" aria-hidden="true" />
                 </div>
               ))}
             </div>
@@ -147,7 +149,7 @@ const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleM
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-8 flex items-center justify-center gap-2 w-full gold-gradient text-primary-foreground py-4 rounded-md text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-opacity"
+            className="flex items-center justify-center gap-2 w-full gold-gradient text-primary-foreground py-4 sm:py-5 rounded-md text-sm sm:text-base font-bold uppercase tracking-widest hover:opacity-90 transition-opacity"
           >
             <MessageCircle size={18} />
             {t.fleet.book}
