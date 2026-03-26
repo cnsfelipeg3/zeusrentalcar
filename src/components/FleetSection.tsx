@@ -57,6 +57,12 @@ const buildGallery = (slug: string) => {
   return { images, thumbs };
 };
 
+const buildSingleGallery = (slug: string) => {
+  const img = galleryImageMap[`../assets/fleet/${slug}-front.jpg`];
+  const thumb = galleryThumbMap[`../assets/fleet/thumbs/${slug}-front-thumb.jpg`] ?? img;
+  return { images: [img], thumbs: [thumb] };
+};
+
 const corvetteGallery = buildGallery("corvette");
 const mustangGallery = buildGallery("mustang");
 const escaladeGallery = buildGallery("escalade");
@@ -68,6 +74,14 @@ const sportageGallery = buildGallery("sportage");
 const outlanderGallery = buildGallery("outlander");
 const tiguanGallery = buildGallery("tiguan");
 const pacificaGallery = buildGallery("pacifica");
+const lexusNxGallery = buildSingleGallery("lexus-nx");
+const audiQ7Gallery = buildSingleGallery("audi-q7");
+const volvoXc60Gallery = buildSingleGallery("volvo-xc60");
+const mustangWhiteGallery = buildSingleGallery("mustang-white");
+const tiguanWhiteGallery = buildSingleGallery("tiguan-white");
+const nissanKicksGallery = buildSingleGallery("nissan-kicks");
+const vwAtlasGallery = buildSingleGallery("vw-atlas");
+const mercedesGlaGallery = buildSingleGallery("mercedes-gla");
 
 const vehicles: Vehicle[] = [
   { name: "Corvette Stingray C8", categoryKey: "superSport", passengers: 2, coverImage: corvetteCover, galleryImages: corvetteGallery.images, galleryThumbs: corvetteGallery.thumbs },
