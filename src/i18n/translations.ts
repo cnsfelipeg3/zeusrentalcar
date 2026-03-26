@@ -680,6 +680,12 @@ export const translations: Record<Language, TranslationKeys> = {
       t2Text: "Wir haben einen Escalade für die Familie gemietet und es war perfekt. Super einfacher Prozess, keine Bürokratie. Wir kommen bestimmt wieder!",
       t3Name: "Carlos A.",
       t3Text: "Ich habe meinen Traum erfüllt, eine Corvette in Orlando zu fahren. Zeus hat alles einfach und sicher gemacht. Note 10!",
+      t4Name: "Juliana P.",
+      t4Text: "Brunos Service war von einer anderen Welt! Er kümmerte sich um alles mit unglaublicher Aufmerksamkeit, von der Reservierung bis zur Fahrzeugübergabe. Alle Erwartungen übertroffen!",
+      t5Name: "Marcos T.",
+      t5Text: "Ich habe schon oft Autos in Orlando gemietet, aber nie einen Service wie den von Bruno erlebt. Er ist extrem engagiert und sorgt dafür, dass alles perfekt ist. Note 1000!",
+      t6Name: "Ana Carolina R.",
+      t6Text: "Bruno hat unser Mietwagen-Erlebnis in etwas Besonderes verwandelt. Er gab uns tolle Tipps zu Orlando und das Auto war makellos. Außergewöhnlicher Service!",
     },
     footer: {
       tagline: "Zeus Rental Car — Premium-Concierge für Brasilianer in Orlando.",
