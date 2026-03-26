@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Globe } from "lucide-react";
-import zeusLogo from "@/assets/zeus-logo.png";
+
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Language, languageLabels, languageFlags } from "@/i18n/translations";
 import {
@@ -40,7 +40,7 @@ const Navbar = () => {
     >
       <div className="container mx-auto flex items-center justify-between py-4 px-4 lg:px-8">
         <a href="#" className="flex items-center">
-          <img src={zeusLogo} alt="Zeus Rental Car" className="h-20 w-auto" />
+          <span className="text-xl font-black uppercase tracking-widest gold-text">Zeus</span>
         </a>
 
         {/* Desktop */}
