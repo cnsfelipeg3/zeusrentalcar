@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Globe } from "lucide-react";
-import { Link } from "react-router-dom";
 
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Language, languageLabels, languageFlags } from "@/i18n/translations";
@@ -17,6 +16,7 @@ const Navbar = () => {
   const { language, setLanguage, t } = useLanguage();
 
   const navLinks = [
+    { label: t.nav.about, href: "#quem-somos" },
     { label: t.nav.fleet, href: "#frota" },
     { label: t.nav.howItWorks, href: "#como-funciona" },
     { label: t.nav.whyZeus, href: "#por-que" },
@@ -43,9 +43,6 @@ const Navbar = () => {
         <a href="/#" className="text-sm font-bold uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors duration-300">
           Home
         </a>
-        <Link to="/sobre-nos" className="text-sm font-bold uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors duration-300">
-          Sobre Nós
-        </Link>
 
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
@@ -102,13 +99,6 @@ const Navbar = () => {
       {mobileOpen && (
         <div className="md:hidden bg-background/95 backdrop-blur-xl border-t border-white/5 animate-fade-in">
           <div className="flex flex-col gap-4 px-6 py-6">
-            <Link
-              to="/sobre-nos"
-              onClick={() => setMobileOpen(false)}
-              className="text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors"
-            >
-              Sobre Nós
-            </Link>
             {navLinks.map((link) => (
               <a
                 key={link.href}

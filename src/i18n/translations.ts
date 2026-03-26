@@ -20,6 +20,7 @@ export const languageFlags: Record<Language, string> = {
 
 type TranslationKeys = {
   nav: {
+    about: string;
     fleet: string;
     howItWorks: string;
     whyZeus: string;
@@ -129,6 +130,7 @@ type TranslationKeys = {
 export const translations: Record<Language, TranslationKeys> = {
   pt: {
     nav: {
+      about: "Sobre Nós",
       fleet: "Frota",
       howItWorks: "Como Funciona",
       whyZeus: "Por que a Zeus",
@@ -254,6 +256,7 @@ export const translations: Record<Language, TranslationKeys> = {
   },
   en: {
     nav: {
+      about: "About Us",
       fleet: "Fleet",
       howItWorks: "How It Works",
       whyZeus: "Why Zeus",
@@ -379,6 +382,7 @@ export const translations: Record<Language, TranslationKeys> = {
   },
   es: {
     nav: {
+      about: "Sobre Nosotros",
       fleet: "Flota",
       howItWorks: "Cómo Funciona",
       whyZeus: "Por qué Zeus",
@@ -504,6 +508,7 @@ export const translations: Record<Language, TranslationKeys> = {
   },
   it: {
     nav: {
+      about: "Chi Siamo",
       fleet: "Flotta",
       howItWorks: "Come Funziona",
       whyZeus: "Perché Zeus",
@@ -629,6 +634,7 @@ export const translations: Record<Language, TranslationKeys> = {
   },
   de: {
     nav: {
+      about: "Über Uns",
       fleet: "Flotte",
       howItWorks: "So Funktioniert's",
       whyZeus: "Warum Zeus",
@@ -754,6 +760,7 @@ export const translations: Record<Language, TranslationKeys> = {
   },
   fr: {
     nav: {
+      about: "À Propos",
       fleet: "Flotte",
       howItWorks: "Comment Ça Marche",
       whyZeus: "Pourquoi Zeus",
