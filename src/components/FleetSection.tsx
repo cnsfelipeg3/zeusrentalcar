@@ -137,7 +137,7 @@ const FleetSection = () => {
   });
 
   const whatsappMsg = (name: string) =>
-    `https://wa.me/14075551234?text=${encodeURIComponent(t.fleet.whatsappMsg(name))}`;
+    `https://wa.me/16892981754?text=${encodeURIComponent(t.fleet.whatsappMsg(name))}`;
 
   return (
     <section id="frota" className="py-24 relative">
