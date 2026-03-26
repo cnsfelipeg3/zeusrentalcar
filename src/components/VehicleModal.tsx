@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, Users, Briefcase, Settings, Smartphone, MessageCircle } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -10,6 +10,7 @@ interface VehicleModalProps {
     passengers: number;
     luggage?: number;
     images: string[];
+    thumbnails: string[];
   };
   categoryLabel: string;
   onClose: () => void;
@@ -23,6 +24,21 @@ const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleM
 
   const nextImage = () => setCurrentImage((prev) => (prev + 1) % vehicle.images.length);
   const prevImage = () => setCurrentImage((prev) => (prev - 1 + vehicle.images.length) % vehicle.images.length);
+
+  useEffect(() => {
+    setCurrentImage(0);
+  }, [vehicle.name]);
+
+  useEffect(() => {
+    const nextIndex = (currentImage + 1) % vehicle.images.length;
+    const prevIndex = (currentImage - 1 + vehicle.images.length) % vehicle.images.length;
+
+    [vehicle.images[nextIndex], vehicle.images[prevIndex]].forEach((src) => {
+      const img = new Image();
+      img.decoding = "async";
+      img.src = src;
+    });
+  }, [currentImage, vehicle.images]);
 
   return (
     <motion.div
@@ -40,7 +56,6 @@ const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleM
         className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-background border border-white/10 rounded-xl shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close button */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/80 transition-colors"
@@ -48,7 +63,6 @@ const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleM
           <X size={20} />
         </button>
 
-        {/* Image Gallery */}
         <div className="relative aspect-[16/10] sm:aspect-[16/9] overflow-hidden rounded-t-xl">
           <AnimatePresence mode="wait">
             <motion.img
@@ -58,12 +72,14 @@ const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleM
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.25 }}
               className="w-full h-full object-cover"
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
             />
           </AnimatePresence>
 
-          {/* Navigation arrows */}
           <button
             onClick={prevImage}
             className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/70 transition-colors"
@@ -77,7 +93,6 @@ const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleM
             <ChevronRight size={22} />
           </button>
 
-          {/* Dots indicator */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
             {vehicle.images.map((_, i) => (
               <button
@@ -89,10 +104,8 @@ const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleM
               />
             ))}
           </div>
-
         </div>
 
-        {/* Thumbnail strip */}
         <div className="flex gap-2 p-3 sm:p-4 overflow-x-auto">
           {vehicle.images.map((img, i) => (
             <button
@@ -102,19 +115,25 @@ const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleM
                 i === currentImage ? "border-primary" : "border-transparent opacity-60 hover:opacity-100"
               }`}
             >
-              <img src={img} alt="" className="w-full h-full object-cover" />
+              <img
+                src={vehicle.thumbnails[i] ?? img}
+                alt=""
+                className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+                width={320}
+                height={220}
+              />
             </button>
           ))}
         </div>
 
-        {/* Content */}
         <div className="px-5 pb-6 pt-1 sm:px-8 sm:pb-8 sm:pt-2 space-y-5 sm:space-y-6">
           <div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-wider leading-tight">{vehicle.name}</h2>
             <p className="text-muted-foreground italic font-light mt-1.5 text-base sm:text-lg">{vehicleT?.subtitle}</p>
           </div>
 
-          {/* Specs */}
           <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-muted-foreground">
             <span className="flex items-center gap-2">
               <Users size={16} className="text-primary" /> {vehicle.passengers} {t.fleet.passengers.replace(":", "")}
@@ -132,7 +151,6 @@ const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleM
             </span>
           </div>
 
-          {/* Features */}
           <div className="rounded-xl border border-border/60 bg-muted/30 px-4 sm:px-5 py-2">
             <div className="divide-y divide-border/50">
               {vehicleT?.features.map((feat) => (
@@ -144,7 +162,6 @@ const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleM
             </div>
           </div>
 
-          {/* CTA */}
           <a
             href={whatsappUrl}
             target="_blank"
