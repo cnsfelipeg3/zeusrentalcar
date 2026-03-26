@@ -49,17 +49,29 @@ const galleryThumbMap = import.meta.glob("../assets/fleet/thumbs/*.{jpg,jpeg,png
 const galleryViews = ["front", "dashboard", "interior", "rear"] as const;
 
 const buildGallery = (slug: string) => {
-  const front = galleryImageMap[`../assets/fleet/${slug}-front.jpg`];
-  const frontThumb = galleryThumbMap[`../assets/fleet/thumbs/${slug}-front-thumb.jpg`] ?? front;
+  const images: string[] = [];
+  const thumbs: string[] = [];
 
-  return { images: [front], thumbs: [frontThumb] };
+  for (const view of galleryViews) {
+    const img = galleryImageMap[`../assets/fleet/${slug}-${view}.jpg`];
+    if (img) {
+      images.push(img);
+      const thumb = galleryThumbMap[`../assets/fleet/thumbs/${slug}-${view}-thumb.jpg`] ?? img;
+      thumbs.push(thumb);
+    }
+  }
+
+  // Also check for the base image (e.g. corvette.jpg)
+  const baseImg = galleryImageMap[`../assets/fleet/${slug}.jpg`];
+  if (baseImg && !images.includes(baseImg)) {
+    images.push(baseImg);
+    thumbs.push(baseImg);
+  }
+
+  return { images, thumbs };
 };
 
-const buildSingleGallery = (slug: string) => {
-  const img = galleryImageMap[`../assets/fleet/${slug}-front.jpg`];
-  const thumb = galleryThumbMap[`../assets/fleet/thumbs/${slug}-front-thumb.jpg`] ?? img;
-  return { images: [img], thumbs: [thumb] };
-};
+const buildSingleGallery = buildGallery;
 
 const corvetteGallery = buildGallery("corvette");
 const mustangGallery = buildGallery("mustang");
