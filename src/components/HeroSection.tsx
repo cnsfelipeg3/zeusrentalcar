@@ -36,7 +36,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="h-28 sm:h-40 lg:h-48 w-auto mx-auto mb-4 sm:mb-8 mt-[-2rem] sm:mt-0"
+          className="h-28 sm:h-40 lg:h-48 w-auto mx-auto mb-4 sm:mb-8 mt-[-3.5rem] sm:mt-[-1rem]"
         />
 
         <motion.h1
@@ -83,11 +83,11 @@ const HeroSection = () => {
 
       <motion.a
         href="#frota"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ repeat: Infinity, duration: 2 }}
-        className="absolute bottom-16 sm:bottom-8 left-1/2 -translate-x-1/2 cursor-pointer"
+        animate={{ y: [0, 6, 0] }}
+        transition={{ repeat: Infinity, duration: 2.5 }}
+        className="absolute bottom-16 sm:bottom-8 left-1/2 -translate-x-1/2 cursor-pointer opacity-30 hover:opacity-60 transition-opacity duration-300"
       >
-        <ChevronDown className="text-primary/50" size={32} />
+        <ChevronDown className="text-primary/50" size={24} />
       </motion.a>
     </section>
   );
