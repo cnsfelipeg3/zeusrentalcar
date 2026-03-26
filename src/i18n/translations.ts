@@ -216,6 +216,12 @@ export const translations: Record<Language, TranslationKeys> = {
       t2Text: "Alugamos um Escalade para a família e foi perfeito. Processo super simples, sem burocracia. Voltaremos com certeza!",
       t3Name: "Carlos A.",
       t3Text: "Realizei o sonho de dirigir um Corvette em Orlando. A Zeus tornou tudo fácil e seguro. Nota 10!",
+      t4Name: "Juliana P.",
+      t4Text: "O atendimento do Bruno foi coisa de outro mundo! Ele cuidou de tudo com uma atenção absurda, desde a reserva até a entrega do carro. Superou todas as expectativas!",
+      t5Name: "Marcos T.",
+      t5Text: "Já aluguei carro em Orlando várias vezes, mas nunca tive um atendimento como o do Bruno. Ele é extremamente dedicado e faz questão de garantir que tudo seja perfeito. Nota 1000!",
+      t6Name: "Ana Carolina R.",
+      t6Text: "O Bruno transformou nossa experiência de aluguel de carro em algo especial. Ele nos deu dicas incríveis sobre Orlando e o carro estava impecável. Atendimento fora da curva!",
     },
     footer: {
       tagline: "Zeus Rental Car — Concierge premium para brasileiros em Orlando.",
