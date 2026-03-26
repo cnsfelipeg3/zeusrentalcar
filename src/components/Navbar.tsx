@@ -29,7 +29,7 @@ const Navbar = () => {
     >
       <div className="container mx-auto flex items-center justify-between py-4 px-4 lg:px-8">
         <a href="#" className="flex items-center">
-          <img src={zeusLogo} alt="Zeus Rental Car" className="h-12 w-auto" />
+          <img src={zeusLogo} alt="Zeus Rental Car" className="h-20 w-auto" />
         </a>
 
         {/* Desktop */}
