@@ -40,9 +40,12 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto flex items-center justify-between py-4 px-4 lg:px-8">
-        <a href="#" className="text-sm font-bold uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors duration-300">
+        <a href="/#" className="text-sm font-bold uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors duration-300">
           Home
         </a>
+        <Link to="/sobre-nos" className="text-sm font-bold uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors duration-300">
+          Sobre Nós
+        </Link>
 
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
