@@ -230,7 +230,7 @@ export const translations: Record<Language, TranslationKeys> = {
     footer: {
       tagline: "Zeus Rental Car — Concierge premium para brasileiros em Orlando.",
       whatsapp: "Fale Conosco no WhatsApp",
-      rights: "© 2025 Zeus Rental Car. Todos os direitos reservados.",
+      rights: "© 2026 Zeus Rental Car. Todos os direitos reservados.",
     },
     vehicles: {
       "Corvette Stingray C8": { subtitle: "Performance e estilo em cada detalhe", features: ["Motor V8", "Conversível", "Piloto automático", "Painel digital", "CarPlay"] },
@@ -356,7 +356,7 @@ export const translations: Record<Language, TranslationKeys> = {
     footer: {
       tagline: "Zeus Rental Car — Premium concierge for Brazilians in Orlando.",
       whatsapp: "Contact Us on WhatsApp",
-      rights: "© 2025 Zeus Rental Car. All rights reserved.",
+      rights: "© 2026 Zeus Rental Car. All rights reserved.",
     },
     vehicles: {
       "Corvette Stingray C8": { subtitle: "Performance and style in every detail", features: ["V8 Engine", "Convertible", "Cruise control", "Digital dashboard", "CarPlay"] },
@@ -482,7 +482,7 @@ export const translations: Record<Language, TranslationKeys> = {
     footer: {
       tagline: "Zeus Rental Car — Concierge premium para brasileños en Orlando.",
       whatsapp: "Contáctenos por WhatsApp",
-      rights: "© 2025 Zeus Rental Car. Todos los derechos reservados.",
+      rights: "© 2026 Zeus Rental Car. Todos los derechos reservados.",
     },
     vehicles: {
       "Corvette Stingray C8": { subtitle: "Rendimiento y estilo en cada detalle", features: ["Motor V8", "Convertible", "Piloto automático", "Panel digital", "CarPlay"] },
@@ -608,7 +608,7 @@ export const translations: Record<Language, TranslationKeys> = {
     footer: {
       tagline: "Zeus Rental Car — Concierge premium per brasiliani a Orlando.",
       whatsapp: "Contattaci su WhatsApp",
-      rights: "© 2025 Zeus Rental Car. Tutti i diritti riservati.",
+      rights: "© 2026 Zeus Rental Car. Tutti i diritti riservati.",
     },
     vehicles: {
       "Corvette Stingray C8": { subtitle: "Prestazioni e stile in ogni dettaglio", features: ["Motore V8", "Convertibile", "Cruise control", "Cruscotto digitale", "CarPlay"] },
@@ -734,7 +734,7 @@ export const translations: Record<Language, TranslationKeys> = {
     footer: {
       tagline: "Zeus Rental Car — Premium-Concierge für Brasilianer in Orlando.",
       whatsapp: "Kontaktieren Sie Uns auf WhatsApp",
-      rights: "© 2025 Zeus Rental Car. Alle Rechte vorbehalten.",
+      rights: "© 2026 Zeus Rental Car. Alle Rechte vorbehalten.",
     },
     vehicles: {
       "Corvette Stingray C8": { subtitle: "Leistung und Stil in jedem Detail", features: ["V8-Motor", "Cabriolet", "Tempomat", "Digitales Cockpit", "CarPlay"] },
@@ -860,7 +860,7 @@ export const translations: Record<Language, TranslationKeys> = {
     footer: {
       tagline: "Zeus Rental Car — Concierge premium pour les Brésiliens à Orlando.",
       whatsapp: "Contactez-Nous sur WhatsApp",
-      rights: "© 2025 Zeus Rental Car. Tous droits réservés.",
+      rights: "© 2026 Zeus Rental Car. Tous droits réservés.",
     },
     vehicles: {
       "Corvette Stingray C8": { subtitle: "Performance et style dans chaque détail", features: ["Moteur V8", "Cabriolet", "Régulateur de vitesse", "Tableau de bord numérique", "CarPlay"] },
