@@ -160,38 +160,68 @@ const FleetSection = () => {
           </h2>
         </motion.div>
 
-        {/* Filters */}
-        <div className="mb-10 space-y-4">
-          <div className="flex flex-wrap justify-center gap-2">
-            {categoryKeys.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
-                  activeCategory === cat
-                    ? "gold-gradient text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {categoryLabels[cat]}
-              </button>
-            ))}
-          </div>
-          <div className="flex flex-wrap justify-center gap-2">
-            <span className="text-xs text-muted-foreground uppercase tracking-wider self-center mr-2">{t.fleet.passengers}</span>
-            {passengerFilters.map((pf) => (
-              <button
-                key={pf}
-                onClick={() => setActivePassengers(pf)}
-                className={`px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
-                  activePassengers === pf
-                    ? "gold-gradient text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {passengerLabels[pf]}
-              </button>
-            ))}
+        {/* Smart Filters */}
+        <div className="mb-12 max-w-3xl mx-auto">
+          <div className="rounded-2xl border border-border/60 bg-card/40 backdrop-blur-sm p-5 sm:p-6 space-y-5">
+            {/* Category row */}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <SlidersHorizontal size={14} className="text-primary" />
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  {t.fleet.sectionTag.includes("Frota") ? "Categoria" : "Category"}
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {categoryKeys.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 border ${
+                      activeCategory === cat
+                        ? "gold-gradient text-primary-foreground border-transparent shadow-md shadow-primary/20"
+                        : "border-border/60 bg-transparent text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                    }`}
+                  >
+                    {categoryLabels[cat]}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="h-px bg-border/40" />
+
+            {/* Passengers row */}
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <UserRound size={14} className="text-primary" />
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  {t.fleet.passengers.replace(":", "")}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                {passengerFilters.map((pf) => (
+                  <button
+                    key={pf}
+                    onClick={() => setActivePassengers(pf)}
+                    className={`min-w-[44px] px-3 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 border ${
+                      activePassengers === pf
+                        ? "gold-gradient text-primary-foreground border-transparent shadow-md shadow-primary/20"
+                        : "border-border/60 bg-transparent text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                    }`}
+                  >
+                    {passengerLabels[pf]}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Result count */}
+            <div className="text-center pt-1">
+              <span className="text-xs text-muted-foreground/70 tracking-wide">
+                {activeCount} {activeCount === 1 ? "veículo" : "veículos"}
+              </span>
+            </div>
           </div>
         </div>
 
