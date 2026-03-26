@@ -291,6 +291,7 @@ export const translations: Record<Language, TranslationKeys> = {
       suvPremium: "SUV Premium",
       suvFullSize: "SUV Full Size",
       suv: "SUV",
+      suvCompact: "Compact SUV",
       minivan: "Minivan",
     },
     howItWorks: {
