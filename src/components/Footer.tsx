@@ -10,7 +10,7 @@ const Footer = () => {
       <div className="container mx-auto px-4 text-center">
         <img src={zeusLogo} alt="Zeus Rental Car" className="h-28 w-auto mx-auto" />
 
-        <p className="mt-4 text-muted-foreground font-light italic tracking-wide max-w-md mx-auto">
+        <p className="mt-4 text-muted-foreground italic tracking-wide max-w-md mx-auto text-sm font-semibold">
           {t.footer.tagline}
         </p>
 
