@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Globe } from "lucide-react";
+import { Menu, X, Globe, Home } from "lucide-react";
 
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Language, languageLabels, languageFlags } from "@/i18n/translations";
