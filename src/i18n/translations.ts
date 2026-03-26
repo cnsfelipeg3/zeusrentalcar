@@ -770,8 +770,8 @@ export const translations: Record<Language, TranslationKeys> = {
     about: {
       title: "Qui ",
       titleHighlight: "Sommes-Nous",
-      description: "Zeus Rental Car est une référence en location de véhicules premium pour les Brésiliens à Orlando. Nous offrons une expérience de mobilité haut de gamme, avec un service personnalisé et une flotte sélectionnée pour transformer votre voyage.",
-      tagline: "Mobilité premium pour les Brésiliens à Orlando.",
+      description: "Zeus Rental Car est une référence en location de véhicules premium pour les Brésiliens à Orlando. Nous offrons une expérience de mobilité haut de gamme, avec un service personnalisé, une flotte sélectionnée et le meilleur rapport qualité-prix du marché — car le service premium ne doit pas coûter cher.",
+      tagline: "Service premium avec le meilleur rapport qualité-prix d'Orlando.",
       feat1: "Service 100% en portugais",
       feat2: "Véhicules sélectionnés et révisés",
       feat3: "Processus simple et rapide",
