@@ -16,7 +16,6 @@ const Navbar = () => {
   const { language, setLanguage, t } = useLanguage();
 
   const navLinks = [
-    { label: t.nav.about, href: "#quem-somos" },
     { label: t.nav.fleet, href: "#frota" },
     { label: t.nav.howItWorks, href: "#como-funciona" },
     { label: t.nav.whyZeus, href: "#por-que" },
