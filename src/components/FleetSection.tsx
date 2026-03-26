@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Users, Briefcase, Smartphone, Settings, SlidersHorizontal, UserRound, ChevronDown, Check } from "lucide-react";
+import { Users, Briefcase, SlidersHorizontal, UserRound, ChevronDown, Check } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import VehicleModal from "./VehicleModal";
 
@@ -307,7 +307,7 @@ const FleetSection = () => {
                   className="group relative overflow-hidden rounded-xl cursor-pointer hover:scale-[1.02] transition-all duration-300"
                   onClick={() => setSelectedVehicle(v)}
                 >
-                  <div className="relative h-64 overflow-hidden">
+                  <div className="relative h-80 overflow-hidden">
                     <img
                       src={v.coverImage}
                       alt={v.name}
@@ -317,7 +317,7 @@ const FleetSection = () => {
                       width={1280}
                       height={720}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
 
                     <div className="absolute bottom-0 left-0 right-0 p-5">
                       <h3 className="text-xl font-black uppercase tracking-wider text-white">{v.name}</h3>
@@ -331,12 +331,6 @@ const FleetSection = () => {
                             <Briefcase size={13} className="text-primary" /> {v.luggage}
                           </span>
                         )}
-                        <span className="flex items-center gap-1">
-                          <Settings size={13} className="text-primary" /> Auto
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Smartphone size={13} className="text-primary" /> CarPlay
-                        </span>
                       </div>
                     </div>
                   </div>
