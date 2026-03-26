@@ -30,11 +30,11 @@ const RequirementsSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="glass-card p-8 sm:p-12 max-w-lg mx-auto"
+          className="glass-card p-8 sm:p-12 max-w-lg mx-auto text-justify"
         >
           <div className="space-y-5 flex flex-col items-center">
             {items.map((item, i) => (
-              <div key={i} className="flex items-center gap-4">
+              <div key={i} className="flex items-center gap-4 text-center">
                 <div className="w-8 h-8 rounded-full gold-gradient flex items-center justify-center flex-shrink-0">
                   <Check className="text-primary-foreground" size={16} />
                 </div>
