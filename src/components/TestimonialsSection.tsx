@@ -9,6 +9,9 @@ const TestimonialsSection = () => {
     { name: t.testimonials.t1Name, text: t.testimonials.t1Text },
     { name: t.testimonials.t2Name, text: t.testimonials.t2Text },
     { name: t.testimonials.t3Name, text: t.testimonials.t3Text },
+    { name: t.testimonials.t4Name, text: t.testimonials.t4Text },
+    { name: t.testimonials.t5Name, text: t.testimonials.t5Text },
+    { name: t.testimonials.t6Name, text: t.testimonials.t6Text },
   ];
 
   return (
@@ -24,7 +27,7 @@ const TestimonialsSection = () => {
           {t.testimonials.title}<span className="gold-text">{t.testimonials.titleHighlight}</span>
         </motion.h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {testimonials.map((tm, i) => (
             <motion.div
               key={i}
