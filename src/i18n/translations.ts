@@ -57,6 +57,7 @@ type TranslationKeys = {
     suvPremium: string;
     suvFullSize: string;
     suv: string;
+    suvCompact: string;
     minivan: string;
   };
   howItWorks: {
