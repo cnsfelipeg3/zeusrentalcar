@@ -108,6 +108,12 @@ type TranslationKeys = {
     t2Text: string;
     t3Name: string;
     t3Text: string;
+    t4Name: string;
+    t4Text: string;
+    t5Name: string;
+    t5Text: string;
+    t6Name: string;
+    t6Text: string;
   };
   footer: {
     tagline: string;
