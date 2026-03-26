@@ -94,25 +94,25 @@ const vwAtlasGallery = buildSingleGallery("vw-atlas");
 const mercedesGlaGallery = buildSingleGallery("mercedes-gla");
 
 const vehicles: Vehicle[] = [
-  { name: "Corvette Stingray C8", categoryKey: "superSport", passengers: 2, coverImage: corvetteCover, galleryImages: corvetteGallery.images, galleryThumbs: corvetteGallery.thumbs },
-  { name: "Mustang Conversível", categoryKey: "sport", passengers: 4, coverImage: mustangCover, galleryImages: mustangGallery.images, galleryThumbs: mustangGallery.thumbs },
+  { name: "Corvette Stingray C8", categoryKey: "superSport", passengers: 2, luggage: 1, coverImage: corvetteCover, galleryImages: corvetteGallery.images, galleryThumbs: corvetteGallery.thumbs },
+  { name: "Mustang Conversível", categoryKey: "sport", passengers: 4, luggage: 2, coverImage: mustangCover, galleryImages: mustangGallery.images, galleryThumbs: mustangGallery.thumbs },
   { name: "Cadillac Escalade", categoryKey: "suvPremium", passengers: 7, luggage: 5, coverImage: escaladeCover, galleryImages: escaladeGallery.images, galleryThumbs: escaladeGallery.thumbs },
-  { name: "BMW X5 M Sport", categoryKey: "suvPremium", passengers: 5, coverImage: bmwX5Cover, galleryImages: bmwX5Gallery.images, galleryThumbs: bmwX5Gallery.thumbs },
+  { name: "BMW X5 M Sport", categoryKey: "suvPremium", passengers: 5, luggage: 3, coverImage: bmwX5Cover, galleryImages: bmwX5Gallery.images, galleryThumbs: bmwX5Gallery.thumbs },
   { name: "Chevrolet Suburban", categoryKey: "suvFullSize", passengers: 7, luggage: 5, coverImage: suburbanCover, galleryImages: suburbanGallery.images, galleryThumbs: suburbanGallery.thumbs },
-  { name: "Dodge Durango", categoryKey: "suv", passengers: 7, coverImage: durangoCover, galleryImages: durangoGallery.images, galleryThumbs: durangoGallery.thumbs },
-  { name: "Kia Sorento", categoryKey: "suv", passengers: 6, coverImage: sorentoCover, galleryImages: sorentoGallery.images, galleryThumbs: sorentoGallery.thumbs },
-  { name: "Kia Sportage", categoryKey: "suv", passengers: 5, coverImage: sportageCover, galleryImages: sportageGallery.images, galleryThumbs: sportageGallery.thumbs },
-  { name: "Mitsubishi Outlander", categoryKey: "suv", passengers: 7, coverImage: outlanderCover, galleryImages: outlanderGallery.images, galleryThumbs: outlanderGallery.thumbs },
-  { name: "Volkswagen Tiguan", categoryKey: "suv", passengers: 7, coverImage: tiguanCover, galleryImages: tiguanGallery.images, galleryThumbs: tiguanGallery.thumbs },
-  { name: "Chrysler Pacifica", categoryKey: "minivan", passengers: 7, coverImage: pacificaCover, galleryImages: pacificaGallery.images, galleryThumbs: pacificaGallery.thumbs },
-  { name: "Lexus NX", categoryKey: "suvPremium", passengers: 5, coverImage: lexusNxCover, galleryImages: lexusNxGallery.images, galleryThumbs: lexusNxGallery.thumbs, preparing: true },
-  { name: "Audi Q7", categoryKey: "suvPremium", passengers: 7, coverImage: audiQ7Cover, galleryImages: audiQ7Gallery.images, galleryThumbs: audiQ7Gallery.thumbs, preparing: true },
-  { name: "Volvo XC60", categoryKey: "suvPremium", passengers: 5, coverImage: volvoXc60Cover, galleryImages: volvoXc60Gallery.images, galleryThumbs: volvoXc60Gallery.thumbs, preparing: true },
-  { name: "MUSTANG CONVERSÍVEL", categoryKey: "sport", passengers: 4, coverImage: mustangWhiteCover, galleryImages: mustangWhiteGallery.images, galleryThumbs: mustangWhiteGallery.thumbs, preparing: true },
-  { name: "VOLKSWAGEN TIGUAN", categoryKey: "suv", passengers: 7, coverImage: tiguanWhiteCover, galleryImages: tiguanWhiteGallery.images, galleryThumbs: tiguanWhiteGallery.thumbs, preparing: true },
-  { name: "Nissan Kicks", categoryKey: "suvCompact", passengers: 5, coverImage: nissanKicksCover, galleryImages: nissanKicksGallery.images, galleryThumbs: nissanKicksGallery.thumbs, preparing: true },
-  { name: "Volkswagen Atlas", categoryKey: "suvFullSize", passengers: 7, coverImage: vwAtlasCover, galleryImages: vwAtlasGallery.images, galleryThumbs: vwAtlasGallery.thumbs, preparing: true },
-  { name: "Mercedes-Benz GLA", categoryKey: "suvPremium", passengers: 5, coverImage: mercedesGlaCover, galleryImages: mercedesGlaGallery.images, galleryThumbs: mercedesGlaGallery.thumbs, preparing: true },
+  { name: "Dodge Durango", categoryKey: "suv", passengers: 7, luggage: 4, coverImage: durangoCover, galleryImages: durangoGallery.images, galleryThumbs: durangoGallery.thumbs },
+  { name: "Kia Sorento", categoryKey: "suv", passengers: 6, luggage: 3, coverImage: sorentoCover, galleryImages: sorentoGallery.images, galleryThumbs: sorentoGallery.thumbs },
+  { name: "Kia Sportage", categoryKey: "suv", passengers: 5, luggage: 3, coverImage: sportageCover, galleryImages: sportageGallery.images, galleryThumbs: sportageGallery.thumbs },
+  { name: "Mitsubishi Outlander", categoryKey: "suv", passengers: 7, luggage: 3, coverImage: outlanderCover, galleryImages: outlanderGallery.images, galleryThumbs: outlanderGallery.thumbs },
+  { name: "Volkswagen Tiguan", categoryKey: "suv", passengers: 7, luggage: 3, coverImage: tiguanCover, galleryImages: tiguanGallery.images, galleryThumbs: tiguanGallery.thumbs },
+  { name: "Chrysler Pacifica", categoryKey: "minivan", passengers: 7, luggage: 5, coverImage: pacificaCover, galleryImages: pacificaGallery.images, galleryThumbs: pacificaGallery.thumbs },
+  { name: "Lexus NX", categoryKey: "suvPremium", passengers: 5, luggage: 3, coverImage: lexusNxCover, galleryImages: lexusNxGallery.images, galleryThumbs: lexusNxGallery.thumbs, preparing: true },
+  { name: "Audi Q7", categoryKey: "suvPremium", passengers: 7, luggage: 4, coverImage: audiQ7Cover, galleryImages: audiQ7Gallery.images, galleryThumbs: audiQ7Gallery.thumbs, preparing: true },
+  { name: "Volvo XC60", categoryKey: "suvPremium", passengers: 5, luggage: 3, coverImage: volvoXc60Cover, galleryImages: volvoXc60Gallery.images, galleryThumbs: volvoXc60Gallery.thumbs, preparing: true },
+  { name: "MUSTANG CONVERSÍVEL", categoryKey: "sport", passengers: 4, luggage: 2, coverImage: mustangWhiteCover, galleryImages: mustangWhiteGallery.images, galleryThumbs: mustangWhiteGallery.thumbs, preparing: true },
+  { name: "VOLKSWAGEN TIGUAN", categoryKey: "suv", passengers: 7, luggage: 3, coverImage: tiguanWhiteCover, galleryImages: tiguanWhiteGallery.images, galleryThumbs: tiguanWhiteGallery.thumbs, preparing: true },
+  { name: "Nissan Kicks", categoryKey: "suvCompact", passengers: 5, luggage: 2, coverImage: nissanKicksCover, galleryImages: nissanKicksGallery.images, galleryThumbs: nissanKicksGallery.thumbs, preparing: true },
+  { name: "Volkswagen Atlas", categoryKey: "suvFullSize", passengers: 7, luggage: 5, coverImage: vwAtlasCover, galleryImages: vwAtlasGallery.images, galleryThumbs: vwAtlasGallery.thumbs, preparing: true },
+  { name: "Mercedes-Benz GLA", categoryKey: "suvPremium", passengers: 5, luggage: 3, coverImage: mercedesGlaCover, galleryImages: mercedesGlaGallery.images, galleryThumbs: mercedesGlaGallery.thumbs, preparing: true },
 ];
 
 const categoryKeys = ["all", "superSport", "sport", "suvPremium", "suvFullSize", "suv", "suvCompact", "minivan"] as const;
@@ -344,11 +344,9 @@ const FleetSection = () => {
                         <span className="flex items-center gap-1">
                           <Users size={13} className="text-primary" /> {v.passengers}
                         </span>
-                        {v.luggage && (
-                          <span className="flex items-center gap-1">
-                            <Briefcase size={13} className="text-primary" /> {v.luggage}
-                          </span>
-                        )}
+                        <span className="flex items-center gap-1">
+                          <Briefcase size={13} className="text-primary" /> {v.luggage}
+                        </span>
                       </div>
                     </div>
                   </div>
