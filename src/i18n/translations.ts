@@ -130,6 +130,7 @@ type TranslationKeys = {
 export const translations: Record<Language, TranslationKeys> = {
   pt: {
     nav: {
+      about: "Sobre Nós",
       fleet: "Frota",
       howItWorks: "Como Funciona",
       whyZeus: "Por que a Zeus",
