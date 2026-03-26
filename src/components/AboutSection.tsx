@@ -3,21 +3,20 @@ import { Globe, CheckCircle, Zap, Shield } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 const icons = [Globe, CheckCircle, Zap, Shield];
-const emojis = ["🇧🇷", "✅", "⚡", "🛡️"];
 
 const AboutSection = () => {
   const { t } = useLanguage();
   const features = [t.about.feat1, t.about.feat2, t.about.feat3, t.about.feat4];
 
   return (
-    <section id="quem-somos" className="py-24 relative section-divider">
+    <section id="quem-somos" className="py-12 sm:py-24 relative section-divider">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="text-center max-w-3xl mx-auto mb-10 sm:mb-16"
         >
           <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-wider mb-4">
             {t.about.title}<span className="gold-text">{t.about.titleHighlight}</span>
@@ -31,19 +30,22 @@ const AboutSection = () => {
         </motion.div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {features.map((title, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="glass-card p-6 text-center hover:gold-border-glow hover:scale-[1.02] transition-all duration-300"
-            >
-              <span className="text-3xl">{emojis[i]}</span>
-              <p className="mt-3 text-[10px] sm:text-xs md:text-sm font-semibold uppercase tracking-wider leading-snug">{title}</p>
-            </motion.div>
-          ))}
+          {features.map((title, i) => {
+            const Icon = icons[i];
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="glass-card p-6 text-center hover:gold-border-glow hover:scale-[1.02] transition-all duration-300"
+              >
+                <Icon className="mx-auto text-primary" size={28} strokeWidth={1.5} />
+                <p className="mt-3 text-[10px] sm:text-xs md:text-sm font-semibold uppercase tracking-wider leading-snug">{title}</p>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
