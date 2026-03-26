@@ -760,6 +760,7 @@ export const translations: Record<Language, TranslationKeys> = {
   },
   fr: {
     nav: {
+      about: "À Propos",
       fleet: "Flotte",
       howItWorks: "Comment Ça Marche",
       whyZeus: "Pourquoi Zeus",
