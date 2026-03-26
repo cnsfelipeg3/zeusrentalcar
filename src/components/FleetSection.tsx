@@ -137,7 +137,9 @@ const FleetSection = () => {
   });
 
   const whatsappMsg = (name: string) =>
-    `https://wa.me/16892981754?text=${encodeURIComponent(t.fleet.whatsappMsg(name))}`;
+    `https://wa.me/16892981754?text=${encodeURIComponent("Olá, venho do site da Zeus e gostaria de realizar uma reserva!")}`;
+
+  const activeCount = filtered.length;
 
   return (
     <section id="frota" className="py-24 relative">
