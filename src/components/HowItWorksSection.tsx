@@ -70,7 +70,7 @@ const HowItWorksSection = () => {
             {t.howItWorks.quote}
           </p>
           <a
-            href="https://wa.me/16892981754"
+            href={`https://wa.me/16892981754?text=${encodeURIComponent("Olá, venho do site da Zeus e gostaria de realizar uma reserva!")}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block gold-gradient text-primary-foreground px-8 py-4 rounded-md text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-opacity"
