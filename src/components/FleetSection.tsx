@@ -91,7 +91,7 @@ const vehicles: Vehicle[] = [
   { name: "Mercedes-Benz GLA", categoryKey: "suvPremium", passengers: 5, coverImage: mercedesGlaCover, galleryImages: mercedesGlaGallery.images, galleryThumbs: mercedesGlaGallery.thumbs },
 ];
 
-const categoryKeys = ["all", "superSport", "sport", "suvPremium", "suvFullSize", "suv", "minivan"] as const;
+const categoryKeys = ["all", "superSport", "sport", "suvPremium", "suvFullSize", "suv", "suvCompact", "minivan"] as const;
 const passengerFilters = ["all", "2", "4-5", "6-7"];
 
 const matchPassenger = (p: number, filter: string) => {
