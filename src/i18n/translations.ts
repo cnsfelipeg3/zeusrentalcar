@@ -385,7 +385,7 @@ export const translations: Record<Language, TranslationKeys> = {
       about: "Sobre Nosotros",
       fleet: "Flota",
       howItWorks: "Cómo Funciona",
-      whyZeus: "Por qué Zeus",
+      whyZeus: "¿Por qué Zeus?",
       contact: "Contacto",
       book: "Reservar",
     },
