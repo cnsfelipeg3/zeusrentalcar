@@ -343,6 +343,38 @@ const FleetSection = () => {
                 </motion.div>
               );
             })}
+
+            {/* "Coming Soon" surprise cards */}
+            {[1, 2].map((i) => (
+              <motion.div
+                key={`surprise-${i}`}
+                layout
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, delay: 0.1 * i }}
+                className="relative overflow-hidden rounded-xl border-2 border-dashed border-primary/20 hover:border-primary/40 transition-all duration-300"
+              >
+                <div className="relative h-[22rem] flex flex-col items-center justify-center bg-card/40 backdrop-blur-sm">
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] via-transparent to-primary/[0.06]" />
+
+                  <div className="relative z-10 text-center px-6">
+                    <span className="text-4xl mb-4 block">🔒</span>
+                    <h3 className="text-lg font-black uppercase tracking-wider text-foreground/80 mb-2">
+                      Em breve
+                    </h3>
+                    <p className="text-sm text-muted-foreground italic font-light">
+                      Novidade exclusiva chegando à frota Zeus
+                    </p>
+                    <div className="mt-4 inline-block px-4 py-1.5 rounded-full border border-primary/30 bg-primary/[0.06]">
+                      <span className="text-[11px] text-primary font-semibold uppercase tracking-widest">
+                        ✦ Surpresa
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </AnimatePresence>
         </div>
 
