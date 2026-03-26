@@ -41,7 +41,7 @@ const HeroSection = () => (
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="text-4xl sm:text-5xl lg:text-7xl font-black uppercase tracking-tight leading-tight max-w-5xl mx-auto"
+        className="text-4xl sm:text-5xl font-black uppercase tracking-tight leading-tight max-w-5xl mx-auto lg:text-6xl"
       >
         Sua viagem em Orlando começa com o{" "}
         <span className="gold-text">carro certo.</span>
