@@ -50,15 +50,25 @@ const Navbar = () => {
 
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300"
-            >
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) =>
+            link.isRoute ? (
+              <button
+                key={link.href}
+                onClick={() => navigate(link.href)}
+                className="text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300"
+              >
+                {link.label}
+              </button>
+            ) : (
+              <a
+                key={link.href}
+                href={link.href}
+                className="text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300"
+              >
+                {link.label}
+              </a>
+            )
+          )}
 
           {/* Theme Toggle */}
           <button
