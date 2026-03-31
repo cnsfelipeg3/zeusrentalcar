@@ -40,7 +40,15 @@ const Login = () => {
             <>
               <h2 className="text-lg font-semibold text-foreground mb-6">Entrar</h2>
 
-              <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const success = login(email, password);
+                if (success) {
+                  navigate("/minha-conta");
+                } else {
+                  toast({ title: "Erro", description: "E-mail ou senha incorretos.", variant: "destructive" });
+                }
+              }} className="space-y-4">
                 <div>
                   <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1.5 block">
                     E-mail
