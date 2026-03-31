@@ -557,7 +557,7 @@ const BookingDetails = () => {
                         {premiumInsurance ? "Seguro Premium" : "Seguro Básico"}
                       </span>
                       <span className={`font-semibold ${premiumInsurance ? "text-foreground" : "text-emerald-400"}`}>
-                        {premiumInsurance ? `${formatPrice(pricing.insuranceTotal)}` : "Incluso"}
+                        {premiumInsurance ? formatPrice(pricing.insuranceTotal) : "Incluso"}
                       </span>
                     </div>
 
