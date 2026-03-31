@@ -181,7 +181,7 @@ const BookingDetails = () => {
       premiumInsurance ? `Seguro Premium: ${formatPrice(pricing.insuranceTotal)}` : `Seguro Básico: Incluso`,
       childSeat ? `Cadeirinha (x${childSeatQty}): ${formatPrice(pricing.childSeatTotal)}` : "",
       tollTag ? `TAG Pedágios: ${formatPrice(pricing.tollTagTotal)}` : "",
-      extraDriver ? `Condutor Extra (+2%): ${formatPrice(pricing.extraDriverTotal)}` : "",
+      extraDriver ? `Condutor Extra (${formatPrice(pricing.extraDriverDailyExtra)}/dia): ${formatPrice(pricing.extraDriverTotal)}` : "",
       isDifferentCity ? `Taxa de retorno: ${formatPrice(RETURN_FEE)}` : "",
       pricing.qualifiesDiscount ? `Desconto 10+ diárias: -${formatPrice(pricing.discountAmount)}` : "",
       ``,
