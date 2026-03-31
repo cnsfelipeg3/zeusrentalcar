@@ -101,6 +101,8 @@ const BookingDetails = () => {
   const returnTime = searchParams.get("returnTime") || "10:00";
   const pickupLocation = searchParams.get("pickupLocation") || "";
   const returnLocation = searchParams.get("returnLocation") || pickupLocation;
+  const driverAgeParam = searchParams.get("driverAge");
+  const isUnder26 = driverAgeParam ? parseInt(driverAgeParam) < 26 : false;
 
   const pickupDate = pickupDateStr ? new Date(pickupDateStr) : null;
   const returnDate = returnDateStr ? new Date(returnDateStr) : null;
