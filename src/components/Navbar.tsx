@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Globe, Home } from "lucide-react";
+import { Menu, X, Globe, Home, Sun, Moon } from "lucide-react";
 
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useThemeMode } from "@/i18n/ThemeContext";
 import { Language, languageLabels, languageFlags } from "@/i18n/translations";
 import {
   DropdownMenu,
