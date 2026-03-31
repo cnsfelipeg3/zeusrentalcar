@@ -10,7 +10,7 @@ import { pt } from "date-fns/locale";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppBubble from "@/components/WhatsAppBubble";
-import { vehiclePrices } from "@/data/vehicles";
+import { vehiclePrices, vehicleTrims } from "@/data/vehicles";
 import { Switch } from "@/components/ui/switch";
 
 // Cover images
