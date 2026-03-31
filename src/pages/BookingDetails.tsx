@@ -528,7 +528,7 @@ const BookingDetails = () => {
             </div>
 
             {/* RIGHT: Sticky Summary */}
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-2">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
