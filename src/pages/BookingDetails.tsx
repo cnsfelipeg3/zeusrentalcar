@@ -201,7 +201,7 @@ const BookingDetails = () => {
       <Navbar />
 
       <section className="pt-24 pb-16">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 max-w-5xl">
           {/* Back */}
           <Link
             to={`/buscar?${searchParams.toString()}`}
@@ -211,7 +211,7 @@ const BookingDetails = () => {
             Voltar aos resultados
           </Link>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             {/* LEFT: Vehicle + Extras */}
             <div className="lg:col-span-2 space-y-6">
               {/* Vehicle Hero Card */}
