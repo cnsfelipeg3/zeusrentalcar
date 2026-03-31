@@ -96,6 +96,14 @@ const Navbar = () => {
           >
             {t.nav.book}
           </a>
+
+          <button
+            onClick={() => navigate("/login")}
+            className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors duration-300"
+            title={t.nav.myBookings}
+          >
+            <User size={18} />
+          </button>
         </div>
 
         {/* Mobile toggle */}
