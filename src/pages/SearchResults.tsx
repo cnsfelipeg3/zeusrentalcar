@@ -1,4 +1,4 @@
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Users, Briefcase, CalendarIcon, MapPin, Clock, ArrowLeft, Check } from "lucide-react";
 import { format } from "date-fns";
