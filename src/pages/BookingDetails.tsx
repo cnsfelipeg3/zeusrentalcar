@@ -190,7 +190,7 @@ const BookingDetails = () => {
     ].filter(Boolean);
 
     return `https://wa.me/16892981754?text=${encodeURIComponent(lines.join("\n"))}`;
-  }, [decodedName, pickupDate, returnDate, pickupTime, returnTime, days, pickupLocation, returnLocation, dailyPrice, pricing, premiumInsurance, childSeat, childSeatQty, tollTag, isDifferentCity]);
+  }, [decodedName, pickupDate, returnDate, pickupTime, returnTime, days, pickupLocation, returnLocation, dailyPrice, pricing, premiumInsurance, extraDriver, childSeat, childSeatQty, tollTag, isDifferentCity]);
 
   if (!vehicle) {
     return (
