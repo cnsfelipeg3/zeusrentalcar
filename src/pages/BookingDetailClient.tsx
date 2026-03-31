@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useCurrency } from "@/i18n/CurrencyContext";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -34,6 +35,7 @@ const BookingDetailClient = () => {
   const { bookingId } = useParams<{ bookingId: string }>();
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
+  const { formatPrice } = useCurrency();
 
   useEffect(() => {
     if (!isLoggedIn) navigate("/login", { replace: true });
@@ -274,7 +276,7 @@ const BookingDetailClient = () => {
                 ) : (
                   <div className="text-sm">
                     <p className="text-muted-foreground">Caução</p>
-                    <p className="text-foreground font-bold">${booking.deposit}</p>
+                    <p className="text-foreground font-bold">{formatPrice(booking.deposit)}</p>
                     <p className="text-xs text-muted-foreground/70 mt-0.5">
                       {booking.status === "completed" ? "Devolvido" : "Retido"}
                     </p>

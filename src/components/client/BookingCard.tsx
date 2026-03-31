@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Calendar, MapPin, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Booking } from "@/data/mockBookings";
+import { useCurrency } from "@/i18n/CurrencyContext";
 import BookingStatusBadge from "./BookingStatusBadge";
 
 interface BookingCardProps {
@@ -17,6 +18,7 @@ const formatDate = (iso: string) => {
 
 const BookingCard = ({ booking, index, featured }: BookingCardProps) => {
   const navigate = useNavigate();
+  const { formatPrice } = useCurrency();
 
   if (featured) {
     return (
@@ -114,7 +116,7 @@ const BookingCard = ({ booking, index, featured }: BookingCardProps) => {
           <p className="text-xs text-muted-foreground/70 mt-0.5">{booking.pickupLocation}</p>
         </div>
         <div className="flex items-center gap-4">
-          <p className="text-lg font-bold gold-text">${booking.pricing.total.toLocaleString()}</p>
+          <p className="text-lg font-bold gold-text">{formatPrice(booking.pricing.total)}</p>
           <ChevronRight size={18} className="text-muted-foreground" />
         </div>
       </div>

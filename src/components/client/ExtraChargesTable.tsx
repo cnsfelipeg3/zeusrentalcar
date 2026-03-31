@@ -1,10 +1,13 @@
 import { ExtraCharge } from "@/data/mockBookings";
+import { useCurrency } from "@/i18n/CurrencyContext";
 
 interface ExtraChargesTableProps {
   charges: ExtraCharge[];
 }
 
 const ExtraChargesTable = ({ charges }: ExtraChargesTableProps) => {
+  const { formatPrice } = useCurrency();
+
   if (charges.length === 0) return null;
 
   return (
@@ -21,7 +24,7 @@ const ExtraChargesTable = ({ charges }: ExtraChargesTableProps) => {
             }`}
           >
             <span className="text-muted-foreground">{charge.description}</span>
-            <span className="text-amber-400 font-semibold">+${charge.amount}</span>
+            <span className="text-amber-400 font-semibold">+{formatPrice(charge.amount)}</span>
           </div>
         ))}
       </div>

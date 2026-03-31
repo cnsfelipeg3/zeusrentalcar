@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppBubble from "@/components/WhatsAppBubble";
 import { vehiclePrices } from "@/data/vehicles";
+import { useCurrency } from "@/i18n/CurrencyContext";
 
 // Re-import covers and vehicle data from FleetSection
 import corvetteCover from "@/assets/fleet/covers/corvette-cover.jpg";
@@ -72,6 +73,7 @@ const vehicles: SearchVehicle[] = [
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
+  const { formatPrice } = useCurrency();
 
   const pickupDateStr = searchParams.get("pickupDate");
   const returnDateStr = searchParams.get("returnDate");
@@ -220,13 +222,12 @@ const SearchResults = () => {
                       <div>
                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground">A partir de</p>
                         <p className="text-2xl font-black text-foreground">
-                          <span className="text-sm font-medium text-muted-foreground">US$ </span>
-                          {dailyPrice}
+                          {formatPrice(dailyPrice)}
                           <span className="text-sm font-medium text-muted-foreground"> /dia</span>
                         </p>
                         {days > 1 && (
                           <p className="text-xs text-primary font-semibold mt-0.5">
-                            Total: US$ {totalPrice} ({days} dias)
+                            Total: {formatPrice(totalPrice)} ({days} dias)
                           </p>
                         )}
                       </div>

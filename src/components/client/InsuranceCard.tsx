@@ -1,4 +1,5 @@
 import { ShieldCheck, ShieldAlert } from "lucide-react";
+import { useCurrency } from "@/i18n/CurrencyContext";
 
 interface InsuranceCardProps {
   isPremium: boolean;
@@ -7,6 +8,8 @@ interface InsuranceCardProps {
 }
 
 const InsuranceCard = ({ isPremium, deposit, franchise }: InsuranceCardProps) => {
+  const { formatPrice } = useCurrency();
+
   if (isPremium) {
     return (
       <div className="rounded-xl border border-green-500/30 bg-green-500/5 p-4">
@@ -37,11 +40,11 @@ const InsuranceCard = ({ isPremium, deposit, franchise }: InsuranceCardProps) =>
       <div className="grid grid-cols-2 gap-3 text-xs">
         <div>
           <p className="text-muted-foreground">Caução</p>
-          <p className="text-amber-400 font-bold">${deposit}</p>
+          <p className="text-amber-400 font-bold">{formatPrice(deposit)}</p>
         </div>
         <div>
           <p className="text-muted-foreground">Franquia</p>
-          <p className="text-amber-400 font-bold">${franchise}</p>
+          <p className="text-amber-400 font-bold">{formatPrice(franchise)}</p>
         </div>
       </div>
     </div>
