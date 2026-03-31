@@ -205,43 +205,43 @@ const BookingDetails = () => {
           {/* Back */}
           <Link
             to={`/buscar?${searchParams.toString()}`}
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm mb-8"
+            className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors text-xs tracking-wide mb-6"
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={14} />
             Voltar aos resultados
           </Link>
 
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             {/* LEFT: Vehicle + Extras */}
-            <div className="lg:col-span-3 space-y-6">
+            <div className="lg:col-span-3 space-y-5">
               {/* Vehicle Hero Card */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="glass-card rounded-2xl overflow-hidden"
+                className="rounded-xl overflow-hidden border border-border/40 bg-card"
               >
-                <div className="relative h-64 sm:h-80">
+                <div className="relative h-56 sm:h-72">
                   <img
                     src={vehicle.coverImage}
                     alt={vehicle.name}
                     className="w-full h-full object-cover object-[center_40%]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <p className="text-xs text-primary font-bold uppercase tracking-[0.2em] mb-1">
+                  <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-5">
+                    <p className="text-[10px] text-primary font-semibold uppercase tracking-[0.2em] mb-0.5">
                       {categoryLabels[vehicle.categoryKey]}
                     </p>
-                    <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-wider text-foreground">
+                    <h1 className="text-lg sm:text-xl font-bold uppercase tracking-wide text-foreground">
                       {vehicle.name}
                     </h1>
                     {vehicleTrims[decodedName] && (
-                      <p className="text-xs text-muted-foreground mt-0.5">{vehicleTrims[decodedName]}</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">{vehicleTrims[decodedName]}</p>
                     )}
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
-                      <span className="flex items-center gap-1.5"><Users size={14} className="text-primary" /> {vehicle.passengers} passageiros</span>
-                      {vehicle.luggage && <span className="flex items-center gap-1.5"><Briefcase size={14} className="text-primary" /> {vehicle.luggage} malas</span>}
-                      <span className="flex items-center gap-1.5"><Fuel size={14} className="text-primary" /> Gasolina</span>
-                      <span className="flex items-center gap-1.5"><Gauge size={14} className="text-primary" /> Automático</span>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2">
+                      <span className="flex items-center gap-1"><Users size={12} className="text-primary" /> {vehicle.passengers}</span>
+                      {vehicle.luggage && <span className="flex items-center gap-1"><Briefcase size={12} className="text-primary" /> {vehicle.luggage}</span>}
+                      <span className="flex items-center gap-1"><Fuel size={12} className="text-primary" /> Gasolina</span>
+                      <span className="flex items-center gap-1"><Gauge size={12} className="text-primary" /> Auto</span>
                     </div>
                   </div>
                 </div>
@@ -249,90 +249,90 @@ const BookingDetails = () => {
 
               {/* Trip Details */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="glass-card rounded-2xl p-6"
+                transition={{ delay: 0.05 }}
+                className="rounded-xl border border-border/40 bg-card p-5"
               >
-                <h2 className="text-lg font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <CalendarIcon size={18} className="text-primary" />
+                <h2 className="text-sm font-semibold uppercase tracking-wider mb-4 flex items-center gap-2 text-foreground">
+                  <CalendarIcon size={15} className="text-primary" />
                   Detalhes da <span className="gold-text">Viagem</span>
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-3 p-3 rounded-xl bg-muted/30 border border-border/30">
-                      <div className="w-8 h-8 rounded-lg gold-gradient flex items-center justify-center shrink-0 mt-0.5">
-                        <CalendarIcon size={14} className="text-primary-foreground" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-2.5">
+                    <div className="flex items-start gap-2.5 p-3 rounded-lg bg-muted/20 border border-border/20">
+                      <div className="w-7 h-7 rounded-md gold-gradient flex items-center justify-center shrink-0 mt-0.5">
+                        <CalendarIcon size={12} className="text-primary-foreground" />
                       </div>
                       <div>
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Retirada</p>
-                        <p className="font-semibold text-foreground">
-                          {pickupDate ? format(pickupDate, "dd 'de' MMMM, yyyy", { locale: pt }) : "—"}
+                        <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Retirada</p>
+                        <p className="text-sm font-medium text-foreground">
+                          {pickupDate ? format(pickupDate, "dd 'de' MMMM, yyyy", { locale: pt }) : ""}
                         </p>
-                        <p className="text-sm text-muted-foreground flex items-center gap-1"><Clock size={12} /> {pickupTime}</p>
+                        <p className="text-xs text-muted-foreground flex items-center gap-1"><Clock size={10} /> {pickupTime}</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3 p-3 rounded-xl bg-muted/30 border border-border/30">
-                      <div className="w-8 h-8 rounded-lg gold-gradient flex items-center justify-center shrink-0 mt-0.5">
-                        <MapPin size={14} className="text-primary-foreground" />
+                    <div className="flex items-start gap-2.5 p-3 rounded-lg bg-muted/20 border border-border/20">
+                      <div className="w-7 h-7 rounded-md gold-gradient flex items-center justify-center shrink-0 mt-0.5">
+                        <MapPin size={12} className="text-primary-foreground" />
                       </div>
                       <div>
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Local de Retirada</p>
-                        <p className="font-semibold text-foreground">{pickupLocation || "—"}</p>
+                        <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Local de Retirada</p>
+                        <p className="text-sm font-medium text-foreground">{pickupLocation || ""}</p>
                       </div>
                     </div>
                   </div>
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-3 p-3 rounded-xl bg-muted/30 border border-border/30">
-                      <div className="w-8 h-8 rounded-lg gold-gradient flex items-center justify-center shrink-0 mt-0.5">
-                        <CalendarIcon size={14} className="text-primary-foreground" />
+                  <div className="space-y-2.5">
+                    <div className="flex items-start gap-2.5 p-3 rounded-lg bg-muted/20 border border-border/20">
+                      <div className="w-7 h-7 rounded-md gold-gradient flex items-center justify-center shrink-0 mt-0.5">
+                        <CalendarIcon size={12} className="text-primary-foreground" />
                       </div>
                       <div>
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Devolução</p>
-                        <p className="font-semibold text-foreground">
-                          {returnDate ? format(returnDate, "dd 'de' MMMM, yyyy", { locale: pt }) : "—"}
+                        <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Devolução</p>
+                        <p className="text-sm font-medium text-foreground">
+                          {returnDate ? format(returnDate, "dd 'de' MMMM, yyyy", { locale: pt }) : ""}
                         </p>
-                        <p className="text-sm text-muted-foreground flex items-center gap-1"><Clock size={12} /> {returnTime}</p>
+                        <p className="text-xs text-muted-foreground flex items-center gap-1"><Clock size={10} /> {returnTime}</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3 p-3 rounded-xl bg-muted/30 border border-border/30">
-                      <div className="w-8 h-8 rounded-lg gold-gradient flex items-center justify-center shrink-0 mt-0.5">
-                        <MapPin size={14} className="text-primary-foreground" />
+                    <div className="flex items-start gap-2.5 p-3 rounded-lg bg-muted/20 border border-border/20">
+                      <div className="w-7 h-7 rounded-md gold-gradient flex items-center justify-center shrink-0 mt-0.5">
+                        <MapPin size={12} className="text-primary-foreground" />
                       </div>
                       <div>
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Local de Devolução</p>
-                        <p className="font-semibold text-foreground">{returnLocation || "—"}</p>
+                        <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Local de Devolução</p>
+                        <p className="text-sm font-medium text-foreground">{returnLocation || ""}</p>
                         {isDifferentCity && (
-                          <p className="text-xs text-amber-400 flex items-center gap-1 mt-1">
-                            <AlertTriangle size={10} /> Cidade diferente — taxa de retorno aplicada
+                          <p className="text-[10px] text-amber-400 flex items-center gap-1 mt-1">
+                            <AlertTriangle size={9} /> Cidade diferente
                           </p>
                         )}
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="mt-4 p-3 rounded-xl bg-primary/10 border border-primary/20 text-center">
-                  <p className="text-sm font-semibold text-primary">
-                    {days} {days === 1 ? "diária" : "diárias"} • US$ {dailyPrice}/dia
+                <div className="mt-3 p-2.5 rounded-lg bg-primary/8 border border-primary/15 text-center">
+                  <p className="text-xs font-semibold text-primary">
+                    {days} {days === 1 ? "diária" : "diárias"} · US$ {dailyPrice}/dia
                   </p>
                 </div>
               </motion.div>
 
               {/* Vehicle Features */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 }}
-                className="glass-card rounded-2xl p-6"
+                transition={{ delay: 0.1 }}
+                className="rounded-xl border border-border/40 bg-card p-5"
               >
-                <h2 className="text-lg font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <Car size={18} className="text-primary" />
+                <h2 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2 text-foreground">
+                  <Car size={15} className="text-primary" />
                   Destaques do <span className="gold-text">Veículo</span>
                 </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {vehicle.features.map((feat) => (
-                    <div key={feat} className="flex items-center gap-2 p-2.5 rounded-lg bg-muted/20 border border-border/20 text-sm">
-                      <Check size={14} className="text-emerald-400 shrink-0" />
+                    <div key={feat} className="flex items-center gap-1.5 p-2 rounded-md bg-muted/15 border border-border/15 text-xs">
+                      <Check size={12} className="text-emerald-400 shrink-0" />
                       <span className="text-muted-foreground">{feat}</span>
                     </div>
                   ))}
@@ -341,43 +341,43 @@ const BookingDetails = () => {
 
               {/* Insurance Selection */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="glass-card rounded-2xl p-6"
+                transition={{ delay: 0.15 }}
+                className="rounded-xl border border-border/40 bg-card p-5"
               >
-                <h2 className="text-lg font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <Shield size={18} className="text-primary" />
+                <h2 className="text-sm font-semibold uppercase tracking-wider mb-4 flex items-center gap-2 text-foreground">
+                  <Shield size={15} className="text-primary" />
                   Proteção & <span className="gold-text">Seguro</span>
                 </h2>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {/* Basic */}
                   <button
                     onClick={() => setPremiumInsurance(false)}
-                    className={`relative p-5 rounded-xl border-2 transition-all duration-300 text-left ${
+                    className={`relative p-4 rounded-lg border transition-all duration-300 text-left ${
                       !premiumInsurance
-                        ? "border-primary/60 bg-primary/5"
-                        : "border-border/40 bg-card/30 hover:border-border/60"
+                        ? "border-primary/50 bg-primary/5"
+                        : "border-border/30 bg-muted/10 hover:border-border/50"
                     }`}
                   >
                     {!premiumInsurance && (
-                      <div className="absolute top-3 right-3 w-5 h-5 rounded-full gold-gradient flex items-center justify-center">
-                        <Check size={12} className="text-primary-foreground" />
+                      <div className="absolute top-2.5 right-2.5 w-4 h-4 rounded-full gold-gradient flex items-center justify-center">
+                        <Check size={10} className="text-primary-foreground" />
                       </div>
                     )}
-                    <Shield size={24} className="text-muted-foreground mb-3" />
-                    <h3 className="font-bold uppercase tracking-wider text-foreground mb-1">Seguro Básico</h3>
-                    <p className="text-xs text-emerald-400 font-semibold mb-3">Já incluso</p>
-                    <ul className="space-y-2 text-xs text-muted-foreground">
-                      <li className="flex items-start gap-2"><Check size={12} className="text-emerald-400 mt-0.5 shrink-0" /> Cobertura contra colisão</li>
-                      <li className="flex items-start gap-2"><Check size={12} className="text-emerald-400 mt-0.5 shrink-0" /> Cobertura contra roubo</li>
-                      <li className="flex items-start gap-2">
-                        <AlertTriangle size={12} className="text-amber-400 mt-0.5 shrink-0" />
+                    <Shield size={18} className="text-muted-foreground mb-2" />
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-foreground mb-0.5">Seguro Básico</h3>
+                    <p className="text-[10px] text-emerald-400 font-semibold mb-2.5">Já incluso</p>
+                    <ul className="space-y-1.5 text-[11px] text-muted-foreground">
+                      <li className="flex items-start gap-1.5"><Check size={10} className="text-emerald-400 mt-0.5 shrink-0" /> Cobertura contra colisão</li>
+                      <li className="flex items-start gap-1.5"><Check size={10} className="text-emerald-400 mt-0.5 shrink-0" /> Cobertura contra roubo</li>
+                      <li className="flex items-start gap-1.5">
+                        <AlertTriangle size={10} className="text-amber-400 mt-0.5 shrink-0" />
                         <span>Caução: <strong className="text-foreground">US$ {BASIC_DEPOSIT}</strong></span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <AlertTriangle size={12} className="text-amber-400 mt-0.5 shrink-0" />
+                      <li className="flex items-start gap-1.5">
+                        <AlertTriangle size={10} className="text-amber-400 mt-0.5 shrink-0" />
                         <span>Franquia: <strong className="text-foreground">US$ {pricing.basicDeductible}</strong></span>
                       </li>
                     </ul>
@@ -386,36 +386,36 @@ const BookingDetails = () => {
                   {/* Premium */}
                   <button
                     onClick={() => setPremiumInsurance(true)}
-                    className={`relative p-5 rounded-xl border-2 transition-all duration-300 text-left ${
+                    className={`relative p-4 rounded-lg border transition-all duration-300 text-left ${
                       premiumInsurance
-                        ? "border-primary/60 bg-primary/5 ring-1 ring-primary/20"
-                        : "border-border/40 bg-card/30 hover:border-border/60"
+                        ? "border-primary/50 bg-primary/5 ring-1 ring-primary/15"
+                        : "border-border/30 bg-muted/10 hover:border-border/50"
                     }`}
                   >
                     {premiumInsurance && (
-                      <div className="absolute top-3 right-3 w-5 h-5 rounded-full gold-gradient flex items-center justify-center">
-                        <Check size={12} className="text-primary-foreground" />
+                      <div className="absolute top-2.5 right-2.5 w-4 h-4 rounded-full gold-gradient flex items-center justify-center">
+                        <Check size={10} className="text-primary-foreground" />
                       </div>
                     )}
-                    <div className="absolute -top-2.5 left-4 px-2 py-0.5 rounded-md gold-gradient">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-primary-foreground">Mais popular</span>
+                    <div className="absolute -top-2 left-3 px-2 py-0.5 rounded gold-gradient">
+                      <span className="text-[8px] font-bold uppercase tracking-widest text-primary-foreground">Recomendado</span>
                     </div>
-                    <ShieldCheck size={24} className="text-primary mb-3" />
-                    <h3 className="font-bold uppercase tracking-wider text-foreground mb-1">Seguro Premium</h3>
-                    <p className="text-xs text-primary font-semibold mb-3">+ US$ {Math.round(dailyPrice * PREMIUM_INSURANCE_RATE)} /dia</p>
-                    <ul className="space-y-2 text-xs text-muted-foreground">
-                      <li className="flex items-start gap-2"><Check size={12} className="text-emerald-400 mt-0.5 shrink-0" /> Cobertura total contra colisão</li>
-                      <li className="flex items-start gap-2"><Check size={12} className="text-emerald-400 mt-0.5 shrink-0" /> Cobertura total contra roubo</li>
-                      <li className="flex items-start gap-2">
-                        <Check size={12} className="text-emerald-400 mt-0.5 shrink-0" />
+                    <ShieldCheck size={18} className="text-primary mb-2" />
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-foreground mb-0.5">Seguro Premium</h3>
+                    <p className="text-[10px] text-primary font-semibold mb-2.5">+ US$ {Math.round(dailyPrice * PREMIUM_INSURANCE_RATE)} /dia</p>
+                    <ul className="space-y-1.5 text-[11px] text-muted-foreground">
+                      <li className="flex items-start gap-1.5"><Check size={10} className="text-emerald-400 mt-0.5 shrink-0" /> Cobertura total contra colisão</li>
+                      <li className="flex items-start gap-1.5"><Check size={10} className="text-emerald-400 mt-0.5 shrink-0" /> Cobertura total contra roubo</li>
+                      <li className="flex items-start gap-1.5">
+                        <Check size={10} className="text-emerald-400 mt-0.5 shrink-0" />
                         <span>Caução: <strong className="text-emerald-400">ZERO</strong></span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <Check size={12} className="text-emerald-400 mt-0.5 shrink-0" />
+                      <li className="flex items-start gap-1.5">
+                        <Check size={10} className="text-emerald-400 mt-0.5 shrink-0" />
                         <span>Franquia: <strong className="text-emerald-400">ZERO</strong></span>
                       </li>
-                      <li className="flex items-start gap-2"><Check size={12} className="text-emerald-400 mt-0.5 shrink-0" /> Proteção de vidros e pneus</li>
-                      <li className="flex items-start gap-2"><Check size={12} className="text-emerald-400 mt-0.5 shrink-0" /> Assistência 24h prioritária</li>
+                      <li className="flex items-start gap-1.5"><Check size={10} className="text-emerald-400 mt-0.5 shrink-0" /> Proteção de vidros e pneus</li>
+                      <li className="flex items-start gap-1.5"><Check size={10} className="text-emerald-400 mt-0.5 shrink-0" /> Assistência 24h prioritária</li>
                     </ul>
                   </button>
                 </div>
@@ -423,32 +423,32 @@ const BookingDetails = () => {
 
               {/* Add-ons */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.25 }}
-                className="glass-card rounded-2xl p-6"
+                transition={{ delay: 0.2 }}
+                className="rounded-xl border border-border/40 bg-card p-5"
               >
-                <h2 className="text-lg font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <Zap size={18} className="text-primary" />
+                <h2 className="text-sm font-semibold uppercase tracking-wider mb-4 flex items-center gap-2 text-foreground">
+                  <Zap size={15} className="text-primary" />
                   Adicionais & <span className="gold-text">Extras</span>
                 </h2>
 
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {/* Child seat */}
-                  <div className={`flex items-center justify-between p-4 rounded-xl border transition-all duration-300 ${
-                    childSeat ? "border-primary/40 bg-primary/5" : "border-border/30 bg-muted/10"
+                  <div className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-300 ${
+                    childSeat ? "border-primary/30 bg-primary/5" : "border-border/20 bg-muted/10"
                   }`}>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-muted/40 flex items-center justify-center">
-                        <Baby size={20} className="text-primary" />
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-md bg-muted/30 flex items-center justify-center">
+                        <Baby size={16} className="text-primary" />
                       </div>
                       <div>
-                        <p className="font-semibold text-sm text-foreground">Cadeirinha para Bebê/Criança</p>
-                        <p className="text-xs text-muted-foreground">Segurança homologada — ISOFIX</p>
+                        <p className="text-xs font-semibold text-foreground">Cadeirinha Bebê/Criança</p>
+                        <p className="text-[10px] text-muted-foreground">Homologada ISOFIX</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <p className="text-sm font-bold text-foreground whitespace-nowrap">US$ {CHILD_SEAT_DAILY}/dia</p>
+                    <div className="flex items-center gap-2.5">
+                      <p className="text-xs font-bold text-foreground whitespace-nowrap">US$ {CHILD_SEAT_DAILY}/dia</p>
                       <Switch
                         checked={childSeat}
                         onCheckedChange={setChildSeat}
@@ -465,44 +465,44 @@ const BookingDetails = () => {
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden"
                       >
-                        <div className="flex items-center gap-3 pl-16 pb-2">
-                          <p className="text-xs text-muted-foreground">Quantidade:</p>
-                          <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2.5 pl-12 pb-1">
+                          <p className="text-[10px] text-muted-foreground">Qtd:</p>
+                          <div className="flex items-center gap-1.5">
                             <button
                               onClick={() => setChildSeatQty(Math.max(1, childSeatQty - 1))}
-                              className="w-7 h-7 rounded-md bg-muted/40 border border-border/40 text-foreground font-bold text-sm hover:bg-muted/60 transition-colors"
+                              className="w-6 h-6 rounded bg-muted/30 border border-border/30 text-foreground font-medium text-xs hover:bg-muted/50 transition-colors"
                             >
                               −
                             </button>
-                            <span className="w-6 text-center font-bold text-foreground">{childSeatQty}</span>
+                            <span className="w-5 text-center text-xs font-semibold text-foreground">{childSeatQty}</span>
                             <button
                               onClick={() => setChildSeatQty(Math.min(3, childSeatQty + 1))}
-                              className="w-7 h-7 rounded-md bg-muted/40 border border-border/40 text-foreground font-bold text-sm hover:bg-muted/60 transition-colors"
+                              className="w-6 h-6 rounded bg-muted/30 border border-border/30 text-foreground font-medium text-xs hover:bg-muted/50 transition-colors"
                             >
                               +
                             </button>
                           </div>
-                          <p className="text-xs text-primary font-semibold">= US$ {CHILD_SEAT_DAILY * childSeatQty}/dia</p>
+                          <p className="text-[10px] text-primary font-semibold">= US$ {CHILD_SEAT_DAILY * childSeatQty}/dia</p>
                         </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
 
                   {/* Toll Tag */}
-                  <div className={`flex items-center justify-between p-4 rounded-xl border transition-all duration-300 ${
-                    tollTag ? "border-primary/40 bg-primary/5" : "border-border/30 bg-muted/10"
+                  <div className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-300 ${
+                    tollTag ? "border-primary/30 bg-primary/5" : "border-border/20 bg-muted/10"
                   }`}>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-muted/40 flex items-center justify-center">
-                        <CircleDollarSign size={20} className="text-primary" />
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-md bg-muted/30 flex items-center justify-center">
+                        <CircleDollarSign size={16} className="text-primary" />
                       </div>
                       <div>
-                        <p className="font-semibold text-sm text-foreground">TAG Ilimitada — Pedágios FL</p>
-                        <p className="text-xs text-muted-foreground">SunPass — todos os pedágios da Flórida inclusos</p>
+                        <p className="text-xs font-semibold text-foreground">TAG Ilimitada Pedágios FL</p>
+                        <p className="text-[10px] text-muted-foreground">SunPass inclusos</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <p className="text-sm font-bold text-foreground whitespace-nowrap">US$ {TOLL_TAG_DAILY}/dia</p>
+                    <div className="flex items-center gap-2.5">
+                      <p className="text-xs font-bold text-foreground whitespace-nowrap">US$ {TOLL_TAG_DAILY}/dia</p>
                       <Switch
                         checked={tollTag}
                         onCheckedChange={setTollTag}
@@ -512,12 +512,12 @@ const BookingDetails = () => {
                   </div>
 
                   {/* Included for free */}
-                  <div className="p-4 rounded-xl border border-border/20 bg-muted/5">
-                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Já incluso na sua reserva</p>
-                    <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                  <div className="p-3 rounded-lg border border-border/15 bg-muted/5">
+                    <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-muted-foreground mb-2">Já incluso na sua reserva</p>
+                    <div className="grid grid-cols-2 gap-1.5 text-[11px] text-muted-foreground">
                       {["Quilometragem ilimitada", "Segundo motorista grátis", "Seguro básico", "Assistência 24h", "GPS integrado", "Limpeza completa"].map((item) => (
-                        <div key={item} className="flex items-center gap-1.5">
-                          <Check size={12} className="text-emerald-400 shrink-0" />
+                        <div key={item} className="flex items-center gap-1">
+                          <Check size={10} className="text-emerald-400 shrink-0" />
                           {item}
                         </div>
                       ))}
@@ -530,19 +530,19 @@ const BookingDetails = () => {
             {/* RIGHT: Sticky Summary */}
             <div className="lg:col-span-2">
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: 0.25 }}
                 className="sticky top-24 space-y-4"
               >
                 {/* Price Summary Card */}
-                <div className="glass-card rounded-2xl p-6 border border-primary/20">
-                  <h2 className="text-lg font-bold uppercase tracking-wider mb-5 flex items-center gap-2">
-                    <CircleDollarSign size={18} className="text-primary" />
+                <div className="rounded-xl border border-primary/20 bg-card p-5">
+                  <h2 className="text-sm font-semibold uppercase tracking-wider mb-4 flex items-center gap-2 text-foreground">
+                    <CircleDollarSign size={15} className="text-primary" />
                     Resumo do <span className="gold-text">Orçamento</span>
                   </h2>
 
-                  <div className="space-y-3 text-sm">
+                  <div className="space-y-2.5 text-xs">
                     {/* Rental */}
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Locação ({days} {days === 1 ? "dia" : "dias"} × US$ {dailyPrice})</span>
@@ -580,24 +580,24 @@ const BookingDetails = () => {
                       <div className="flex justify-between">
                         <span className="text-muted-foreground flex items-center gap-1">
                           Taxa de retorno
-                          <span className="text-[10px] text-amber-400">(cidade diferente)</span>
+                          <span className="text-[9px] text-amber-400">(cidade diferente)</span>
                         </span>
                         <span className="font-semibold text-foreground">US$ {RETURN_FEE}</span>
                       </div>
                     )}
 
                     {/* Divider */}
-                    <div className="border-t border-border/40 my-2" />
+                    <div className="border-t border-border/30 my-1.5" />
 
                     {/* Discount */}
                     {pricing.qualifiesDiscount && (
                       <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="flex justify-between items-center p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20"
+                        className="flex justify-between items-center p-2 rounded-md bg-emerald-500/10 border border-emerald-500/15"
                       >
-                        <span className="text-emerald-400 font-semibold flex items-center gap-1.5">
-                          <Percent size={14} />
+                        <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                          <Percent size={12} />
                           Desconto 10+ diárias
                         </span>
                         <span className="font-bold text-emerald-400">- US$ {pricing.discountAmount}</span>
@@ -605,54 +605,54 @@ const BookingDetails = () => {
                     )}
 
                     {!pricing.qualifiesDiscount && days >= 7 && (
-                      <div className="p-2 rounded-lg bg-primary/5 border border-primary/10 text-center">
-                        <p className="text-[10px] uppercase tracking-widest text-primary">
-                          Reserve {LONG_RENTAL_MIN_DAYS - days}+ dia(s) a mais e ganhe 5% OFF!
+                      <div className="p-2 rounded-md bg-primary/5 border border-primary/10 text-center">
+                        <p className="text-[9px] uppercase tracking-widest text-primary">
+                          Reserve {LONG_RENTAL_MIN_DAYS - days}+ dia(s) a mais e ganhe 5% OFF
                         </p>
                       </div>
                     )}
 
                     {/* Total */}
-                    <div className="pt-2">
+                    <div className="pt-1.5">
                       <div className="flex justify-between items-end">
-                        <span className="text-muted-foreground font-medium">Total</span>
+                        <span className="text-muted-foreground text-xs font-medium">Total</span>
                         <div className="text-right">
                           {pricing.qualifiesDiscount && (
-                            <p className="text-xs text-muted-foreground line-through">US$ {pricing.subtotalBeforeDiscount}</p>
+                            <p className="text-[10px] text-muted-foreground line-through">US$ {pricing.subtotalBeforeDiscount}</p>
                           )}
-                          <p className="text-2xl font-black text-foreground">
+                          <p className="text-xl font-bold text-foreground">
                             US$ {pricing.total}
                           </p>
                         </div>
                       </div>
-                      <p className="text-[10px] text-muted-foreground text-right mt-1">
+                      <p className="text-[9px] text-muted-foreground text-right mt-0.5">
                         ≈ US$ {Math.round(pricing.total / days)} /dia (média)
                       </p>
                     </div>
                   </div>
 
                   {/* Deposit / Deductible info */}
-                  <div className={`mt-4 p-3 rounded-xl text-xs ${
+                  <div className={`mt-4 p-3 rounded-lg text-[11px] ${
                     premiumInsurance
-                      ? "bg-emerald-500/10 border border-emerald-500/20"
-                      : "bg-amber-500/10 border border-amber-500/20"
+                      ? "bg-emerald-500/8 border border-emerald-500/15"
+                      : "bg-amber-500/8 border border-amber-500/15"
                   }`}>
                     {premiumInsurance ? (
-                      <div className="space-y-1">
+                      <div className="space-y-0.5">
                         <p className="flex items-center gap-1.5 text-emerald-400 font-semibold">
-                          <ShieldCheck size={14} /> Proteção Premium ativa
+                          <ShieldCheck size={12} /> Proteção Premium ativa
                         </p>
-                        <p className="text-emerald-400/80">Caução: <strong>ZERO</strong> • Franquia: <strong>ZERO</strong></p>
-                        <p className="text-emerald-400/60">Você está 100% protegido!</p>
+                        <p className="text-emerald-400/80">Caução: <strong>ZERO</strong> · Franquia: <strong>ZERO</strong></p>
+                        <p className="text-emerald-400/60">Você está 100% protegido</p>
                       </div>
                     ) : (
-                      <div className="space-y-1">
+                      <div className="space-y-0.5">
                         <p className="flex items-center gap-1.5 text-amber-400 font-semibold">
-                          <AlertTriangle size={14} /> Seguro Básico
+                          <AlertTriangle size={12} /> Seguro Básico
                         </p>
-                        <p className="text-amber-400/80">Caução exigido: <strong>US$ {BASIC_DEPOSIT}</strong></p>
-                        <p className="text-amber-400/80">Franquia em caso de sinistro: <strong>US$ {pricing.basicDeductible}</strong></p>
-                        <p className="text-amber-400/60 mt-1">Upgrade para Premium e elimine esses custos!</p>
+                        <p className="text-amber-400/80">Caução: <strong>US$ {BASIC_DEPOSIT}</strong></p>
+                        <p className="text-amber-400/80">Franquia: <strong>US$ {pricing.basicDeductible}</strong></p>
+                        <p className="text-amber-400/60 mt-0.5">Upgrade para Premium e elimine esses custos</p>
                       </div>
                     )}
                   </div>
@@ -662,28 +662,28 @@ const BookingDetails = () => {
                     href={whatsappMsg}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-6 w-full gold-gradient text-primary-foreground py-4 rounded-xl text-sm font-black uppercase tracking-[0.15em] flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                    className="mt-5 w-full gold-gradient text-primary-foreground py-3 rounded-lg text-xs font-bold uppercase tracking-[0.12em] flex items-center justify-center gap-1.5 hover:opacity-90 transition-opacity"
                   >
                     Reservar pelo WhatsApp
-                    <ChevronRight size={16} />
+                    <ChevronRight size={14} />
                   </a>
 
-                  <p className="text-[10px] text-center text-muted-foreground mt-3">
-                    Sem compromisso • Resposta em até 15 minutos
+                  <p className="text-[9px] text-center text-muted-foreground mt-2">
+                    Sem compromisso · Resposta em até 15 minutos
                   </p>
                 </div>
 
                 {/* Trust badges */}
-                <div className="glass-card rounded-2xl p-5">
-                  <div className="grid grid-cols-2 gap-3 text-center text-[10px] uppercase tracking-widest text-muted-foreground">
+                <div className="rounded-xl border border-border/30 bg-card p-4">
+                  <div className="grid grid-cols-2 gap-2.5 text-center text-[9px] uppercase tracking-[0.12em] text-muted-foreground">
                     {[
                       { icon: ShieldCheck, label: "Seguro incluso" },
                       { icon: Car, label: "Km ilimitado" },
                       { icon: Zap, label: "Retirada rápida" },
                       { icon: Users, label: "2º motorista grátis" },
                     ].map(({ icon: Icon, label }) => (
-                      <div key={label} className="flex flex-col items-center gap-1.5 p-2">
-                        <Icon size={18} className="text-primary" />
+                      <div key={label} className="flex flex-col items-center gap-1 p-1.5">
+                        <Icon size={15} className="text-primary" />
                         {label}
                       </div>
                     ))}
