@@ -111,11 +111,20 @@ const Navbar = () => {
           </a>
 
           <button
-            onClick={() => navigate("/login")}
+            onClick={() => navigate(isLoggedIn ? "/minha-conta" : "/login")}
             className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors duration-300"
             title={t.nav.myBookings}
           >
-            <User size={18} />
+            {isLoggedIn && user ? (
+              <>
+                <span className="w-6 h-6 rounded-full gold-gradient flex items-center justify-center text-primary-foreground text-[10px] font-bold">
+                  {user.name.charAt(0)}
+                </span>
+                <span className="text-xs font-medium tracking-wider">{user.name.split(" ")[0]}</span>
+              </>
+            ) : (
+              <User size={18} />
+            )}
           </button>
         </div>
 
