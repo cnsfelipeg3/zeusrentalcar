@@ -18,6 +18,7 @@ const formatDate = (iso: string) => {
 
 const BookingCard = ({ booking, index, featured }: BookingCardProps) => {
   const navigate = useNavigate();
+  const { formatPrice } = useCurrency();
 
   if (featured) {
     return (
