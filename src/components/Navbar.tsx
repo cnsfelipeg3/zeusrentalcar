@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useThemeMode } from "@/i18n/ThemeContext";
+import { useAuth } from "@/hooks/useAuth";
 import { Language, languageLabels, languageFlags } from "@/i18n/translations";
 import {
   DropdownMenu,
