@@ -125,7 +125,8 @@ const BookingDetails = () => {
   }, [pickupLocation, returnLocation]);
 
   // Pricing calculations
-  const dailyPrice = vehiclePrices[decodedName] || 99;
+  const basePrice = vehiclePrices[decodedName] || 99;
+  const dailyPrice = isUnder26 ? Math.ceil(basePrice * (1 + YOUNG_DRIVER_SURCHARGE)) : basePrice;
   const pricing = useMemo(() => {
     const subtotalRental = dailyPrice * days;
     const insuranceDailyExtra = premiumInsurance ? Math.round(dailyPrice * PREMIUM_INSURANCE_RATE) : 0;

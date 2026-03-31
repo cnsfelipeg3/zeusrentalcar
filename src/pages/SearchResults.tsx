@@ -156,7 +156,8 @@ const SearchResults = () => {
           {/* Results Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {vehicles.map((v, i) => {
-              const dailyPrice = vehiclePrices[v.name] || 99;
+              const basePrice = vehiclePrices[v.name] || 99;
+              const dailyPrice = isUnder26 ? Math.ceil(basePrice * (1 + YOUNG_DRIVER_SURCHARGE)) : basePrice;
               const totalPrice = dailyPrice * days;
 
               const bookingUrl = `/reserva/${encodeURIComponent(v.name)}?${searchParams.toString()}`;
