@@ -130,16 +130,26 @@ const Navbar = () => {
       {mobileOpen && (
         <div className="md:hidden bg-background/95 backdrop-blur-xl border-t border-border/30 animate-fade-in">
           <div className="flex flex-col gap-4 px-6 py-6">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors"
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              link.isRoute ? (
+                <button
+                  key={link.href}
+                  onClick={() => { navigate(link.href); setMobileOpen(false); }}
+                  className="text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors text-left"
+                >
+                  {link.label}
+                </button>
+              ) : (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {link.label}
+                </a>
+              )
+            )}
 
             {/* Mobile theme toggle */}
             <button
