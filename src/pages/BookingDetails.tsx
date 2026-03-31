@@ -84,6 +84,7 @@ const LONG_RENTAL_DISCOUNT_RATE = 0.05;
 const LONG_RENTAL_MIN_DAYS = 10;
 const BASIC_DEPOSIT = 550;
 const DEDUCTIBLE_MULTIPLIER = 11;
+const EXTRA_DRIVER_RATE = 0.02;
 
 const BookingDetails = () => {
   const { vehicleName } = useParams<{ vehicleName: string }>();
@@ -112,6 +113,7 @@ const BookingDetails = () => {
   const [childSeat, setChildSeat] = useState(false);
   const [childSeatQty, setChildSeatQty] = useState(1);
   const [tollTag, setTollTag] = useState(false);
+  const [extraDriver, setExtraDriver] = useState(false);
 
   // Check if different cities
   const isDifferentCity = useMemo(() => {
@@ -125,11 +127,13 @@ const BookingDetails = () => {
     const subtotalRental = dailyPrice * days;
     const insuranceDailyExtra = premiumInsurance ? Math.round(dailyPrice * PREMIUM_INSURANCE_RATE) : 0;
     const insuranceTotal = insuranceDailyExtra * days;
+    const extraDriverDailyExtra = extraDriver ? Math.round(dailyPrice * EXTRA_DRIVER_RATE) : 0;
+    const extraDriverTotal = extraDriverDailyExtra * days;
     const childSeatTotal = childSeat ? CHILD_SEAT_DAILY * childSeatQty * days : 0;
     const tollTagTotal = tollTag ? TOLL_TAG_DAILY * days : 0;
     const returnFee = isDifferentCity ? RETURN_FEE : 0;
 
-    const subtotalBeforeDiscount = subtotalRental + insuranceTotal + childSeatTotal + tollTagTotal + returnFee;
+    const subtotalBeforeDiscount = subtotalRental + insuranceTotal + extraDriverTotal + childSeatTotal + tollTagTotal + returnFee;
 
     const qualifiesDiscount = days >= LONG_RENTAL_MIN_DAYS;
     const discountAmount = qualifiesDiscount ? Math.round(subtotalBeforeDiscount * LONG_RENTAL_DISCOUNT_RATE) : 0;
@@ -142,6 +146,8 @@ const BookingDetails = () => {
       subtotalRental,
       insuranceDailyExtra,
       insuranceTotal,
+      extraDriverDailyExtra,
+      extraDriverTotal,
       childSeatTotal,
       tollTagTotal,
       returnFee,
@@ -153,7 +159,7 @@ const BookingDetails = () => {
       deposit: premiumInsurance ? 0 : BASIC_DEPOSIT,
       deductible: premiumInsurance ? 0 : basicDeductible,
     };
-  }, [dailyPrice, days, premiumInsurance, childSeat, childSeatQty, tollTag, isDifferentCity]);
+  }, [dailyPrice, days, premiumInsurance, extraDriver, childSeat, childSeatQty, tollTag, isDifferentCity]);
 
   // WhatsApp message
   const whatsappMsg = useMemo(() => {
@@ -175,6 +181,7 @@ const BookingDetails = () => {
       premiumInsurance ? `Seguro Premium: ${formatPrice(pricing.insuranceTotal)}` : `Seguro Básico: Incluso`,
       childSeat ? `Cadeirinha (x${childSeatQty}): ${formatPrice(pricing.childSeatTotal)}` : "",
       tollTag ? `TAG Pedágios: ${formatPrice(pricing.tollTagTotal)}` : "",
+      extraDriver ? `Condutor Extra (+2%): ${formatPrice(pricing.extraDriverTotal)}` : "",
       isDifferentCity ? `Taxa de retorno: ${formatPrice(RETURN_FEE)}` : "",
       pricing.qualifiesDiscount ? `Desconto 10+ diárias: -${formatPrice(pricing.discountAmount)}` : "",
       ``,
@@ -183,7 +190,7 @@ const BookingDetails = () => {
     ].filter(Boolean);
 
     return `https://wa.me/16892981754?text=${encodeURIComponent(lines.join("\n"))}`;
-  }, [decodedName, pickupDate, returnDate, pickupTime, returnTime, days, pickupLocation, returnLocation, dailyPrice, pricing, premiumInsurance, childSeat, childSeatQty, tollTag, isDifferentCity]);
+  }, [decodedName, pickupDate, returnDate, pickupTime, returnTime, days, pickupLocation, returnLocation, dailyPrice, pricing, premiumInsurance, extraDriver, childSeat, childSeatQty, tollTag, isDifferentCity]);
 
   if (!vehicle) {
     return (
@@ -513,6 +520,29 @@ const BookingDetails = () => {
                     </div>
                   </div>
 
+                  {/* Extra Driver */}
+                  <div className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-300 ${
+                    extraDriver ? "border-primary/30 bg-primary/5" : "border-border/20 bg-muted/10"
+                  }`}>
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-md bg-muted/30 flex items-center justify-center">
+                        <Users size={16} className="text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-foreground">Condutor Extra</p>
+                        <p className="text-[10px] text-muted-foreground">Motorista adicional habilitado</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <p className="text-xs font-bold text-foreground whitespace-nowrap">+2% /dia</p>
+                      <Switch
+                        checked={extraDriver}
+                        onCheckedChange={setExtraDriver}
+                        className="data-[state=checked]:bg-emerald-500"
+                      />
+                    </div>
+                  </div>
+
                   {/* Included for free */}
                   <div className="p-3 rounded-lg border border-border/15 bg-muted/5">
                     <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-muted-foreground mb-2">Já incluso na sua reserva</p>
@@ -574,6 +604,14 @@ const BookingDetails = () => {
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">TAG Pedágios FL</span>
                         <span className="font-semibold text-foreground">{formatPrice(pricing.tollTagTotal)}</span>
+                      </div>
+                    )}
+
+                    {/* Extra driver */}
+                    {extraDriver && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Condutor Extra (+2%)</span>
+                        <span className="font-semibold text-foreground">{formatPrice(pricing.extraDriverTotal)}</span>
                       </div>
                     )}
 
