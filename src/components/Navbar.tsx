@@ -39,6 +39,18 @@ const Navbar = () => {
 
   const languages: Language[] = ["pt", "en", "es", "it", "de", "fr"];
 
+  const CurrencyToggle = ({ className = "" }: { className?: string }) => (
+    <button
+      onClick={toggleCurrency}
+      className={`flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors duration-300 text-xs font-medium uppercase tracking-wider ${className}`}
+      title="Alternar moeda"
+    >
+      <span className={currency === "USD" ? "text-primary font-bold" : ""}>USD</span>
+      <span className="text-muted-foreground/40">/</span>
+      <span className={currency === "BRL" ? "text-primary font-bold" : ""}>BRL</span>
+    </button>
+  );
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
@@ -102,6 +114,9 @@ const Navbar = () => {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* Currency Toggle */}
+          <CurrencyToggle />
 
           <a
             href="https://wa.me/16892981754"
@@ -173,7 +188,7 @@ const Navbar = () => {
               <span>{theme === "dark" ? "Modo Claro" : "Modo Escuro"}</span>
             </button>
 
-            {/* Mobile language switcher - same dropdown style as desktop */}
+            {/* Mobile language switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger className="flex items-center gap-2 text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300 outline-none pt-2 border-t border-border/30 w-full">
                 <Globe size={16} />
@@ -193,6 +208,9 @@ const Navbar = () => {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
+
+            {/* Mobile currency toggle */}
+            <CurrencyToggle className="pt-2 border-t border-border/30 w-full text-sm" />
 
             <a
               href="https://wa.me/16892981754"
