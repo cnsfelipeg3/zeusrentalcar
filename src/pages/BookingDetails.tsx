@@ -113,6 +113,7 @@ const BookingDetails = () => {
   const [childSeat, setChildSeat] = useState(false);
   const [childSeatQty, setChildSeatQty] = useState(1);
   const [tollTag, setTollTag] = useState(false);
+  const [extraDriver, setExtraDriver] = useState(false);
 
   // Check if different cities
   const isDifferentCity = useMemo(() => {
