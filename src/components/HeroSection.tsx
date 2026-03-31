@@ -80,6 +80,8 @@ const HeroSection = () => {
             {t.hero.contactUs}
           </a>
         </motion.div>
+
+        <SearchBar />
       </div>
 
       <motion.a
