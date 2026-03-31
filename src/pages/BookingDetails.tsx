@@ -234,6 +234,9 @@ const BookingDetails = () => {
                     <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-wider text-foreground">
                       {vehicle.name}
                     </h1>
+                    {vehicleTrims[decodedName] && (
+                      <p className="text-xs text-muted-foreground mt-0.5">{vehicleTrims[decodedName]}</p>
+                    )}
                     <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
                       <span className="flex items-center gap-1.5"><Users size={14} className="text-primary" /> {vehicle.passengers} passageiros</span>
                       {vehicle.luggage && <span className="flex items-center gap-1.5"><Briefcase size={14} className="text-primary" /> {vehicle.luggage} malas</span>}
