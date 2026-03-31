@@ -391,6 +391,7 @@ export const translations: Record<Language, TranslationKeys> = {
       whyZeus: "¿Por qué Zeus?",
       contact: "Contacto",
       book: "Reservar",
+      myBookings: "Mis Reservas",
     },
     hero: {
       title: "Tu viaje en Orlando comienza con el ",
