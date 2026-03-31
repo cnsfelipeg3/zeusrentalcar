@@ -84,6 +84,7 @@ const LONG_RENTAL_DISCOUNT_RATE = 0.05;
 const LONG_RENTAL_MIN_DAYS = 10;
 const BASIC_DEPOSIT = 550;
 const DEDUCTIBLE_MULTIPLIER = 11;
+const EXTRA_DRIVER_RATE = 0.02;
 
 const BookingDetails = () => {
   const { vehicleName } = useParams<{ vehicleName: string }>();
