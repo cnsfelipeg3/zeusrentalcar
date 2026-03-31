@@ -15,6 +15,7 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
+  const { theme, toggleTheme } = useThemeMode();
 
   const navLinks = [
     { label: t.nav.fleet, href: "#frota" },
