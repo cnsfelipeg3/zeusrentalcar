@@ -120,6 +120,15 @@ const Navbar = () => {
               </a>
             ))}
 
+            {/* Mobile theme toggle */}
+            <button
+              onClick={toggleTheme}
+              className="flex items-center gap-2 text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300 pt-2 border-t border-border/30 w-full"
+            >
+              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+              <span>{theme === "dark" ? "Modo Claro" : "Modo Escuro"}</span>
+            </button>
+
             {/* Mobile language switcher - same dropdown style as desktop */}
             <DropdownMenu>
               <DropdownMenuTrigger className="flex items-center gap-2 text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300 outline-none pt-2 border-t border-white/5 w-full">
