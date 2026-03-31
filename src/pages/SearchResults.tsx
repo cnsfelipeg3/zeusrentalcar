@@ -80,7 +80,9 @@ const SearchResults = () => {
   const pickupTime = searchParams.get("pickupTime") || "10:00";
   const pickupLocation = searchParams.get("pickupLocation") || "";
   const returnLocation = searchParams.get("returnLocation") || pickupLocation;
-
+  const driverAgeParam = searchParams.get("driverAge");
+  const isUnder26 = driverAgeParam ? parseInt(driverAgeParam) < 26 : false;
+  const YOUNG_DRIVER_SURCHARGE = 0.08;
   const pickupDate = pickupDateStr ? new Date(pickupDateStr) : null;
   const returnDate = returnDateStr ? new Date(returnDateStr) : null;
 
