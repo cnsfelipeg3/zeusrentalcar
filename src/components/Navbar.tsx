@@ -23,6 +23,7 @@ const Navbar = () => {
     { label: t.nav.fleet, href: "#frota" },
     { label: t.nav.howItWorks, href: "#como-funciona" },
     { label: t.nav.whyZeus, href: "#por-que" },
+    { label: t.nav.about, href: "/sobre-nos", isRoute: true },
     { label: t.nav.contact, href: "#contato" },
   ];
 
@@ -49,15 +50,25 @@ const Navbar = () => {
 
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300"
-            >
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) =>
+            link.isRoute ? (
+              <button
+                key={link.href}
+                onClick={() => navigate(link.href)}
+                className="text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300"
+              >
+                {link.label}
+              </button>
+            ) : (
+              <a
+                key={link.href}
+                href={link.href}
+                className="text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300"
+              >
+                {link.label}
+              </a>
+            )
+          )}
 
           {/* Theme Toggle */}
           <button
@@ -119,16 +130,26 @@ const Navbar = () => {
       {mobileOpen && (
         <div className="md:hidden bg-background/95 backdrop-blur-xl border-t border-border/30 animate-fade-in">
           <div className="flex flex-col gap-4 px-6 py-6">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors"
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              link.isRoute ? (
+                <button
+                  key={link.href}
+                  onClick={() => { navigate(link.href); setMobileOpen(false); }}
+                  className="text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors text-left"
+                >
+                  {link.label}
+                </button>
+              ) : (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {link.label}
+                </a>
+              )
+            )}
 
             {/* Mobile theme toggle */}
             <button
