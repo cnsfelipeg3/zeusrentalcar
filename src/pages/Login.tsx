@@ -42,7 +42,7 @@ const Login = () => {
 
               <form onSubmit={(e) => {
                 e.preventDefault();
-                const success = login(email, password);
+                const success = login(email.trim(), password.trim());
                 if (success) {
                   navigate("/minha-conta");
                 } else {
