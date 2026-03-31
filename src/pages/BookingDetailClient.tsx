@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useCurrency } from "@/i18n/CurrencyContext";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
