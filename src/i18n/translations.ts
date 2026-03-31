@@ -26,6 +26,7 @@ type TranslationKeys = {
     whyZeus: string;
     contact: string;
     book: string;
+    myBookings: string;
   };
   hero: {
     title: string;
