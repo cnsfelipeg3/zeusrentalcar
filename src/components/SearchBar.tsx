@@ -48,6 +48,7 @@ const SearchBar = () => {
     if (returnTime) params.set("returnTime", returnTime);
     if (pickupLocation) params.set("pickupLocation", pickupLocation);
     params.set("returnLocation", differentReturnLocation ? returnLocation : pickupLocation);
+    if (!driverOver26 && driverAge) params.set("driverAge", driverAge);
     navigate(`/buscar?${params.toString()}`);
   };
 
