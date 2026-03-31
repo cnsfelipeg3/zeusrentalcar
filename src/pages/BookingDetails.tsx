@@ -179,7 +179,7 @@ const BookingDetails = () => {
       pricing.qualifiesDiscount ? `Desconto 10+ diárias: -${formatPrice(pricing.discountAmount)}` : "",
       ``,
       `*TOTAL: ${formatPrice(pricing.total)}*`,
-      premiumInsurance ? `✅ Franquia: ZERO | Caução: ZERO` : `⚠️ Caução: ${formatPrice(BASIC_DEPOSIT)\} | Franquia: $\{formatPrice(pricing.basicDeductible)}`,
+      premiumInsurance ? `✅ Franquia: ZERO | Caução: ZERO` : `⚠️ Caução: ${formatPrice(BASIC_DEPOSIT)} | Franquia: ${formatPrice(pricing.basicDeductible)}`,
     ].filter(Boolean);
 
     return `https://wa.me/16892981754?text=${encodeURIComponent(lines.join("\n"))}`;
