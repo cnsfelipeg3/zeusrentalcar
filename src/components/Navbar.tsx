@@ -168,6 +168,14 @@ const Navbar = () => {
             >
               {t.nav.book}
             </a>
+
+            <button
+              onClick={() => { navigate("/login"); setMobileOpen(false); }}
+              className="flex items-center gap-2 text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300 pt-2 border-t border-border/30 w-full"
+            >
+              <User size={16} />
+              <span>{t.nav.myBookings}</span>
+            </button>
           </div>
         </div>
       )}
