@@ -73,6 +73,7 @@ const vehicles: SearchVehicle[] = [
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
+  const { formatPrice } = useCurrency();
 
   const pickupDateStr = searchParams.get("pickupDate");
   const returnDateStr = searchParams.get("returnDate");
