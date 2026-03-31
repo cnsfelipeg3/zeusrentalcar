@@ -36,6 +36,8 @@ const SearchBar = () => {
   const [pickupLocation, setPickupLocation] = useState("");
   const [returnLocation, setReturnLocation] = useState("");
   const [differentReturnLocation, setDifferentReturnLocation] = useState(false);
+  const [driverOver26, setDriverOver26] = useState(true);
+  const [driverAge, setDriverAge] = useState("");
   const [openPicker, setOpenPicker] = useState<string | null>(null);
 
   const handleSearch = () => {
