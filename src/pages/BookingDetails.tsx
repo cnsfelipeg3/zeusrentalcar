@@ -606,6 +606,14 @@ const BookingDetails = () => {
                       </div>
                     )}
 
+                    {/* Extra driver */}
+                    {extraDriver && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Condutor Extra (+2%)</span>
+                        <span className="font-semibold text-foreground">{formatPrice(pricing.extraDriverTotal)}</span>
+                      </div>
+                    )}
+
                     {/* Return fee */}
                     {isDifferentCity && (
                       <div className="flex justify-between">
