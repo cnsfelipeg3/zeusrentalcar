@@ -330,6 +330,13 @@ const BookingDetails = () => {
                     {days} {days === 1 ? "diária" : "diárias"} · {formatPrice(dailyPrice)}/dia
                   </p>
                 </div>
+                {isUnder26 && (
+                  <div className="mt-2 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-center">
+                    <p className="text-[11px] font-semibold text-amber-400">
+                      ⚠️ Condutor com {driverAgeParam} anos — acréscimo de 8% aplicado
+                    </p>
+                  </div>
+                )}
               </motion.div>
 
               {/* Vehicle Features */}
