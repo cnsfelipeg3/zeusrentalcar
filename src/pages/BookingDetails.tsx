@@ -11,6 +11,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppBubble from "@/components/WhatsAppBubble";
 import { vehiclePrices, vehicleTrims } from "@/data/vehicles";
+import { useCurrency } from "@/i18n/CurrencyContext";
 import { Switch } from "@/components/ui/switch";
 
 // Cover images
