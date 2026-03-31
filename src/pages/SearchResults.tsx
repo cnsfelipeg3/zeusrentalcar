@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppBubble from "@/components/WhatsAppBubble";
 import { vehiclePrices } from "@/data/vehicles";
+import { useCurrency } from "@/i18n/CurrencyContext";
 
 // Re-import covers and vehicle data from FleetSection
 import corvetteCover from "@/assets/fleet/covers/corvette-cover.jpg";
