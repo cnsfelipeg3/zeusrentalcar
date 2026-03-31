@@ -21,6 +21,7 @@ const Navbar = () => {
   const { theme, toggleTheme } = useThemeMode();
   const navigate = useNavigate();
   const { isLoggedIn, user } = useAuth();
+  const { currency, toggleCurrency } = useCurrency();
 
   const navLinks = [
     { label: t.nav.fleet, href: "#frota" },
