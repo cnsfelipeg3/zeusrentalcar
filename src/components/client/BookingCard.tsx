@@ -116,7 +116,7 @@ const BookingCard = ({ booking, index, featured }: BookingCardProps) => {
           <p className="text-xs text-muted-foreground/70 mt-0.5">{booking.pickupLocation}</p>
         </div>
         <div className="flex items-center gap-4">
-          <p className="text-lg font-bold gold-text">${booking.pricing.total.toLocaleString()}</p>
+          <p className="text-lg font-bold gold-text">{formatPrice(booking.pricing.total)}</p>
           <ChevronRight size={18} className="text-muted-foreground" />
         </div>
       </div>
