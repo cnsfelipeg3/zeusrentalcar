@@ -170,16 +170,16 @@ const BookingDetails = () => {
       `Devolução: ${returnLocation}`,
       ``,
       `💰 *Resumo do Orçamento:*`,
-      `Diária: $\{formatPrice(dailyPrice)\}`,
-      `Subtotal locação: $\{formatPrice(pricing.subtotalRental)\}`,
-      premiumInsurance ? `Seguro Premium: $\{formatPrice(pricing.insuranceTotal)\}` : `Seguro Básico: Incluso`,
-      childSeat ? `Cadeirinha (x${childSeatQty}): $\{formatPrice(pricing.childSeatTotal)\}` : "",
-      tollTag ? `TAG Pedágios: $\{formatPrice(pricing.tollTagTotal)\}` : "",
-      isDifferentCity ? `Taxa de retorno: $\{formatPrice(RETURN_FEE)\}` : "",
-      pricing.qualifiesDiscount ? `Desconto 10+ diárias: -$\{formatPrice(pricing.discountAmount)\}` : "",
+      `Diária: ${formatPrice(dailyPrice)}`,
+      `Subtotal locação: ${formatPrice(pricing.subtotalRental)}`,
+      premiumInsurance ? `Seguro Premium: ${formatPrice(pricing.insuranceTotal)}` : `Seguro Básico: Incluso`,
+      childSeat ? `Cadeirinha (x${childSeatQty}): ${formatPrice(pricing.childSeatTotal)}` : "",
+      tollTag ? `TAG Pedágios: ${formatPrice(pricing.tollTagTotal)}` : "",
+      isDifferentCity ? `Taxa de retorno: ${formatPrice(RETURN_FEE)}` : "",
+      pricing.qualifiesDiscount ? `Desconto 10+ diárias: -${formatPrice(pricing.discountAmount)}` : "",
       ``,
-      `*TOTAL: $\{formatPrice(pricing.total)\}*`,
-      premiumInsurance ? `✅ Franquia: ZERO | Caução: ZERO` : `⚠️ Caução: $\{formatPrice(BASIC_DEPOSIT)\} | Franquia: $\{formatPrice(pricing.basicDeductible)\}`,
+      `*TOTAL: ${formatPrice(pricing.total)}*`,
+      premiumInsurance ? `✅ Franquia: ZERO | Caução: ZERO` : `⚠️ Caução: ${formatPrice(BASIC_DEPOSIT)\} | Franquia: $\{formatPrice(pricing.basicDeductible)}`,
     ].filter(Boolean);
 
     return `https://wa.me/16892981754?text=${encodeURIComponent(lines.join("\n"))}`;
@@ -557,7 +557,7 @@ const BookingDetails = () => {
                         {premiumInsurance ? "Seguro Premium" : "Seguro Básico"}
                       </span>
                       <span className={`font-semibold ${premiumInsurance ? "text-foreground" : "text-emerald-400"}`}>
-                        {premiumInsurance ? `$\{formatPrice(pricing.insuranceTotal)\}` : "Incluso"}
+                        {premiumInsurance ? `${formatPrice(pricing.insuranceTotal)}` : "Incluso"}
                       </span>
                     </div>
 
