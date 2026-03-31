@@ -276,7 +276,7 @@ const BookingDetailClient = () => {
                 ) : (
                   <div className="text-sm">
                     <p className="text-muted-foreground">Caução</p>
-                    <p className="text-foreground font-bold">${booking.deposit}</p>
+                    <p className="text-foreground font-bold">{formatPrice(booking.deposit)}</p>
                     <p className="text-xs text-muted-foreground/70 mt-0.5">
                       {booking.status === "completed" ? "Devolvido" : "Retido"}
                     </p>
