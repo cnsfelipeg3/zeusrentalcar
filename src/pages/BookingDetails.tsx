@@ -610,7 +610,7 @@ const BookingDetails = () => {
                     {/* Extra driver */}
                     {extraDriver && (
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Condutor Extra (+2%)</span>
+                        <span className="text-muted-foreground">Condutor Extra ({formatPrice(pricing.extraDriverDailyExtra)}/dia)</span>
                         <span className="font-semibold text-foreground">{formatPrice(pricing.extraDriverTotal)}</span>
                       </div>
                     )}
