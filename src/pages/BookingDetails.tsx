@@ -170,16 +170,16 @@ const BookingDetails = () => {
       `Devolução: ${returnLocation}`,
       ``,
       `💰 *Resumo do Orçamento:*`,
-      `Diária: US$ ${dailyPrice}`,
-      `Subtotal locação: US$ ${pricing.subtotalRental}`,
-      premiumInsurance ? `Seguro Premium: US$ ${pricing.insuranceTotal}` : `Seguro Básico: Incluso`,
-      childSeat ? `Cadeirinha (x${childSeatQty}): US$ ${pricing.childSeatTotal}` : "",
-      tollTag ? `TAG Pedágios: US$ ${pricing.tollTagTotal}` : "",
-      isDifferentCity ? `Taxa de retorno: US$ ${RETURN_FEE}` : "",
-      pricing.qualifiesDiscount ? `Desconto 10+ diárias: -US$ ${pricing.discountAmount}` : "",
+      `Diária: $\{formatPrice(dailyPrice)\}`,
+      `Subtotal locação: $\{formatPrice(pricing.subtotalRental)\}`,
+      premiumInsurance ? `Seguro Premium: $\{formatPrice(pricing.insuranceTotal)\}` : `Seguro Básico: Incluso`,
+      childSeat ? `Cadeirinha (x${childSeatQty}): $\{formatPrice(pricing.childSeatTotal)\}` : "",
+      tollTag ? `TAG Pedágios: $\{formatPrice(pricing.tollTagTotal)\}` : "",
+      isDifferentCity ? `Taxa de retorno: $\{formatPrice(RETURN_FEE)\}` : "",
+      pricing.qualifiesDiscount ? `Desconto 10+ diárias: -$\{formatPrice(pricing.discountAmount)\}` : "",
       ``,
-      `*TOTAL: US$ ${pricing.total}*`,
-      premiumInsurance ? `✅ Franquia: ZERO | Caução: ZERO` : `⚠️ Caução: US$ ${BASIC_DEPOSIT} | Franquia: US$ ${pricing.basicDeductible}`,
+      `*TOTAL: $\{formatPrice(pricing.total)\}*`,
+      premiumInsurance ? `✅ Franquia: ZERO | Caução: ZERO` : `⚠️ Caução: $\{formatPrice(BASIC_DEPOSIT)\} | Franquia: $\{formatPrice(pricing.basicDeductible)\}`,
     ].filter(Boolean);
 
     return `https://wa.me/16892981754?text=${encodeURIComponent(lines.join("\n"))}`;
@@ -315,7 +315,7 @@ const BookingDetails = () => {
                 </div>
                 <div className="mt-3 p-2.5 rounded-lg bg-primary/8 border border-primary/15 text-center">
                   <p className="text-xs font-semibold text-primary">
-                    {days} {days === 1 ? "diária" : "diárias"} · US$ {dailyPrice}/dia
+                    {days} {days === 1 ? "diária" : "diárias"} · {formatPrice(dailyPrice)}/dia
                   </p>
                 </div>
               </motion.div>
@@ -376,11 +376,11 @@ const BookingDetails = () => {
                       <li className="flex items-start gap-1.5"><Check size={10} className="text-emerald-400 mt-0.5 shrink-0" /> Cobertura contra roubo</li>
                       <li className="flex items-start gap-1.5">
                         <AlertTriangle size={10} className="text-amber-400 mt-0.5 shrink-0" />
-                        <span>Caução: <strong className="text-foreground">US$ {BASIC_DEPOSIT}</strong></span>
+                        <span>Caução: <strong className="text-foreground">{formatPrice(BASIC_DEPOSIT)}</strong></span>
                       </li>
                       <li className="flex items-start gap-1.5">
                         <AlertTriangle size={10} className="text-amber-400 mt-0.5 shrink-0" />
-                        <span>Franquia: <strong className="text-foreground">US$ {pricing.basicDeductible}</strong></span>
+                        <span>Franquia: <strong className="text-foreground">{formatPrice(pricing.basicDeductible)}</strong></span>
                       </li>
                     </ul>
                   </button>
@@ -404,7 +404,7 @@ const BookingDetails = () => {
                     </div>
                     <ShieldCheck size={18} className="text-primary mb-2" />
                     <h3 className="text-xs font-bold uppercase tracking-wider text-foreground mb-0.5">Seguro Premium</h3>
-                    <p className="text-[10px] text-primary font-semibold mb-2.5">+ US$ {Math.round(dailyPrice * PREMIUM_INSURANCE_RATE)} /dia</p>
+                    <p className="text-[10px] text-primary font-semibold mb-2.5">+ {formatPrice(Math.round(dailyPrice * PREMIUM_INSURANCE_RATE))} /dia</p>
                     <ul className="space-y-1.5 text-[11px] text-muted-foreground">
                       <li className="flex items-start gap-1.5"><Check size={10} className="text-emerald-400 mt-0.5 shrink-0" /> Cobertura total contra colisão</li>
                       <li className="flex items-start gap-1.5"><Check size={10} className="text-emerald-400 mt-0.5 shrink-0" /> Cobertura total contra roubo</li>
@@ -450,7 +450,7 @@ const BookingDetails = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-2.5">
-                      <p className="text-xs font-bold text-foreground whitespace-nowrap">US$ {CHILD_SEAT_DAILY}/dia</p>
+                      <p className="text-xs font-bold text-foreground whitespace-nowrap">{formatPrice(CHILD_SEAT_DAILY)}/dia</p>
                       <Switch
                         checked={childSeat}
                         onCheckedChange={setChildSeat}
@@ -484,7 +484,7 @@ const BookingDetails = () => {
                               +
                             </button>
                           </div>
-                          <p className="text-[10px] text-primary font-semibold">= US$ {CHILD_SEAT_DAILY * childSeatQty}/dia</p>
+                          <p className="text-[10px] text-primary font-semibold">= {formatPrice(CHILD_SEAT_DAILY * childSeatQty)}/dia</p>
                         </div>
                       </motion.div>
                     )}
@@ -504,7 +504,7 @@ const BookingDetails = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-2.5">
-                      <p className="text-xs font-bold text-foreground whitespace-nowrap">US$ {TOLL_TAG_DAILY}/dia</p>
+                      <p className="text-xs font-bold text-foreground whitespace-nowrap">{formatPrice(TOLL_TAG_DAILY)}/dia</p>
                       <Switch
                         checked={tollTag}
                         onCheckedChange={setTollTag}
@@ -547,8 +547,8 @@ const BookingDetails = () => {
                   <div className="space-y-2.5 text-xs">
                     {/* Rental */}
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Locação ({days} {days === 1 ? "dia" : "dias"} × US$ {dailyPrice})</span>
-                      <span className="font-semibold text-foreground">US$ {pricing.subtotalRental}</span>
+                      <span className="text-muted-foreground">Locação ({days} {days === 1 ? "dia" : "dias"} × {formatPrice(dailyPrice)})</span>
+                      <span className="font-semibold text-foreground">{formatPrice(pricing.subtotalRental)}</span>
                     </div>
 
                     {/* Insurance */}
@@ -557,7 +557,7 @@ const BookingDetails = () => {
                         {premiumInsurance ? "Seguro Premium" : "Seguro Básico"}
                       </span>
                       <span className={`font-semibold ${premiumInsurance ? "text-foreground" : "text-emerald-400"}`}>
-                        {premiumInsurance ? `US$ ${pricing.insuranceTotal}` : "Incluso"}
+                        {premiumInsurance ? `$\{formatPrice(pricing.insuranceTotal)\}` : "Incluso"}
                       </span>
                     </div>
 
@@ -565,7 +565,7 @@ const BookingDetails = () => {
                     {childSeat && (
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Cadeirinha (x{childSeatQty})</span>
-                        <span className="font-semibold text-foreground">US$ {pricing.childSeatTotal}</span>
+                        <span className="font-semibold text-foreground">{formatPrice(pricing.childSeatTotal)}</span>
                       </div>
                     )}
 
@@ -573,7 +573,7 @@ const BookingDetails = () => {
                     {tollTag && (
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">TAG Pedágios FL</span>
-                        <span className="font-semibold text-foreground">US$ {pricing.tollTagTotal}</span>
+                        <span className="font-semibold text-foreground">{formatPrice(pricing.tollTagTotal)}</span>
                       </div>
                     )}
 
@@ -584,7 +584,7 @@ const BookingDetails = () => {
                           Taxa de retorno
                           <span className="text-[9px] text-amber-400">(cidade diferente)</span>
                         </span>
-                        <span className="font-semibold text-foreground">US$ {RETURN_FEE}</span>
+                        <span className="font-semibold text-foreground">{formatPrice(RETURN_FEE)}</span>
                       </div>
                     )}
 
@@ -602,7 +602,7 @@ const BookingDetails = () => {
                           <Percent size={12} />
                           Desconto 10+ diárias
                         </span>
-                        <span className="font-bold text-emerald-400">- US$ {pricing.discountAmount}</span>
+                        <span className="font-bold text-emerald-400">- {formatPrice(pricing.discountAmount)}</span>
                       </motion.div>
                     )}
 
@@ -620,15 +620,15 @@ const BookingDetails = () => {
                         <span className="text-muted-foreground text-xs font-medium">Total</span>
                         <div className="text-right">
                           {pricing.qualifiesDiscount && (
-                            <p className="text-[10px] text-muted-foreground line-through">US$ {pricing.subtotalBeforeDiscount}</p>
+                            <p className="text-[10px] text-muted-foreground line-through">{formatPrice(pricing.subtotalBeforeDiscount)}</p>
                           )}
                           <p className="text-xl font-bold text-foreground">
-                            US$ {pricing.total}
+                            {formatPrice(pricing.total)}
                           </p>
                         </div>
                       </div>
                       <p className="text-[9px] text-muted-foreground text-right mt-0.5">
-                        ≈ US$ {Math.round(pricing.total / days)} /dia (média)
+                        ≈ {formatPrice(Math.round(pricing.total / days))} /dia (média)
                       </p>
                     </div>
                   </div>
@@ -652,8 +652,8 @@ const BookingDetails = () => {
                         <p className="flex items-center gap-1.5 text-amber-400 font-semibold">
                           <AlertTriangle size={12} /> Seguro Básico
                         </p>
-                        <p className="text-amber-400/80">Caução: <strong>US$ {BASIC_DEPOSIT}</strong></p>
-                        <p className="text-amber-400/80">Franquia: <strong>US$ {pricing.basicDeductible}</strong></p>
+                        <p className="text-amber-400/80">Caução: <strong>{formatPrice(BASIC_DEPOSIT)}</strong></p>
+                        <p className="text-amber-400/80">Franquia: <strong>{formatPrice(pricing.basicDeductible)}</strong></p>
                         <p className="text-amber-400/60 mt-0.5">Upgrade para Premium e elimine esses custos</p>
                       </div>
                     )}
