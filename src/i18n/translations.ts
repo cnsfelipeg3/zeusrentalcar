@@ -264,6 +264,7 @@ export const translations: Record<Language, TranslationKeys> = {
       whyZeus: "Why Zeus?",
       contact: "Contact",
       book: "Book Now",
+      myBookings: "My Bookings",
     },
     hero: {
       title: "Your Orlando trip starts with the ",
