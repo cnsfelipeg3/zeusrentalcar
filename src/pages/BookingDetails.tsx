@@ -88,6 +88,7 @@ const DEDUCTIBLE_MULTIPLIER = 11;
 const BookingDetails = () => {
   const { vehicleName } = useParams<{ vehicleName: string }>();
   const [searchParams] = useSearchParams();
+  const { formatPrice, currencySymbol } = useCurrency();
 
   const decodedName = decodeURIComponent(vehicleName || "");
   const vehicle = vehicleMap[decodedName];
