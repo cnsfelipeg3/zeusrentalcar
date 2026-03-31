@@ -127,11 +127,13 @@ const BookingDetails = () => {
     const subtotalRental = dailyPrice * days;
     const insuranceDailyExtra = premiumInsurance ? Math.round(dailyPrice * PREMIUM_INSURANCE_RATE) : 0;
     const insuranceTotal = insuranceDailyExtra * days;
+    const extraDriverDailyExtra = extraDriver ? Math.round(dailyPrice * EXTRA_DRIVER_RATE) : 0;
+    const extraDriverTotal = extraDriverDailyExtra * days;
     const childSeatTotal = childSeat ? CHILD_SEAT_DAILY * childSeatQty * days : 0;
     const tollTagTotal = tollTag ? TOLL_TAG_DAILY * days : 0;
     const returnFee = isDifferentCity ? RETURN_FEE : 0;
 
-    const subtotalBeforeDiscount = subtotalRental + insuranceTotal + childSeatTotal + tollTagTotal + returnFee;
+    const subtotalBeforeDiscount = subtotalRental + insuranceTotal + extraDriverTotal + childSeatTotal + tollTagTotal + returnFee;
 
     const qualifiesDiscount = days >= LONG_RENTAL_MIN_DAYS;
     const discountAmount = qualifiesDiscount ? Math.round(subtotalBeforeDiscount * LONG_RENTAL_DISCOUNT_RATE) : 0;
