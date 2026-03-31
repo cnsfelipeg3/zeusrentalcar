@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useThemeMode } from "@/i18n/ThemeContext";
+import { useAuth } from "@/hooks/useAuth";
 import { Language, languageLabels, languageFlags } from "@/i18n/translations";
 import {
   DropdownMenu,
@@ -18,6 +19,7 @@ const Navbar = () => {
   const { language, setLanguage, t } = useLanguage();
   const { theme, toggleTheme } = useThemeMode();
   const navigate = useNavigate();
+  const { isLoggedIn, user } = useAuth();
 
   const navLinks = [
     { label: t.nav.fleet, href: "#frota" },
@@ -109,11 +111,20 @@ const Navbar = () => {
           </a>
 
           <button
-            onClick={() => navigate("/login")}
+            onClick={() => navigate(isLoggedIn ? "/minha-conta" : "/login")}
             className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors duration-300"
             title={t.nav.myBookings}
           >
-            <User size={18} />
+            {isLoggedIn && user ? (
+              <>
+                <span className="w-6 h-6 rounded-full gold-gradient flex items-center justify-center text-primary-foreground text-[10px] font-bold">
+                  {user.name.charAt(0)}
+                </span>
+                <span className="text-xs font-medium tracking-wider">{user.name.split(" ")[0]}</span>
+              </>
+            ) : (
+              <User size={18} />
+            )}
           </button>
         </div>
 
@@ -191,11 +202,22 @@ const Navbar = () => {
             </a>
 
             <button
-              onClick={() => { navigate("/login"); setMobileOpen(false); }}
+              onClick={() => { navigate(isLoggedIn ? "/minha-conta" : "/login"); setMobileOpen(false); }}
               className="flex items-center gap-2 text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300 pt-2 border-t border-border/30 w-full"
             >
-              <User size={16} />
-              <span>{t.nav.myBookings}</span>
+              {isLoggedIn && user ? (
+                <>
+                  <span className="w-5 h-5 rounded-full gold-gradient flex items-center justify-center text-primary-foreground text-[9px] font-bold">
+                    {user.name.charAt(0)}
+                  </span>
+                  <span>{user.name.split(" ")[0]}</span>
+                </>
+              ) : (
+                <>
+                  <User size={16} />
+                  <span>{t.nav.myBookings}</span>
+                </>
+              )}
             </button>
           </div>
         </div>

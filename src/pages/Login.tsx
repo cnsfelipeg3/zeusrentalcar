@@ -1,15 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "@/hooks/use-toast";
 
 const Login = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { isLoggedIn, login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [mode, setMode] = useState<"login" | "forgot">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    if (isLoggedIn) navigate("/minha-conta", { replace: true });
+  }, [isLoggedIn, navigate]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
@@ -33,7 +40,15 @@ const Login = () => {
             <>
               <h2 className="text-lg font-semibold text-foreground mb-6">Entrar</h2>
 
-              <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const success = login(email, password);
+                if (success) {
+                  navigate("/minha-conta");
+                } else {
+                  toast({ title: "Erro", description: "E-mail ou senha incorretos.", variant: "destructive" });
+                }
+              }} className="space-y-4">
                 <div>
                   <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1.5 block">
                     E-mail

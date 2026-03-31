@@ -11,6 +11,8 @@ import SearchResults from "./pages/SearchResults.tsx";
 import BookingDetails from "./pages/BookingDetails.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Login from "./pages/Login.tsx";
+import MyAccount from "./pages/MyAccount.tsx";
+import BookingDetailClient from "./pages/BookingDetailClient.tsx";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +30,8 @@ const App = () => (
               <Route path="/buscar" element={<SearchResults />} />
               <Route path="/reserva/:vehicleName" element={<BookingDetails />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/minha-conta" element={<MyAccount />} />
+              <Route path="/minha-conta/reserva/:bookingId" element={<BookingDetailClient />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

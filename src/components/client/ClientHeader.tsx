@@ -1,0 +1,48 @@
+import { LogOut } from "lucide-react";
+import { AuthUser } from "@/hooks/useAuth";
+import { motion } from "framer-motion";
+
+interface ClientHeaderProps {
+  user: AuthUser;
+  onLogout: () => void;
+}
+
+const ClientHeader = ({ user, onLogout }: ClientHeaderProps) => {
+  const initials = user.name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6"
+    >
+      <div className="w-16 h-16 rounded-full gold-gradient flex items-center justify-center text-primary-foreground text-xl font-bold shrink-0">
+        {initials}
+      </div>
+      <div className="flex-1 text-center sm:text-left">
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+          Olá, {user.name.split(" ")[0]}!
+        </h1>
+        <p className="text-muted-foreground text-sm mt-1">{user.email}</p>
+        <p className="text-muted-foreground/70 text-xs mt-1">
+          Aqui você acompanha todas as suas reservas com a Zeus Rental Car
+        </p>
+      </div>
+      <button
+        onClick={onLogout}
+        className="flex items-center gap-2 text-xs text-muted-foreground hover:text-destructive transition-colors uppercase tracking-wider"
+      >
+        <LogOut size={14} />
+        Sair
+      </button>
+    </motion.div>
+  );
+};
+
+export default ClientHeader;
