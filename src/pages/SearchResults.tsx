@@ -1,4 +1,4 @@
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Users, Briefcase, CalendarIcon, MapPin, Clock, ArrowLeft, Check } from "lucide-react";
 import { format } from "date-fns";
@@ -155,13 +155,16 @@ const SearchResults = () => {
               const dailyPrice = vehiclePrices[v.name] || 99;
               const totalPrice = dailyPrice * days;
 
+              const bookingUrl = `/reserva/${encodeURIComponent(v.name)}?${searchParams.toString()}`;
+
               return (
                 <motion.div
                   key={v.name}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: i * 0.05 }}
-                  className="group relative overflow-hidden rounded-xl border border-border/40 bg-card/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300"
+                  onClick={() => window.location.href = bookingUrl}
+                  className="group relative overflow-hidden rounded-xl border border-border/40 bg-card/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 cursor-pointer"
                 >
                   {/* Image */}
                   <div className="relative h-52 overflow-hidden">
@@ -228,14 +231,13 @@ const SearchResults = () => {
                         )}
                       </div>
 
-                      <a
-                        href={whatsappMsg(v.name)}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <Link
+                        to={bookingUrl}
+                        onClick={(e) => e.stopPropagation()}
                         className="gold-gradient text-primary-foreground px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-opacity whitespace-nowrap"
                       >
-                        Reservar
-                      </a>
+                        Ver detalhes
+                      </Link>
                     </div>
                   </div>
                 </motion.div>
