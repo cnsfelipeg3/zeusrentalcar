@@ -175,7 +175,7 @@ const SearchResults = () => {
 
                     {/* Availability badge */}
                     <div className="absolute top-3 left-3">
-                      <span className="flex items-center gap-1 bg-green-500/20 border border-green-500/30 text-green-400 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md backdrop-blur-sm">
+                      <span className="flex items-center gap-1 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md backdrop-blur-sm">
                         <Check size={10} />
                         Disponível
                       </span>
