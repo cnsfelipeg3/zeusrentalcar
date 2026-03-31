@@ -35,6 +35,7 @@ const BookingDetailClient = () => {
   const { bookingId } = useParams<{ bookingId: string }>();
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
+  const { formatPrice } = useCurrency();
 
   useEffect(() => {
     if (!isLoggedIn) navigate("/login", { replace: true });
