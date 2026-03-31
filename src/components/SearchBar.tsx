@@ -2,8 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { CalendarIcon, Clock, MapPin, Search, UserCheck } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { CalendarIcon, Clock, MapPin, Search } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 import { cn } from "@/lib/utils";
