@@ -1,5 +1,5 @@
 import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import conciergeImg from "@/assets/concierge-welcome.jpg";
 import {
   Car,
@@ -9,7 +9,6 @@ import {
   Sparkles,
   MapPin,
   KeyRound,
-  Check,
 } from "lucide-react";
 
 /* ─── Data ─── */
@@ -18,27 +17,25 @@ type StepTag = { label: string; gold?: boolean };
 
 type Step = {
   number: number;
-  phase: "antes" | "orlando" | "durante" | "fim";
   phaseLabel: string;
   title: string;
   description: string;
   highlight?: string;
   note?: string;
   tags: StepTag[];
-  icon: React.ReactNode;
-  isFinal?: boolean;
+  icon: React.ElementType;
   isStar?: boolean;
+  isFinal?: boolean;
 };
 
 const steps: Step[] = [
   {
     number: 1,
-    phase: "antes",
     phaseLabel: "Antes da viagem",
-    title: "Escolha o carro ideal para sua viagem",
+    title: "Escolha o carro ideal",
     description:
-      "Navegue pela frota e selecione o modelo perfeito. casal, família ou grupo. Esportivos, SUVs premium, full-size ou minivan.",
-    icon: <Car size={20} />,
+      "Navegue pela frota e selecione o modelo perfeito para sua viagem. Casal, família ou grupo.",
+    icon: Car,
     tags: [
       { label: "11 modelos" },
       { label: "2 a 7 passageiros" },
@@ -47,13 +44,12 @@ const steps: Step[] = [
   },
   {
     number: 2,
-    phase: "antes",
     phaseLabel: "Antes da viagem",
     title: "Fale com a gente no WhatsApp",
     description:
-      "Envie suas datas, o modelo escolhido e tire todas as dúvidas. Atendimento 100% em português, sem complicação e com resposta rápida.",
-    highlight: "Atendimento 100% em português",
-    icon: <MessageCircle size={20} />,
+      "Envie suas datas, o modelo escolhido e tire todas as dúvidas. Atendimento 100% em português, sem complicação.",
+    highlight: "100% em português",
+    icon: MessageCircle,
     tags: [
       { label: "Português nativo", gold: true },
       { label: "Resposta rápida" },
@@ -62,12 +58,11 @@ const steps: Step[] = [
   },
   {
     number: 3,
-    phase: "antes",
     phaseLabel: "Antes da viagem",
     title: "Confirme a reserva e viaje tranquilo",
     description:
-      "Receba o contrato, confirme os detalhes e garanta seu veículo. Tudo resolvido antes de embarcar. Você só precisa de três documentos.",
-    icon: <FileCheck size={20} />,
+      "Receba o contrato, confirme os detalhes e garanta seu veículo. Tudo resolvido antes de embarcar.",
+    icon: FileCheck,
     tags: [
       { label: "CNH brasileira válida" },
       { label: "Passaporte" },
@@ -76,133 +71,69 @@ const steps: Step[] = [
   },
   {
     number: 4,
-    phase: "orlando",
     phaseLabel: "Chegou em Orlando",
-    title: "Um representante Zeus te espera no desembarque",
+    title: "Recepção VIP no aeroporto",
     description:
-      "Ao desembarcar, um representante da Zeus estará na área de desembarque com uma plaquinha com seu nome. Sem procurar balcão, sem fila, sem estresse. Ele te conduz diretamente até o estacionamento.",
-    highlight: "área de desembarque com uma plaquinha com seu nome",
-    note: "A entrega também pode ser feita em outro local combinado previamente. hotel, resort, Airbnb ou onde preferir.",
+      "Ao desembarcar, um representante da Zeus estará na área de desembarque com uma plaquinha com seu nome. Sem fila, sem estresse.",
+    highlight: "plaquinha com seu nome",
     isStar: true,
-    icon: <UserCheck size={20} />,
+    icon: UserCheck,
+    note: "A entrega também pode ser feita em hotel, resort, Airbnb ou onde preferir.",
     tags: [
       { label: "Plaquinha com seu nome", gold: true },
       { label: "Recepção no desembarque", gold: true },
-      { label: "Local alternativo" },
     ],
   },
   {
     number: 5,
-    phase: "orlando",
     phaseLabel: "Chegou em Orlando",
-    title: "Seu carro: limpo, higienizado e de tanque cheio",
+    title: "Carro limpo, higienizado e tanque cheio",
     description:
-      "O representante te leva até o estacionamento onde o carro está pronto: lavado, higienizado e com o tanque cheio. Confira o veículo, receba as orientações e pronto. é só dirigir.",
+      "O representante te leva até o estacionamento onde o carro está pronto: lavado, higienizado e com o tanque cheio.",
     highlight: "lavado, higienizado e com o tanque cheio",
-    icon: <Sparkles size={20} />,
+    icon: Sparkles,
     tags: [
       { label: "Lavado e higienizado", gold: true },
       { label: "Tanque cheio", gold: true },
       { label: "CarPlay configurado" },
-      { label: "GPS pronto" },
     ],
   },
   {
     number: 6,
-    phase: "durante",
     phaseLabel: "Durante a viagem",
-    title: "Aproveite Orlando com suporte a qualquer hora",
+    title: "Aproveite com suporte a qualquer hora",
     description:
-      "Parques, outlets, restaurantes, praias. vá aonde quiser, na hora que quiser. Sem depender de Uber, sem filas. Se precisar de qualquer coisa, a Zeus está a uma mensagem de distância.",
-    highlight: "Zeus está a uma mensagem de distância",
-    icon: <MapPin size={20} />,
+      "Parques, outlets, restaurantes, praias. Vá aonde quiser, na hora que quiser. A Zeus está a uma mensagem de distância.",
+    highlight: "a uma mensagem de distância",
+    icon: MapPin,
     tags: [
-      { label: "Suporte durante toda a viagem", gold: true },
+      { label: "Suporte 24h", gold: true },
       { label: "Autonomia total" },
-      { label: "Sem surpresas" },
     ],
   },
   {
     number: 7,
-    phase: "fim",
     phaseLabel: "Hora de voltar",
-    title: "Um representante te encontra para a devolução",
+    title: "Devolução simples e assistida",
     description:
-      "Na hora de devolver, a mesma experiência: um representante Zeus estará te esperando no aeroporto ou no local combinado. Entregue a chave, despeça-se do carro e embarque com tranquilidade. Sem burocracia, sem taxas escondidas.",
-    highlight: "representante Zeus estará te esperando no aeroporto",
-    note: "A devolução pode ser no aeroporto, hotel, resort ou qualquer local combinado previamente com a equipe.",
+      "Um representante Zeus estará te esperando no aeroporto ou no local combinado. Entregue a chave e embarque tranquilo. Sem burocracia, sem taxas escondidas.",
+    highlight: "no aeroporto ou no local combinado",
     isFinal: true,
-    icon: <KeyRound size={20} />,
+    icon: KeyRound,
     tags: [
       { label: "Devolução assistida", gold: true },
-      { label: "Aeroporto ou local combinado", gold: true },
       { label: "Sem taxas extras" },
     ],
   },
 ];
 
-type PhaseKey = "antes" | "orlando" | "durante" | "fim";
+/* ─── Timeline Step ─── */
 
-const phases: { key: PhaseKey; label: string; icon: string; steps: number[] }[] = [
-  { key: "antes", label: "Antes da viagem", icon: "✈️", steps: [0, 1, 2] },
-  { key: "orlando", label: "Chegou em Orlando", icon: "🏰", steps: [3, 4] },
-  { key: "durante", label: "Durante a viagem", icon: "🎢", steps: [5] },
-  { key: "fim", label: "Hora de voltar", icon: "🛬", steps: [6] },
-];
-
-/* ─── Phase Navigation Pills ─── */
-
-const PhaseNav = ({
-  activePhase,
-  onSelect,
-}: {
-  activePhase: PhaseKey;
-  onSelect: (key: PhaseKey) => void;
-}) => (
-  <motion.div
-    initial={{ opacity: 0, y: 16 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.5, delay: 0.2 }}
-    className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-14 sm:mb-20"
-  >
-    {phases.map((phase) => {
-      const isActive = activePhase === phase.key;
-      return (
-        <button
-          key={phase.key}
-          onClick={() => onSelect(phase.key)}
-          className={`relative px-4 sm:px-5 py-2.5 rounded-full text-xs sm:text-[13px] font-semibold tracking-wide transition-all duration-400 cursor-pointer ${
-            isActive
-              ? "text-primary-foreground shadow-[0_0_30px_hsl(38,72%,42%,0.25)]"
-              : "text-muted-foreground hover:text-foreground bg-card/60 backdrop-blur-sm border border-border hover:border-primary/30"
-          }`}
-        >
-          {isActive && (
-            <motion.div
-              layoutId="activePhase"
-              className="absolute inset-0 rounded-full gold-gradient"
-              transition={{ type: "spring", stiffness: 380, damping: 30 }}
-            />
-          )}
-          <span className="relative z-10 flex items-center gap-2">
-            <span className="text-sm">{phase.icon}</span>
-            <span className="hidden sm:inline">{phase.label}</span>
-            <span className="sm:hidden">
-              {phase.label.split(" ").slice(-1)[0]}
-            </span>
-          </span>
-        </button>
-      );
-    })}
-  </motion.div>
-);
-
-/* ─── Step Card ─── */
-
-const StepCard = ({ step, index }: { step: Step; index: number }) => {
+const TimelineStep = ({ step, index, isLast }: { step: Step; index: number; isLast: boolean }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const isInView = useInView(ref, { once: true, margin: "-60px" });
+  const Icon = step.icon;
+  const isEven = index % 2 === 0;
 
   const renderDescription = () => {
     if (!step.highlight) return step.description;
@@ -217,123 +148,204 @@ const StepCard = ({ step, index }: { step: Step; index: number }) => {
   };
 
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="relative group"
-    >
-      {/* Ambient glow behind card on hover */}
-      <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-primary/20 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm" />
+    <div ref={ref} className="relative">
+      {/* Vertical line */}
+      {!isLast && (
+        <div className="absolute left-1/2 -translate-x-1/2 top-[56px] bottom-0 w-px bg-gradient-to-b from-primary/30 via-border/40 to-border/20 hidden lg:block" />
+      )}
+      {!isLast && (
+        <div className="absolute left-6 top-[56px] bottom-0 w-px bg-gradient-to-b from-primary/30 via-border/40 to-border/20 lg:hidden" />
+      )}
 
-      <div
-        className={`relative rounded-2xl overflow-hidden transition-all duration-500 ${
-          step.isFinal
-            ? "bg-gradient-to-br from-card via-card to-primary/[0.08] border border-primary/30 shadow-[0_0_40px_hsl(38,72%,42%,0.12)]"
-            : step.isStar
-            ? "bg-gradient-to-br from-card via-card to-primary/[0.05] border border-primary/20 group-hover:border-primary/40"
-            : "bg-card/80 backdrop-blur-xl border border-border group-hover:border-primary/30"
-        } group-hover:shadow-[0_8px_40px_hsl(0,0%,0%,0.3)]`}
-      >
-        {/* Top accent line */}
-        <div
-          className={`h-[2px] w-full ${
-            step.isFinal
-              ? "gold-gradient"
-              : "bg-gradient-to-r from-transparent via-primary/40 to-transparent"
-          }`}
-        />
-
-        <div className="p-6 sm:p-8 flex flex-col items-center text-center">
-          {/* Icon circle */}
+      {/* Desktop: alternating layout */}
+      <div className="hidden lg:grid lg:grid-cols-[1fr_56px_1fr] lg:gap-6 items-start">
+        {/* Left side */}
+        <div className={isEven ? "" : "order-3"}>
           <motion.div
-            whileHover={{ scale: 1.1, rotate: 5 }}
-            className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-all duration-300 ${
+            initial={{ opacity: 0, x: isEven ? -30 : 30 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.15, ease: "easeOut" }}
+            className={`group relative ${isEven ? "text-right" : "text-left"}`}
+          >
+            <div
+              className={`relative rounded-xl overflow-hidden transition-all duration-400 bg-card/80 backdrop-blur-sm border group-hover:shadow-[0_4px_24px_hsl(0,0%,0%,0.15)] ${
+                step.isFinal
+                  ? "border-primary/30 shadow-[0_0_20px_hsl(38,72%,42%,0.08)]"
+                  : step.isStar
+                  ? "border-primary/20 group-hover:border-primary/40"
+                  : "border-border/50 group-hover:border-primary/25"
+              }`}
+            >
+              <div
+                className={`h-[2px] w-full ${
+                  step.isFinal || step.isStar
+                    ? "gold-gradient"
+                    : "bg-gradient-to-r from-transparent via-primary/30 to-transparent"
+                }`}
+              />
+              <div className="p-5">
+                <div className={`flex items-center gap-2 mb-1 ${isEven ? "justify-end" : "justify-start"}`}>
+                  <span className="text-primary/50 text-[10px] font-bold tracking-[3px] uppercase">
+                    Passo {String(step.number).padStart(2, "0")}
+                  </span>
+                  <span className="w-0.5 h-0.5 rounded-full bg-primary/30" />
+                  <span className="text-muted-foreground/60 text-[10px] uppercase tracking-[2px] font-medium">
+                    {step.phaseLabel}
+                  </span>
+                </div>
+
+                {step.isStar && (
+                  <p className={`text-[10px] text-primary font-semibold tracking-wider uppercase mb-1 ${isEven ? "text-right" : "text-left"}`}>
+                    Experiência VIP
+                  </p>
+                )}
+
+                <h3 className="text-base font-bold text-foreground leading-snug mb-2">{step.title}</h3>
+                <p className="text-[13px] text-muted-foreground leading-relaxed mb-3">
+                  {renderDescription()}
+                </p>
+
+                {step.note && (
+                  <div className="bg-primary/[0.04] border border-primary/10 rounded-lg px-3 py-2 mb-3">
+                    <p className="text-[11px] text-muted-foreground/70 leading-relaxed italic">{step.note}</p>
+                  </div>
+                )}
+
+                <div className={`flex flex-wrap gap-1.5 ${isEven ? "justify-end" : "justify-start"}`}>
+                  {step.tags.map((tag, i) => (
+                    <span
+                      key={i}
+                      className={`text-[10px] px-2.5 py-1 rounded-md font-medium ${
+                        tag.gold
+                          ? "bg-primary/[0.08] text-primary border border-primary/15"
+                          : "bg-muted/30 text-muted-foreground/70 border border-border/40"
+                      }`}
+                    >
+                      {tag.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Center: icon node */}
+        <div className="flex flex-col items-center order-2">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.4, delay: 0.05, type: "spring", stiffness: 300 }}
+            className={`relative z-10 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 ${
               step.isFinal
-                ? "gold-gradient text-primary-foreground shadow-[0_0_24px_hsl(38,72%,42%,0.35)]"
-                : "bg-primary/[0.08] text-primary border border-primary/20 group-hover:bg-primary/[0.15] group-hover:shadow-[0_0_24px_hsl(38,72%,42%,0.18)]"
+                ? "gold-gradient text-primary-foreground shadow-[0_0_20px_hsl(38,72%,42%,0.3)]"
+                : "bg-card border-2 border-primary/30 text-primary shadow-[0_0_16px_hsl(38,72%,42%,0.1)]"
             }`}
           >
-            {step.isFinal ? <Check size={22} /> : step.icon}
+            <Icon size={20} />
           </motion.div>
-
-          {/* Step number + phase label */}
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-primary/60 text-[11px] font-bold tracking-[3px] uppercase">
-              Passo {step.number < 10 ? `0${step.number}` : step.number}
-            </span>
-            <span className="w-1 h-1 rounded-full bg-primary/30" />
-            <span className="text-muted-foreground text-[10px] uppercase tracking-[2px] font-medium">
-              {step.phaseLabel}
-            </span>
-          </div>
-
-          {step.isStar && (
-            <span className="text-[10px] text-primary font-semibold tracking-wider uppercase mt-1 mb-1">
-              ⭐ Experiência VIP
-            </span>
-          )}
-
-          {/* Title */}
-          <h3 className="text-lg sm:text-xl font-bold text-foreground mb-3 leading-snug tracking-tight mt-2">
-            {step.title}
-          </h3>
-
-          {/* Description */}
-          <p className="text-[13px] sm:text-sm text-muted-foreground leading-[1.8] mb-5 max-w-lg">
-            {renderDescription()}
-          </p>
-
-          {/* Note callout */}
-          {step.note && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={isInView ? { opacity: 1 } : {}}
-              transition={{ delay: 0.3 }}
-              className="relative mb-5 rounded-lg overflow-hidden w-full max-w-lg"
-            >
-              <div className="bg-primary/[0.04] border border-primary/10 rounded-lg px-4 py-3">
-                <p className="text-xs text-muted-foreground/80 leading-relaxed italic">
-                  {step.note}
-                </p>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Tags */}
-          <div className="flex flex-wrap justify-center gap-2">
-            {step.tags.map((tag, i) => (
-              <span
-                key={i}
-                className={`text-[11px] px-3 py-1.5 rounded-lg font-medium transition-all duration-300 ${
-                  tag.gold
-                    ? "bg-primary/[0.1] text-primary border border-primary/20 shadow-[0_0_12px_hsl(38,72%,42%,0.08)]"
-                    : "bg-muted/40 text-muted-foreground border border-border/60 group-hover:border-border"
-                }`}
-              >
-                {tag.gold && <span className="mr-1 text-[10px]">✦</span>}
-                {tag.label}
-              </span>
-            ))}
-          </div>
         </div>
+
+        {/* Right side (empty for even, content for odd) */}
+        <div className={isEven ? "order-3" : ""} />
       </div>
-    </motion.div>
+
+      {/* Mobile: left-aligned timeline */}
+      <div className="lg:hidden flex gap-4">
+        {/* Icon node */}
+        <div className="flex flex-col items-center flex-shrink-0">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.4, delay: 0.05, type: "spring", stiffness: 300 }}
+            className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center ${
+              step.isFinal
+                ? "gold-gradient text-primary-foreground shadow-[0_0_16px_hsl(38,72%,42%,0.3)]"
+                : "bg-card border-2 border-primary/30 text-primary"
+            }`}
+          >
+            <Icon size={18} />
+          </motion.div>
+        </div>
+
+        {/* Card */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={isInView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="flex-1 pb-8"
+        >
+          <div
+            className={`group rounded-xl overflow-hidden transition-all duration-400 bg-card/80 backdrop-blur-sm border ${
+              step.isFinal
+                ? "border-primary/30"
+                : step.isStar
+                ? "border-primary/20"
+                : "border-border/50"
+            }`}
+          >
+            <div
+              className={`h-[2px] w-full ${
+                step.isFinal || step.isStar
+                  ? "gold-gradient"
+                  : "bg-gradient-to-r from-primary/30 via-transparent to-transparent"
+              }`}
+            />
+            <div className="p-4">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-primary/50 text-[10px] font-bold tracking-[3px] uppercase">
+                  {String(step.number).padStart(2, "0")}
+                </span>
+                <span className="w-0.5 h-0.5 rounded-full bg-primary/30" />
+                <span className="text-muted-foreground/60 text-[10px] uppercase tracking-[2px] font-medium">
+                  {step.phaseLabel}
+                </span>
+              </div>
+
+              {step.isStar && (
+                <p className="text-[10px] text-primary font-semibold tracking-wider uppercase mb-1">
+                  Experiência VIP
+                </p>
+              )}
+
+              <h3 className="text-sm font-bold text-foreground leading-snug mb-1.5">{step.title}</h3>
+              <p className="text-[12px] text-muted-foreground leading-relaxed mb-2.5">
+                {renderDescription()}
+              </p>
+
+              {step.note && (
+                <div className="bg-primary/[0.04] border border-primary/10 rounded-lg px-3 py-2 mb-2.5">
+                  <p className="text-[11px] text-muted-foreground/70 leading-relaxed italic">{step.note}</p>
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-1.5">
+                {step.tags.map((tag, i) => (
+                  <span
+                    key={i}
+                    className={`text-[10px] px-2 py-1 rounded-md font-medium ${
+                      tag.gold
+                        ? "bg-primary/[0.08] text-primary border border-primary/15"
+                        : "bg-muted/30 text-muted-foreground/70 border border-border/40"
+                    }`}
+                  >
+                    {tag.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </div>
   );
 };
 
 /* ─── Main Section ─── */
 
 const HowItWorksSection = () => {
-  const [activePhase, setActivePhase] = useState<PhaseKey>("antes");
-
-  const currentPhase = phases.find((p) => p.key === activePhase)!;
-  const currentSteps = currentPhase.steps.map((i) => steps[i]);
-
   return (
     <section id="como-funciona" className="py-20 sm:py-32 relative overflow-hidden">
-      {/* Background effects */}
       <div className="absolute inset-0 section-divider" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary/[0.03] rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
@@ -376,7 +388,7 @@ const HowItWorksSection = () => {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.7, delay: 0.15 }}
-          className="max-w-2xl mx-auto mb-14 sm:mb-20 relative group"
+          className="max-w-2xl mx-auto mb-16 sm:mb-24 relative group"
         >
           <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-primary/20 via-transparent to-primary/10 opacity-60 blur-md group-hover:opacity-80 transition-opacity duration-500" />
           <div className="relative rounded-2xl overflow-hidden border border-primary/20 shadow-[0_8px_40px_hsl(0,0%,0%,0.4)]">
@@ -396,42 +408,11 @@ const HowItWorksSection = () => {
           </div>
         </motion.div>
 
-        {/* Phase navigation */}
-        <PhaseNav activePhase={activePhase} onSelect={setActivePhase} />
-
-        {/* Steps grid */}
-        <div className="max-w-3xl mx-auto">
-          <motion.div
-            key={activePhase}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="grid gap-5 sm:gap-6"
-          >
-            {currentSteps.map((step, i) => (
-              <StepCard key={step.number} step={step} index={i} />
-            ))}
-          </motion.div>
-
-          {/* Phase progress indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="flex items-center justify-center gap-2 mt-10"
-          >
-            {phases.map((phase) => (
-              <button
-                key={phase.key}
-                onClick={() => setActivePhase(phase.key)}
-                className={`h-1.5 rounded-full transition-all duration-500 cursor-pointer ${
-                  phase.key === activePhase
-                    ? "w-10 gold-gradient shadow-[0_0_12px_hsl(38,72%,42%,0.3)]"
-                    : "w-3 bg-muted hover:bg-muted-foreground/30"
-                }`}
-              />
-            ))}
-          </motion.div>
+        {/* Timeline */}
+        <div className="max-w-4xl mx-auto">
+          {steps.map((step, i) => (
+            <TimelineStep key={step.number} step={step} index={i} isLast={i === steps.length - 1} />
+          ))}
         </div>
 
         {/* CTA */}
@@ -446,9 +427,8 @@ const HowItWorksSection = () => {
             href={`https://wa.me/16892981754?text=${encodeURIComponent("Olá, venho do site da Zeus e gostaria de realizar uma reserva!")}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="group/cta relative inline-flex items-center gap-3 px-10 py-4.5 rounded-xl text-sm font-bold uppercase tracking-[2px] transition-all duration-300"
+            className="group/cta relative inline-flex items-center gap-3 px-10 py-4 rounded-xl text-sm font-bold uppercase tracking-[2px] transition-all duration-300"
           >
-            {/* Button glow */}
             <div className="absolute inset-0 rounded-xl gold-gradient opacity-90 group-hover/cta:opacity-100 transition-opacity" />
             <div className="absolute -inset-1 rounded-xl gold-gradient opacity-0 group-hover/cta:opacity-20 blur-lg transition-opacity duration-500" />
             <span className="relative z-10 flex items-center gap-3 text-primary-foreground">
