@@ -1,32 +1,52 @@
 // Shared vehicle data with pricing
 export interface VehicleData {
   name: string;
-  categoryKey: string;
+  categoryLabel: string;
+  trim: string;
   passengers: number;
-  luggage?: number;
-  dailyPrice: number; // USD per day (fictional for now)
-  coverSlug: string;
-  preparing?: boolean;
+  dailyPrice: number;
 }
 
 export const vehiclePrices: Record<string, number> = {
-  "Corvette Stingray C8": 389,
-  "Mustang Conversível": 189,
-  "Cadillac Escalade": 299,
-  "BMW X5 M Sport": 249,
-  "Chevrolet Suburban": 219,
-  "Dodge Durango": 159,
-  "Kia Sorento": 119,
-  "Kia Sportage": 99,
-  "Mitsubishi Outlander": 109,
-  "Volkswagen Tiguan": 115,
-  "Chrysler Pacifica": 139,
-  "Lexus NX": 199,
-  "Audi Q7": 269,
-  "Volvo XC60": 229,
-  "MUSTANG CONVERSÍVEL": 189,
-  "VOLKSWAGEN TIGUAN": 115,
-  "Nissan Kicks": 89,
-  "Volkswagen Atlas": 169,
-  "Mercedes-Benz GLA": 209,
+  "Nissan Kicks": 45,
+  "Kia Sportage": 60,
+  "Kia Sorento": 80,
+  "Mitsubishi Outlander": 80,
+  "Volkswagen Tiguan": 80,
+  "VOLKSWAGEN TIGUAN": 80,
+  "Dodge Durango": 100,
+  "Chevrolet Suburban": 150,
+  "Volkswagen Atlas": 150,
+  "Lexus NX": 130,
+  "Mercedes-Benz GLA": 130,
+  "Volvo XC60": 160,
+  "BMW X5 M Sport": 220,
+  "Cadillac Escalade": 280,
+  "Audi Q7": 280,
+  "Chrysler Pacifica": 70,
+  "Mustang Conversível": 320,
+  "MUSTANG CONVERSÍVEL": 320,
+  "Corvette Stingray C8": 650,
+};
+
+export const vehicleTrims: Record<string, string> = {
+  "Nissan Kicks": "SV / SR",
+  "Kia Sportage": "LX / EX",
+  "Kia Sorento": "LX / EX",
+  "Mitsubishi Outlander": "ES / SE",
+  "Volkswagen Tiguan": "SE / SEL",
+  "VOLKSWAGEN TIGUAN": "SE / SEL",
+  "Dodge Durango": "GT / SXT",
+  "Chevrolet Suburban": "LT / Premier",
+  "Volkswagen Atlas": "SE / SEL",
+  "Lexus NX": "F Sport / Base",
+  "Mercedes-Benz GLA": "GLA 250 / 4MATIC",
+  "Volvo XC60": "R-Design / Inscription",
+  "BMW X5 M Sport": "xDrive40i M Sport",
+  "Cadillac Escalade": "Premium Luxury",
+  "Audi Q7": "Premium Plus / Prestige",
+  "Chrysler Pacifica": "Touring / Limited",
+  "Mustang Conversível": "EcoBoost / GT",
+  "MUSTANG CONVERSÍVEL": "EcoBoost / GT",
+  "Corvette Stingray C8": "6.2 V8",
 };
