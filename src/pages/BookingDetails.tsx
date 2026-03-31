@@ -534,7 +534,7 @@ const BookingDetails = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-2.5">
-                      <p className="text-xs font-bold text-foreground whitespace-nowrap">+2% /dia</p>
+                      <p className="text-xs font-bold text-foreground whitespace-nowrap">+{formatPrice(pricing.extraDriverDailyExtra)} /dia</p>
                       <Switch
                         checked={extraDriver}
                         onCheckedChange={setExtraDriver}
