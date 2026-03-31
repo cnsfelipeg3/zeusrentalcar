@@ -36,7 +36,7 @@ const Navbar = () => {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-background/80 backdrop-blur-xl border-b border-white/5 shadow-lg shadow-black/20"
+          ? "bg-background/80 backdrop-blur-xl border-b border-border/30 shadow-lg shadow-foreground/10"
           : "bg-transparent"
       }`}
     >
@@ -72,7 +72,7 @@ const Navbar = () => {
               <Globe size={18} />
               <span className="text-sm font-medium uppercase tracking-wider">{languageFlags[language]}</span>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-background/95 backdrop-blur-xl border-white/10">
+            <DropdownMenuContent className="bg-background/95 backdrop-blur-xl border-border/40">
               {languages.map((lang) => (
                 <DropdownMenuItem
                   key={lang}
@@ -107,7 +107,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-background/95 backdrop-blur-xl border-t border-white/5 animate-fade-in">
+        <div className="md:hidden bg-background/95 backdrop-blur-xl border-t border-border/30 animate-fade-in">
           <div className="flex flex-col gap-4 px-6 py-6">
             {navLinks.map((link) => (
               <a
@@ -131,12 +131,12 @@ const Navbar = () => {
 
             {/* Mobile language switcher - same dropdown style as desktop */}
             <DropdownMenu>
-              <DropdownMenuTrigger className="flex items-center gap-2 text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300 outline-none pt-2 border-t border-white/5 w-full">
+              <DropdownMenuTrigger className="flex items-center gap-2 text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300 outline-none pt-2 border-t border-border/30 w-full">
                 <Globe size={16} />
                 <span>Trocar idioma</span>
                 <span className="ml-auto">{languageFlags[language]}</span>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-background/95 backdrop-blur-xl border-white/10">
+              <DropdownMenuContent className="bg-background/95 backdrop-blur-xl border-border/40">
                 {languages.map((lang) => (
                   <DropdownMenuItem
                     key={lang}
