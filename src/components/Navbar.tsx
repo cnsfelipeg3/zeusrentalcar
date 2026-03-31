@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Globe, Home, Sun, Moon } from "lucide-react";
+import { Menu, X, Globe, Home, Sun, Moon, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useThemeMode } from "@/i18n/ThemeContext";
@@ -16,6 +17,7 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
   const { theme, toggleTheme } = useThemeMode();
+  const navigate = useNavigate();
 
   const navLinks = [
     { label: t.nav.fleet, href: "#frota" },
@@ -94,6 +96,14 @@ const Navbar = () => {
           >
             {t.nav.book}
           </a>
+
+          <button
+            onClick={() => navigate("/login")}
+            className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors duration-300"
+            title={t.nav.myBookings}
+          >
+            <User size={18} />
+          </button>
         </div>
 
         {/* Mobile toggle */}
@@ -158,6 +168,14 @@ const Navbar = () => {
             >
               {t.nav.book}
             </a>
+
+            <button
+              onClick={() => { navigate("/login"); setMobileOpen(false); }}
+              className="flex items-center gap-2 text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300 pt-2 border-t border-border/30 w-full"
+            >
+              <User size={16} />
+              <span>{t.nav.myBookings}</span>
+            </button>
           </div>
         </div>
       )}

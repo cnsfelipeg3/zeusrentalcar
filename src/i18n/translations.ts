@@ -26,6 +26,7 @@ type TranslationKeys = {
     whyZeus: string;
     contact: string;
     book: string;
+    myBookings: string;
   };
   hero: {
     title: string;
@@ -136,6 +137,7 @@ export const translations: Record<Language, TranslationKeys> = {
       whyZeus: "Por que a Zeus?",
       contact: "Contato",
       book: "Reservar",
+      myBookings: "Minhas Reservas",
     },
     hero: {
       title: "Sua viagem em Orlando começa com o ",
@@ -262,6 +264,7 @@ export const translations: Record<Language, TranslationKeys> = {
       whyZeus: "Why Zeus?",
       contact: "Contact",
       book: "Book Now",
+      myBookings: "My Bookings",
     },
     hero: {
       title: "Your Orlando trip starts with the ",
@@ -388,6 +391,7 @@ export const translations: Record<Language, TranslationKeys> = {
       whyZeus: "¿Por qué Zeus?",
       contact: "Contacto",
       book: "Reservar",
+      myBookings: "Mis Reservas",
     },
     hero: {
       title: "Tu viaje en Orlando comienza con el ",
@@ -514,6 +518,7 @@ export const translations: Record<Language, TranslationKeys> = {
       whyZeus: "Perché Zeus?",
       contact: "Contatto",
       book: "Prenota",
+      myBookings: "Le Mie Prenotazioni",
     },
     hero: {
       title: "Il tuo viaggio a Orlando inizia con l'",
@@ -640,6 +645,7 @@ export const translations: Record<Language, TranslationKeys> = {
       whyZeus: "Warum Zeus?",
       contact: "Kontakt",
       book: "Buchen",
+      myBookings: "Meine Buchungen",
     },
     hero: {
       title: "Ihre Orlando-Reise beginnt mit dem ",
@@ -766,6 +772,7 @@ export const translations: Record<Language, TranslationKeys> = {
       whyZeus: "Pourquoi Zeus ?",
       contact: "Contact",
       book: "Réserver",
+      myBookings: "Mes Réservations",
     },
     hero: {
       title: "Votre voyage à Orlando commence avec la ",
