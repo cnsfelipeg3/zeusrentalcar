@@ -146,6 +146,8 @@ const BookingDetails = () => {
       subtotalRental,
       insuranceDailyExtra,
       insuranceTotal,
+      extraDriverDailyExtra,
+      extraDriverTotal,
       childSeatTotal,
       tollTagTotal,
       returnFee,
@@ -157,7 +159,7 @@ const BookingDetails = () => {
       deposit: premiumInsurance ? 0 : BASIC_DEPOSIT,
       deductible: premiumInsurance ? 0 : basicDeductible,
     };
-  }, [dailyPrice, days, premiumInsurance, childSeat, childSeatQty, tollTag, isDifferentCity]);
+  }, [dailyPrice, days, premiumInsurance, extraDriver, childSeat, childSeatQty, tollTag, isDifferentCity]);
 
   // WhatsApp message
   const whatsappMsg = useMemo(() => {
