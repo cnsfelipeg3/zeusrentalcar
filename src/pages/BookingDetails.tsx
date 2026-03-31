@@ -519,6 +519,29 @@ const BookingDetails = () => {
                     </div>
                   </div>
 
+                  {/* Extra Driver */}
+                  <div className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-300 ${
+                    extraDriver ? "border-primary/30 bg-primary/5" : "border-border/20 bg-muted/10"
+                  }`}>
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-md bg-muted/30 flex items-center justify-center">
+                        <Users size={16} className="text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-foreground">Condutor Extra</p>
+                        <p className="text-[10px] text-muted-foreground">Motorista adicional habilitado</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <p className="text-xs font-bold text-foreground whitespace-nowrap">+2% /dia</p>
+                      <Switch
+                        checked={extraDriver}
+                        onCheckedChange={setExtraDriver}
+                        className="data-[state=checked]:bg-emerald-500"
+                      />
+                    </div>
+                  </div>
+
                   {/* Included for free */}
                   <div className="p-3 rounded-lg border border-border/15 bg-muted/5">
                     <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-muted-foreground mb-2">Já incluso na sua reserva</p>
