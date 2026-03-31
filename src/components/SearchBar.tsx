@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { CalendarIcon, Clock, MapPin, Search } from "lucide-react";
+import { CalendarIcon, Clock, MapPin, Search, UserCheck } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -36,6 +36,8 @@ const SearchBar = () => {
   const [pickupLocation, setPickupLocation] = useState("");
   const [returnLocation, setReturnLocation] = useState("");
   const [differentReturnLocation, setDifferentReturnLocation] = useState(false);
+  const [driverOver26, setDriverOver26] = useState(true);
+  const [driverAge, setDriverAge] = useState("");
   const [openPicker, setOpenPicker] = useState<string | null>(null);
 
   const handleSearch = () => {
@@ -46,6 +48,7 @@ const SearchBar = () => {
     if (returnTime) params.set("returnTime", returnTime);
     if (pickupLocation) params.set("pickupLocation", pickupLocation);
     params.set("returnLocation", differentReturnLocation ? returnLocation : pickupLocation);
+    if (!driverOver26 && driverAge) params.set("driverAge", driverAge);
     navigate(`/buscar?${params.toString()}`);
   };
 
@@ -261,6 +264,51 @@ const SearchBar = () => {
                     ))}
                   </PopoverContent>
                 </Popover>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Driver age toggle */}
+          <div className="flex items-center gap-3">
+            <Switch
+              checked={driverOver26}
+              onCheckedChange={(checked) => {
+                setDriverOver26(checked);
+                if (checked) setDriverAge("");
+              }}
+              className="data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-muted"
+            />
+            <UserCheck size={16} className="text-primary" />
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
+              Condutor tem 26 anos ou mais?
+            </span>
+          </div>
+
+          <AnimatePresence>
+            {!driverOver26 && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="overflow-hidden"
+              >
+                <div className="flex items-center gap-2 px-4 py-3 rounded-xl border border-primary/40 bg-background/50 w-full sm:w-auto sm:min-w-[280px]">
+                  <UserCheck size={16} className="text-primary shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Idade do Condutor</p>
+                    <input
+                      type="number"
+                      min="18"
+                      max="25"
+                      value={driverAge}
+                      onChange={(e) => setDriverAge(e.target.value)}
+                      placeholder="Ex: 22"
+                      className="text-sm text-foreground bg-transparent outline-none w-full placeholder:text-muted-foreground/50"
+                    />
+                  </div>
+                  <span className="text-[10px] text-primary font-semibold whitespace-nowrap">+8% na diária</span>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>

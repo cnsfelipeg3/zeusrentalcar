@@ -80,7 +80,9 @@ const SearchResults = () => {
   const pickupTime = searchParams.get("pickupTime") || "10:00";
   const pickupLocation = searchParams.get("pickupLocation") || "";
   const returnLocation = searchParams.get("returnLocation") || pickupLocation;
-
+  const driverAgeParam = searchParams.get("driverAge");
+  const isUnder26 = driverAgeParam ? parseInt(driverAgeParam) < 26 : false;
+  const YOUNG_DRIVER_SURCHARGE = 0.08;
   const pickupDate = pickupDateStr ? new Date(pickupDateStr) : null;
   const returnDate = returnDateStr ? new Date(returnDateStr) : null;
 
@@ -154,7 +156,8 @@ const SearchResults = () => {
           {/* Results Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {vehicles.map((v, i) => {
-              const dailyPrice = vehiclePrices[v.name] || 99;
+              const basePrice = vehiclePrices[v.name] || 99;
+              const dailyPrice = isUnder26 ? Math.ceil(basePrice * (1 + YOUNG_DRIVER_SURCHARGE)) : basePrice;
               const totalPrice = dailyPrice * days;
 
               const bookingUrl = `/reserva/${encodeURIComponent(v.name)}?${searchParams.toString()}`;

@@ -85,6 +85,7 @@ const LONG_RENTAL_MIN_DAYS = 10;
 const BASIC_DEPOSIT = 550;
 const DEDUCTIBLE_MULTIPLIER = 11;
 const EXTRA_DRIVER_RATE = 0.02;
+const YOUNG_DRIVER_SURCHARGE = 0.08;
 
 const BookingDetails = () => {
   const { vehicleName } = useParams<{ vehicleName: string }>();
@@ -100,6 +101,8 @@ const BookingDetails = () => {
   const returnTime = searchParams.get("returnTime") || "10:00";
   const pickupLocation = searchParams.get("pickupLocation") || "";
   const returnLocation = searchParams.get("returnLocation") || pickupLocation;
+  const driverAgeParam = searchParams.get("driverAge");
+  const isUnder26 = driverAgeParam ? parseInt(driverAgeParam) < 26 : false;
 
   const pickupDate = pickupDateStr ? new Date(pickupDateStr) : null;
   const returnDate = returnDateStr ? new Date(returnDateStr) : null;
@@ -122,7 +125,8 @@ const BookingDetails = () => {
   }, [pickupLocation, returnLocation]);
 
   // Pricing calculations
-  const dailyPrice = vehiclePrices[decodedName] || 99;
+  const basePrice = vehiclePrices[decodedName] || 99;
+  const dailyPrice = isUnder26 ? Math.ceil(basePrice * (1 + YOUNG_DRIVER_SURCHARGE)) : basePrice;
   const pricing = useMemo(() => {
     const subtotalRental = dailyPrice * days;
     const insuranceDailyExtra = premiumInsurance ? Math.round(dailyPrice * PREMIUM_INSURANCE_RATE) : 0;
@@ -176,7 +180,8 @@ const BookingDetails = () => {
       `Devolução: ${returnLocation}`,
       ``,
       `💰 *Resumo do Orçamento:*`,
-      `Diária: ${formatPrice(dailyPrice)}`,
+      isUnder26 ? `⚠️ Condutor menor de 26 anos (idade: ${driverAgeParam}) — acréscimo de 8% na diária` : "",
+      `Diária: ${formatPrice(dailyPrice)}${isUnder26 ? " (com acréscimo +8%)" : ""}`,
       `Subtotal locação: ${formatPrice(pricing.subtotalRental)}`,
       premiumInsurance ? `Seguro Premium: ${formatPrice(pricing.insuranceTotal)}` : `Seguro Básico: Incluso`,
       childSeat ? `Cadeirinha (x${childSeatQty}): ${formatPrice(pricing.childSeatTotal)}` : "",
@@ -325,6 +330,13 @@ const BookingDetails = () => {
                     {days} {days === 1 ? "diária" : "diárias"} · {formatPrice(dailyPrice)}/dia
                   </p>
                 </div>
+                {isUnder26 && (
+                  <div className="mt-2 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-center">
+                    <p className="text-[11px] font-semibold text-amber-400">
+                      ⚠️ Condutor com {driverAgeParam} anos — acréscimo de 8% aplicado
+                    </p>
+                  </div>
+                )}
               </motion.div>
 
               {/* Vehicle Features */}
