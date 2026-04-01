@@ -307,7 +307,12 @@ export default function AdminLive() {
                 eventHandlers={{ click: () => focusVehicle(v.id) }}
               >
                 <Popup className="zeus-popup">
-                  <div className="text-xs space-y-1 min-w-[160px]">
+                  <div className="text-xs space-y-2 min-w-[180px]">
+                    <img
+                      src={getCoverImage(v.name)}
+                      alt={v.name}
+                      className="w-full h-24 object-cover rounded-md -mt-1"
+                    />
                     <p className="font-bold text-sm">{v.name}</p>
                     <p className="font-mono text-muted-foreground">{v.plate}</p>
                     <div className="flex justify-between pt-1 border-t border-border/30">
