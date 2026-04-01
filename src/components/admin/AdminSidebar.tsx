@@ -15,6 +15,7 @@ import {
 
 const menuItems = [
   { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
+  { title: "Live", url: "/admin/live", icon: Radio },
   { title: "Reservas", url: "/admin/bookings", icon: CalendarRange },
   { title: "Frota", url: "/admin/fleet", icon: Car },
   { title: "Clientes", url: "/admin/customers", icon: Users },
