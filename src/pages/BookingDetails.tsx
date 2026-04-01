@@ -1,4 +1,4 @@
-import { useSearchParams, Link, useParams } from "react-router-dom";
+import { useSearchParams, Link, useParams, useLocation } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -74,6 +74,7 @@ const vehicleFeaturesMap: Record<string, string[]> = {
 const BookingDetails = () => {
   const { vehicleName } = useParams<{ vehicleName: string }>();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const { formatPrice, currencySymbol } = useCurrency();
   const { vehicles: dbVehicles } = useVehiclesDB();
   const vehiclePrices = buildPriceMap(dbVehicles);
@@ -278,13 +279,23 @@ const BookingDetails = () => {
       <section className="pt-24 pb-16">
         <div className="container mx-auto px-4 max-w-5xl">
           {/* Back */}
-          <Link
-            to={`/buscar?${searchParams.toString()}`}
-            className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors text-xs tracking-wide mb-6"
-          >
-            <ArrowLeft size={14} />
-            Voltar aos resultados
-          </Link>
+          {location.state?.fromLive ? (
+            <Link
+              to="/admin/live"
+              className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors text-xs tracking-wide mb-6"
+            >
+              <ArrowLeft size={14} />
+              Voltar ao Live Tracking
+            </Link>
+          ) : (
+            <Link
+              to={`/buscar?${searchParams.toString()}`}
+              className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors text-xs tracking-wide mb-6"
+            >
+              <ArrowLeft size={14} />
+              Voltar aos resultados
+            </Link>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             {/* LEFT: Vehicle + Extras */}
