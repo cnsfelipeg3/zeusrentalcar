@@ -148,6 +148,7 @@ export default function AdminLive() {
   );
   const [selected, setSelected] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "moving" | "idle" | "parked">("all");
+  const navigate = useNavigate();
   const mapRef = useRef<L.Map | null>(null);
 
   // Simulate real-time movement
