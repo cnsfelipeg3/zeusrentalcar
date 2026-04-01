@@ -126,6 +126,13 @@ const Navbar = () => {
           >
             {t.nav.book}
           </a>
+          <button
+            onClick={() => navigate("/admin/login")}
+            className="flex items-center gap-1.5 text-muted-foreground/50 hover:text-primary transition-colors duration-300"
+            title="Admin"
+          >
+            <Shield size={16} />
+          </button>
 
           <button
             onClick={() => navigate(isLoggedIn ? "/minha-conta" : "/login")}
