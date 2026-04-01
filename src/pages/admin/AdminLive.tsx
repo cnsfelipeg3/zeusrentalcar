@@ -331,7 +331,13 @@ export default function AdminLive() {
 
           {/* Selected vehicle detail overlay */}
           {selectedVehicle && (
-            <div className="absolute bottom-3 right-3 z-[1000] bg-background/90 backdrop-blur-md rounded-xl border border-border/40 p-4 w-64 shadow-xl">
+            <div className="absolute bottom-3 right-3 z-[1000] bg-background/90 backdrop-blur-md rounded-xl border border-border/40 w-72 shadow-xl overflow-hidden">
+              <img
+                src={getCoverImage(selectedVehicle.name)}
+                alt={selectedVehicle.name}
+                className="w-full h-32 object-cover"
+              />
+              <div className="p-4">
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <p className="font-bold text-foreground">{selectedVehicle.name}</p>
