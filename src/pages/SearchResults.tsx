@@ -6,29 +6,9 @@ import { pt } from "date-fns/locale";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppBubble from "@/components/WhatsAppBubble";
-import { vehiclePrices } from "@/data/vehicles";
 import { useCurrency } from "@/i18n/CurrencyContext";
-
-// Re-import covers and vehicle data from FleetSection
-import corvetteCover from "@/assets/fleet/covers/corvette-cover.jpg";
-import mustangCover from "@/assets/fleet/covers/mustang-cover.jpg";
-import escaladeCover from "@/assets/fleet/covers/escalade-cover.jpg";
-import bmwX5Cover from "@/assets/fleet/covers/bmw-x5-cover.jpg";
-import suburbanCover from "@/assets/fleet/covers/suburban-cover.jpg";
-import durangoCover from "@/assets/fleet/covers/durango-cover.jpg";
-import sorentoCover from "@/assets/fleet/covers/sorento-cover.jpg";
-import sportageCover from "@/assets/fleet/covers/sportage-cover.jpg";
-import outlanderCover from "@/assets/fleet/covers/outlander-cover.jpg";
-import tiguanCover from "@/assets/fleet/covers/tiguan-cover.jpg";
-import pacificaCover from "@/assets/fleet/covers/pacifica-cover.jpg";
-import lexusNxCover from "@/assets/fleet/covers/lexus-nx-cover.jpg";
-import audiQ7Cover from "@/assets/fleet/covers/audi-q7-cover.jpg";
-import volvoXc60Cover from "@/assets/fleet/covers/volvo-xc60-cover.jpg";
-import mustangWhiteCover from "@/assets/fleet/covers/mustang-white-cover.jpg";
-import tiguanWhiteCover from "@/assets/fleet/covers/tiguan-white-cover.jpg";
-import nissanKicksCover from "@/assets/fleet/covers/nissan-kicks-cover.jpg";
-import vwAtlasCover from "@/assets/fleet/covers/vw-atlas-cover.jpg";
-import mercedesGlaCover from "@/assets/fleet/covers/mercedes-gla-cover.jpg";
+import { useVehiclesDB, categoryToKey, buildPriceMap } from "@/hooks/useVehiclesDB";
+import { getCoverImage } from "@/data/vehicleImages";
 
 interface SearchVehicle {
   name: string;
@@ -48,28 +28,6 @@ const categoryLabels: Record<string, string> = {
   suvCompact: "SUV Compacto",
   minivan: "Minivan",
 };
-
-const vehicles: SearchVehicle[] = [
-  { name: "Corvette Stingray C8", categoryKey: "superSport", passengers: 2, luggage: 1, coverImage: corvetteCover },
-  { name: "Mustang Conversível", categoryKey: "sport", passengers: 4, luggage: 2, coverImage: mustangCover },
-  { name: "Cadillac Escalade", categoryKey: "suvPremium", passengers: 7, luggage: 5, coverImage: escaladeCover },
-  { name: "BMW X5 M Sport", categoryKey: "suvPremium", passengers: 5, luggage: 3, coverImage: bmwX5Cover },
-  { name: "Chevrolet Suburban", categoryKey: "suvFullSize", passengers: 7, luggage: 5, coverImage: suburbanCover },
-  { name: "Dodge Durango", categoryKey: "suv", passengers: 7, luggage: 4, coverImage: durangoCover },
-  { name: "Kia Sorento", categoryKey: "suv", passengers: 6, luggage: 3, coverImage: sorentoCover },
-  { name: "Kia Sportage", categoryKey: "suv", passengers: 5, luggage: 3, coverImage: sportageCover },
-  { name: "Mitsubishi Outlander", categoryKey: "suv", passengers: 7, luggage: 3, coverImage: outlanderCover },
-  { name: "Volkswagen Tiguan", categoryKey: "suv", passengers: 7, luggage: 3, coverImage: tiguanCover },
-  { name: "Chrysler Pacifica", categoryKey: "minivan", passengers: 7, luggage: 5, coverImage: pacificaCover },
-  { name: "Lexus NX", categoryKey: "suvPremium", passengers: 5, luggage: 3, coverImage: lexusNxCover, preparing: true },
-  { name: "Audi Q7", categoryKey: "suvPremium", passengers: 7, luggage: 4, coverImage: audiQ7Cover, preparing: true },
-  { name: "Volvo XC60", categoryKey: "suvPremium", passengers: 5, luggage: 3, coverImage: volvoXc60Cover, preparing: true },
-  { name: "MUSTANG CONVERSÍVEL", categoryKey: "sport", passengers: 4, luggage: 2, coverImage: mustangWhiteCover, preparing: true },
-  { name: "VOLKSWAGEN TIGUAN", categoryKey: "suv", passengers: 7, luggage: 3, coverImage: tiguanWhiteCover, preparing: true },
-  { name: "Nissan Kicks", categoryKey: "suvCompact", passengers: 5, luggage: 2, coverImage: nissanKicksCover, preparing: true },
-  { name: "Volkswagen Atlas", categoryKey: "suvFullSize", passengers: 7, luggage: 5, coverImage: vwAtlasCover, preparing: true },
-  { name: "Mercedes-Benz GLA", categoryKey: "suvPremium", passengers: 5, luggage: 3, coverImage: mercedesGlaCover, preparing: true },
-];
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
