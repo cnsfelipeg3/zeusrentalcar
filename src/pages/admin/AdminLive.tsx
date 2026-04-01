@@ -380,6 +380,12 @@ export default function AdminLive() {
               <div className="mt-3 pt-2 border-t border-border/30 text-[10px] text-muted-foreground/60">
                 Lat: {selectedVehicle.lat.toFixed(5)} / Lng: {selectedVehicle.lng.toFixed(5)}
               </div>
+              <button
+                onClick={() => navigate(`/reserva/${encodeURIComponent(selectedVehicle.name)}`)}
+                className="w-full mt-3 flex items-center justify-center gap-2 rounded-lg gold-gradient text-primary-foreground hover:opacity-90 transition-opacity py-2 text-xs font-bold"
+              >
+                <ExternalLink size={13} /> Abrir Página de Reserva
+              </button>
               </div>
             </div>
           )}
