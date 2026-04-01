@@ -1,9 +1,10 @@
 import { useSearchParams, Link, useParams } from "react-router-dom";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Users, Briefcase, CalendarIcon, MapPin, Clock, ArrowLeft, Shield, ShieldCheck,
-  Baby, CircleDollarSign, Zap, ChevronRight, Check, AlertTriangle, Percent, Car, Fuel, Gauge
+  Baby, CircleDollarSign, Zap, ChevronRight, Check, AlertTriangle, Percent, Car, Fuel, Gauge,
+  CreditCard, Lock, Loader2, MessageCircle
 } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
@@ -14,6 +15,8 @@ import { useCurrency } from "@/i18n/CurrencyContext";
 import { Switch } from "@/components/ui/switch";
 import { useVehiclesDB, buildPriceMap, buildTrimMap, categoryToKey } from "@/hooks/useVehiclesDB";
 import { getCoverImage } from "@/data/vehicleImages";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface VehicleInfo {
   name: string;
