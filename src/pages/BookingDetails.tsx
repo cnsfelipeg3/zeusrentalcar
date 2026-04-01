@@ -45,13 +45,49 @@ const DEDUCTIBLE_MULTIPLIER = 11;
 const EXTRA_DRIVER_RATE = 0.02;
 const YOUNG_DRIVER_SURCHARGE = 0.08;
 
+// Static features map (detailed specs not stored in DB)
+const vehicleFeaturesMap: Record<string, string[]> = {
+  "Corvette Stingray C8": ["Motor 6.2L V8", "495 HP", "Câmbio automático 8 marchas", "Apple CarPlay / Android Auto", "Modo Track", "Teto Targa removível"],
+  "Mustang Conversível": ["Motor 2.3L EcoBoost", "Capota conversível elétrica", "310 HP", "Apple CarPlay / Android Auto", "Câmbio automático 10 marchas", "Banco de couro aquecido"],
+  "Cadillac Escalade": ["Motor 6.2L V8", "420 HP", "Tela OLED 38\"", "Sistema AKG 36 alto-falantes", "Bancos de couro ventilados", "Wi-Fi nativo"],
+  "BMW X5 M Sport": ["Motor 3.0L Turbo", "335 HP", "xDrive AWD", "Panoramic Roof", "Harman Kardon Sound", "Assistente de estacionamento"],
+  "Chevrolet Suburban": ["Motor 5.3L V8", "355 HP", "3ª fileira de bancos", "Tela 10.2\"", "Wi-Fi nativo", "Espaço para até 8 malas"],
+  "Dodge Durango": ["Motor 3.6L V6", "295 HP", "3ª fileira de bancos", "Uconnect 10.1\"", "Apple CarPlay", "Tração AWD disponível"],
+  "Kia Sorento": ["Motor 2.5L Turbo", "281 HP", "Câmbio DCT 8 marchas", "Tela 10.25\"", "Carregador wireless", "Bancos de couro"],
+  "Kia Sportage": ["Motor 2.5L", "187 HP", "Tela panorâmica curva", "Apple CarPlay / Android Auto", "Assistente de faixa", "Câmera 360°"],
+  "Mitsubishi Outlander": ["Motor 2.5L", "181 HP", "3ª fileira de bancos", "Tela 9\"", "AWC (tração integral)", "Controle de cruzeiro adaptativo"],
+  "Volkswagen Tiguan": ["Motor 2.0L TSI", "184 HP", "3ª fileira de bancos", "Digital Cockpit", "App-Connect", "Tração 4Motion"],
+  "Chrysler Pacifica": ["Motor 3.6L V6", "287 HP", "Stow 'n Go Seats", "Uconnect Theater", "Portas deslizantes elétricas", "Aspirador de pó integrado"],
+  "Lexus NX": ["Motor 2.5L Turbo", "275 HP", "Lexus Safety System+", "Tela 14\"", "Mark Levinson Audio", "Bancos ventilados"],
+  "Audi Q7": ["Motor 2.0L TFSI", "261 HP", "Quattro AWD", "Virtual Cockpit", "Bang & Olufsen 3D Sound", "Suspensão pneumática"],
+  "Volvo XC60": ["Motor 2.0L Turbo", "247 HP", "Pilot Assist", "Bowers & Wilkins Audio", "Tela Sensus 9\"", "City Safety"],
+  "MUSTANG CONVERSÍVEL": ["Motor 2.3L EcoBoost", "Capota conversível elétrica", "310 HP", "Apple CarPlay / Android Auto", "Câmbio automático 10 marchas", "Cor: Branco Oxford"],
+  "VOLKSWAGEN TIGUAN": ["Motor 2.0L TSI", "184 HP", "3ª fileira de bancos", "Digital Cockpit", "App-Connect", "Cor: Branco Pure"],
+  "Nissan Kicks": ["Motor 1.6L", "122 HP", "Câmbio CVT", "Tela 8\"", "Apple CarPlay / Android Auto", "Câmera de ré inteligente"],
+  "Volkswagen Atlas": ["Motor 3.6L V6", "276 HP", "3ª fileira de bancos", "Digital Cockpit Pro", "4Motion AWD", "Espaço amplo para família"],
+  "Mercedes-Benz GLA": ["Motor 2.0L Turbo", "221 HP", "MBUX Infotainment", "Tela dupla 10.25\"", "Pacote AMG Line", "Suspensão esportiva"],
+};
+
 const BookingDetails = () => {
   const { vehicleName } = useParams<{ vehicleName: string }>();
   const [searchParams] = useSearchParams();
   const { formatPrice, currencySymbol } = useCurrency();
+  const { vehicles: dbVehicles } = useVehiclesDB();
+  const vehiclePrices = buildPriceMap(dbVehicles);
+  const vehicleTrims = buildTrimMap(dbVehicles);
 
   const decodedName = decodeURIComponent(vehicleName || "");
-  const vehicle = vehicleMap[decodedName];
+
+  // Build vehicle info from DB
+  const dbVehicle = dbVehicles.find((v) => v.name === decodedName);
+  const vehicle: VehicleInfo | undefined = dbVehicle ? {
+    name: dbVehicle.name,
+    categoryKey: categoryToKey(dbVehicle.category),
+    passengers: dbVehicle.passengers,
+    luggage: dbVehicle.bags,
+    coverImage: getCoverImage(dbVehicle.name),
+    features: vehicleFeaturesMap[dbVehicle.name] || dbVehicle.features || [],
+  } : undefined;
 
   const pickupDateStr = searchParams.get("pickupDate");
   const returnDateStr = searchParams.get("returnDate");
