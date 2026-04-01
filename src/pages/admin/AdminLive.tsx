@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Car, Signal, Battery, Gauge, Clock, MapPin } from "lucide-react";
+import { getCoverImage } from "@/data/vehicleImages";
 
 // --- Simulated fleet data ---
 interface TrackedVehicle {
@@ -31,21 +32,23 @@ const REGIONS = {
 };
 
 const FLEET_SEED: Omit<TrackedVehicle, "lat" | "lng" | "speed" | "heading" | "battery" | "lastUpdate" | "status">[] = [
-  { id: "v1", name: "Corolla", plate: "ZEU-0017", region: "orlando" },
-  { id: "v2", name: "Civic", plate: "ZEU-0023", region: "miami" },
-  { id: "v3", name: "Mustang GT", plate: "ZEU-0042", region: "miamiBeach" },
-  { id: "v4", name: "Camaro SS", plate: "ZEU-0008", region: "orlando" },
-  { id: "v5", name: "Tesla Model 3", plate: "ZEU-0055", region: "tampa" },
-  { id: "v6", name: "BMW X5", plate: "ZEU-0031", region: "kissimmee" },
-  { id: "v7", name: "Mercedes C300", plate: "ZEU-0019", region: "fortLauderdale" },
-  { id: "v8", name: "Jeep Wrangler", plate: "ZEU-0044", region: "internationalDrive" },
-  { id: "v9", name: "Dodge Charger", plate: "ZEU-0061", region: "miami" },
-  { id: "v10", name: "Ford Explorer", plate: "ZEU-0037", region: "lakeBuenaVista" },
-  { id: "v11", name: "Chevrolet Tahoe", plate: "ZEU-0072", region: "orlando" },
-  { id: "v12", name: "Nissan Altima", plate: "ZEU-0015", region: "miami" },
-  { id: "v13", name: "Hyundai Tucson", plate: "ZEU-0028", region: "tampa" },
-  { id: "v14", name: "Porsche 911", plate: "ZEU-0099", region: "miamiBeach" },
-  { id: "v15", name: "Range Rover", plate: "ZEU-0053", region: "fortLauderdale" },
+  { id: "v1", name: "Corvette Stingray C8", plate: "ZEU-0017", region: "orlando" },
+  { id: "v2", name: "Mustang Conversível", plate: "ZEU-0023", region: "miami" },
+  { id: "v3", name: "Cadillac Escalade", plate: "ZEU-0042", region: "miamiBeach" },
+  { id: "v4", name: "BMW X5 M Sport", plate: "ZEU-0008", region: "orlando" },
+  { id: "v5", name: "Chevrolet Suburban", plate: "ZEU-0055", region: "tampa" },
+  { id: "v6", name: "Dodge Durango", plate: "ZEU-0031", region: "kissimmee" },
+  { id: "v7", name: "Kia Sorento", plate: "ZEU-0019", region: "fortLauderdale" },
+  { id: "v8", name: "Kia Sportage", plate: "ZEU-0044", region: "internationalDrive" },
+  { id: "v9", name: "Mitsubishi Outlander", plate: "ZEU-0061", region: "miami" },
+  { id: "v10", name: "Volkswagen Tiguan", plate: "ZEU-0037", region: "lakeBuenaVista" },
+  { id: "v11", name: "Chrysler Pacifica", plate: "ZEU-0072", region: "orlando" },
+  { id: "v12", name: "Lexus NX", plate: "ZEU-0015", region: "miami" },
+  { id: "v13", name: "Audi Q7", plate: "ZEU-0028", region: "tampa" },
+  { id: "v14", name: "Volvo XC60", plate: "ZEU-0099", region: "miamiBeach" },
+  { id: "v15", name: "Nissan Kicks", plate: "ZEU-0053", region: "fortLauderdale" },
+  { id: "v16", name: "Volkswagen Atlas", plate: "ZEU-0066", region: "kissimmee" },
+  { id: "v17", name: "Mercedes-Benz GLA", plate: "ZEU-0078", region: "internationalDrive" },
 ];
 
 function initVehicle(seed: typeof FLEET_SEED[0]): TrackedVehicle {
@@ -241,27 +244,33 @@ export default function AdminLive() {
               <button
                 key={v.id}
                 onClick={() => focusVehicle(v.id)}
-                className={`w-full text-left rounded-lg border p-3 transition-all ${
+                className={`w-full text-left rounded-lg border p-2.5 transition-all ${
                   selected === v.id
                     ? "bg-primary/5 border-primary/40 shadow-sm shadow-primary/10"
                     : "bg-card/50 border-border/30 hover:border-border/60 hover:bg-muted/20"
                 }`}
               >
-                <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex items-center gap-2">
-                    <Car size={14} className={selected === v.id ? "text-primary" : "text-muted-foreground"} />
-                    <span className="text-sm font-semibold text-foreground">{v.name}</span>
+                <div className="flex items-center gap-2.5">
+                  <img
+                    src={getCoverImage(v.name)}
+                    alt={v.name}
+                    className="w-12 h-9 rounded object-cover flex-shrink-0 border border-border/20"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-0.5">
+                      <span className="text-sm font-semibold text-foreground truncate">{v.name}</span>
+                      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                        v.status === "moving" ? "bg-green-500" : v.status === "idle" ? "bg-yellow-500" : "bg-muted-foreground"
+                      }`} />
+                    </div>
+                    <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                      <span className="font-mono">{v.plate}</span>
+                      <span className="flex items-center gap-1">
+                        <Gauge size={10} />
+                        {v.speed} mph
+                      </span>
+                    </div>
                   </div>
-                  <span className={`w-2 h-2 rounded-full ${
-                    v.status === "moving" ? "bg-green-500" : v.status === "idle" ? "bg-yellow-500" : "bg-muted-foreground"
-                  }`} />
-                </div>
-                <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                  <span className="font-mono">{v.plate}</span>
-                  <span className="flex items-center gap-1">
-                    <Gauge size={10} />
-                    {v.speed} mph
-                  </span>
                 </div>
               </button>
             ))}
@@ -298,7 +307,12 @@ export default function AdminLive() {
                 eventHandlers={{ click: () => focusVehicle(v.id) }}
               >
                 <Popup className="zeus-popup">
-                  <div className="text-xs space-y-1 min-w-[160px]">
+                  <div className="text-xs space-y-2 min-w-[180px]">
+                    <img
+                      src={getCoverImage(v.name)}
+                      alt={v.name}
+                      className="w-full h-24 object-cover rounded-md -mt-1"
+                    />
                     <p className="font-bold text-sm">{v.name}</p>
                     <p className="font-mono text-muted-foreground">{v.plate}</p>
                     <div className="flex justify-between pt-1 border-t border-border/30">
@@ -317,7 +331,13 @@ export default function AdminLive() {
 
           {/* Selected vehicle detail overlay */}
           {selectedVehicle && (
-            <div className="absolute bottom-3 right-3 z-[1000] bg-background/90 backdrop-blur-md rounded-xl border border-border/40 p-4 w-64 shadow-xl">
+            <div className="absolute bottom-3 right-3 z-[1000] bg-background/90 backdrop-blur-md rounded-xl border border-border/40 w-72 shadow-xl overflow-hidden">
+              <img
+                src={getCoverImage(selectedVehicle.name)}
+                alt={selectedVehicle.name}
+                className="w-full h-32 object-cover"
+              />
+              <div className="p-4">
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <p className="font-bold text-foreground">{selectedVehicle.name}</p>
@@ -351,6 +371,7 @@ export default function AdminLive() {
               </div>
               <div className="mt-3 pt-2 border-t border-border/30 text-[10px] text-muted-foreground/60">
                 Lat: {selectedVehicle.lat.toFixed(5)} / Lng: {selectedVehicle.lng.toFixed(5)}
+              </div>
               </div>
             </div>
           )}
