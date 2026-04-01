@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, Briefcase, SlidersHorizontal, UserRound, ChevronDown, Check } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import VehicleModal from "./VehicleModal";
+import { useVehiclesDB, categoryToKey } from "@/hooks/useVehiclesDB";
 
 // Cover images (cinematic)
 import corvetteCover from "@/assets/fleet/covers/corvette-cover.jpg";
