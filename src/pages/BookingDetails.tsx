@@ -1,9 +1,10 @@
 import { useSearchParams, Link, useParams } from "react-router-dom";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Users, Briefcase, CalendarIcon, MapPin, Clock, ArrowLeft, Shield, ShieldCheck,
-  Baby, CircleDollarSign, Zap, ChevronRight, Check, AlertTriangle, Percent, Car, Fuel, Gauge
+  Baby, CircleDollarSign, Zap, ChevronRight, Check, AlertTriangle, Percent, Car, Fuel, Gauge,
+  CreditCard, Lock, Loader2, MessageCircle
 } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
@@ -14,6 +15,8 @@ import { useCurrency } from "@/i18n/CurrencyContext";
 import { Switch } from "@/components/ui/switch";
 import { useVehiclesDB, buildPriceMap, buildTrimMap, categoryToKey } from "@/hooks/useVehiclesDB";
 import { getCoverImage } from "@/data/vehicleImages";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface VehicleInfo {
   name: string;
@@ -105,12 +108,75 @@ const BookingDetails = () => {
     ? Math.max(1, Math.ceil((returnDate.getTime() - pickupDate.getTime()) / (1000 * 60 * 60 * 24)))
     : 1;
 
+  const { toast } = useToast();
+
   // Extras state
   const [premiumInsurance, setPremiumInsurance] = useState(false);
   const [childSeat, setChildSeat] = useState(false);
   const [childSeatQty, setChildSeatQty] = useState(1);
   const [tollTag, setTollTag] = useState(false);
   const [extraDriver, setExtraDriver] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+
+  // Handle cancelled checkout
+  useEffect(() => {
+    if (searchParams.get("cancelled") === "true") {
+      toast({
+        title: "Pagamento cancelado",
+        description: "Sua reserva não foi finalizada. Você pode tentar novamente.",
+        variant: "destructive",
+      });
+    }
+  }, []);
+
+  const handleCheckout = async () => {
+    setIsProcessing(true);
+    setCheckoutError(null);
+
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: {
+          vehicleName: decodedName,
+          vehicleCategory: categoryLabels[vehicle?.categoryKey || ""],
+          dailyRate: dailyPrice,
+          rentalDays: days,
+          pickupDate: pickupDate ? format(pickupDate, "yyyy-MM-dd") : "",
+          dropoffDate: returnDate ? format(returnDate, "yyyy-MM-dd") : "",
+          pickupTime,
+          dropoffTime: returnTime,
+          pickupLocation,
+          dropoffLocation: returnLocation,
+          premiumInsurance,
+          childSeat,
+          childSeatQty,
+          tollTag,
+          extraDriver,
+          isDifferentCity,
+          pricing: {
+            subtotalRental: pricing.subtotalRental,
+            insuranceTotal: pricing.insuranceTotal,
+            extraDriverTotal: pricing.extraDriverTotal,
+            childSeatTotal: pricing.childSeatTotal,
+            tollTagTotal: pricing.tollTagTotal,
+            returnFee: isDifferentCity ? RETURN_FEE : 0,
+            discountAmount: pricing.discountAmount,
+            total: pricing.total,
+          },
+        },
+      });
+
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("Não foi possível criar a sessão de pagamento");
+      }
+    } catch (err: any) {
+      setCheckoutError(err.message || "Erro ao processar pagamento. Tente novamente.");
+      setIsProcessing(false);
+    }
+  };
 
   // Check if different cities
   const isDifferentCity = useMemo(() => {
@@ -703,20 +769,47 @@ const BookingDetails = () => {
                     )}
                   </div>
 
-                  {/* CTA */}
+                  {/* Payment CTA */}
+                  <button
+                    onClick={handleCheckout}
+                    disabled={isProcessing}
+                    className="mt-5 w-full gold-gradient text-primary-foreground py-3 rounded-lg text-xs font-bold uppercase tracking-[0.12em] flex items-center justify-center gap-1.5 hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <Loader2 size={14} className="animate-spin" />
+                        Processando...
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard size={14} />
+                        Pagar e Reservar — {formatPrice(pricing.total)}
+                      </>
+                    )}
+                  </button>
+
+                  {checkoutError && (
+                    <div className="mt-2 p-2 rounded-lg bg-destructive/10 border border-destructive/20 text-center">
+                      <p className="text-[10px] text-destructive">{checkoutError}</p>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-center gap-2 mt-2">
+                    <Lock size={10} className="text-muted-foreground" />
+                    <p className="text-[9px] text-muted-foreground">
+                      Pagamento seguro · Powered by Stripe
+                    </p>
+                  </div>
+
+                  {/* WhatsApp fallback */}
                   <a
                     href={whatsappMsg}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-5 w-full gold-gradient text-primary-foreground py-3 rounded-lg text-xs font-bold uppercase tracking-[0.12em] flex items-center justify-center gap-1.5 hover:opacity-90 transition-opacity"
+                    className="mt-2 text-[10px] text-muted-foreground hover:text-foreground transition-colors text-center block underline underline-offset-2"
                   >
-                    Reservar pelo WhatsApp
-                    <ChevronRight size={14} />
+                    Prefere reservar pelo WhatsApp?
                   </a>
-
-                  <p className="text-[9px] text-center text-muted-foreground mt-2">
-                    Sem compromisso · Resposta em até 15 minutos
-                  </p>
                 </div>
 
                 {/* Trust badges */}
