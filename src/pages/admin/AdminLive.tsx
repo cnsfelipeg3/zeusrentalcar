@@ -381,7 +381,7 @@ export default function AdminLive() {
                 Lat: {selectedVehicle.lat.toFixed(5)} / Lng: {selectedVehicle.lng.toFixed(5)}
               </div>
               <button
-                onClick={() => navigate(`/reserva/${encodeURIComponent(selectedVehicle.name)}`)}
+                onClick={() => navigate(`/reserva/${encodeURIComponent(selectedVehicle.name)}`, { state: { fromLive: true } })}
                 className="w-full mt-3 flex items-center justify-center gap-2 rounded-lg gold-gradient text-primary-foreground hover:opacity-90 transition-opacity py-2 text-xs font-bold"
               >
                 <ExternalLink size={13} /> Abrir Página de Reserva
