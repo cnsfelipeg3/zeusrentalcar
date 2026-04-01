@@ -122,7 +122,7 @@ const Navbar = () => {
             href="https://wa.me/16892981754"
             target="_blank"
             rel="noopener noreferrer"
-            className="gold-gradient text-primary-foreground px-5 py-2 rounded-md text-sm font-bold uppercase tracking-wider hover:opacity-90 transition-opacity"
+            className="gold-gradient text-primary-foreground px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-opacity shadow-md shadow-primary/10"
           >
             {t.nav.book}
           </a>

@@ -15,39 +15,41 @@ const TestimonialsSection = () => {
   ];
 
   return (
-    <section className="py-24 relative section-divider">
+    <section className="py-28 relative section-divider">
       <div className="container mx-auto px-4">
-        <motion.h2
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
-          className="text-3xl sm:text-4xl font-black uppercase tracking-wider text-center mb-16"
+          className="text-center mb-14 sm:mb-20"
         >
-          {t.testimonials.title}<span className="gold-text">{t.testimonials.titleHighlight}</span>
-        </motion.h2>
+          <h2 className="section-heading">
+            {t.testimonials.title}<span className="gold-text">{t.testimonials.titleHighlight}</span>
+          </h2>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 max-w-6xl mx-auto">
           {testimonials.map((tm, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="glass-card p-6"
+              transition={{ duration: 0.5, delay: i * 0.08 }}
+              className="glass-card p-6 sm:p-7 hover-lift"
             >
               <div className="flex gap-1 mb-4">
                 {[...Array(5)].map((_, j) => (
-                  <Star key={j} size={16} className="text-primary fill-primary" />
+                  <Star key={j} size={14} className="text-primary fill-primary" />
                 ))}
               </div>
-              <p className="text-sm text-muted-foreground font-light leading-relaxed italic">"{tm.text}"</p>
-              <div className="mt-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-                  <span className="text-xs font-bold text-muted-foreground">{tm.name[0]}</span>
+              <p className="text-sm text-muted-foreground font-light leading-relaxed italic mb-5">"{tm.text}"</p>
+              <div className="flex items-center gap-3 pt-4 border-t border-border/20">
+                <div className="w-10 h-10 rounded-full gold-gradient flex items-center justify-center">
+                  <span className="text-xs font-bold text-primary-foreground">{tm.name[0]}</span>
                 </div>
-                <span className="text-sm font-semibold">{tm.name}</span>
+                <span className="text-sm font-semibold tracking-wide">{tm.name}</span>
               </div>
             </motion.div>
           ))}

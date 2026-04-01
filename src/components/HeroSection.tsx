@@ -63,11 +63,11 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
+          className="mt-10 sm:mt-12 flex flex-col sm:flex-row gap-4 justify-center"
         >
           <a
             href="#frota"
-            className="gold-gradient text-primary-foreground px-8 py-4 rounded-md text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-opacity"
+            className="gold-gradient text-primary-foreground px-9 py-4 rounded-xl text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-opacity shadow-lg shadow-primary/15"
           >
             {t.hero.exploreFleet}
           </a>
@@ -75,7 +75,7 @@ const HeroSection = () => {
             href={`https://wa.me/16892981754?text=${encodeURIComponent("Olá, venho do site da Zeus e gostaria de realizar uma reserva!")}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="border-2 border-primary text-primary px-8 py-4 rounded-md text-sm font-bold uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+            className="border-2 border-primary/60 text-primary px-9 py-4 rounded-xl text-sm font-bold uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all duration-300 backdrop-blur-sm"
           >
             {t.hero.contactUs}
           </a>

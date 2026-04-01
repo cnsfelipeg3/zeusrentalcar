@@ -342,7 +342,7 @@ const FleetSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           <AnimatePresence mode="popLayout">
             {filtered.map((v) => {
               const vehicleT = t.vehicles[v.name];
@@ -354,38 +354,38 @@ const FleetSection = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3 }}
-                  className="group relative overflow-hidden rounded-xl cursor-pointer hover:scale-[1.02] transition-all duration-300"
+                  className="group relative overflow-hidden rounded-2xl cursor-pointer hover-lift border border-border/10 hover:border-primary/20"
                   onClick={() => setSelectedVehicle(v)}
                 >
-                  <div className="relative h-[22rem] overflow-hidden">
+                  <div className="relative h-[22rem] sm:h-[24rem] overflow-hidden">
                     <img
                       src={v.coverImage}
                       alt={v.name}
-                      className="w-full h-full object-cover object-[center_40%] transition-transform duration-700 group-hover:scale-110"
+                      className="w-full h-full object-cover object-[center_40%] transition-transform duration-700 group-hover:scale-105"
                       loading="lazy"
                       decoding="async"
                       width={1280}
                       height={720}
                     />
-                    <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.96)_0%,rgba(0,0,0,0.88)_22%,rgba(0,0,0,0.45)_48%,rgba(0,0,0,0)_68%)] opacity-65" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-80" />
 
                     {v.preparing && (
-                      <div className="absolute top-3 right-3 z-10">
-                        <span className="bg-primary/90 text-primary-foreground text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md backdrop-blur-sm shadow-lg">
+                      <div className="absolute top-4 right-4 z-10">
+                        <span className="bg-primary/90 text-primary-foreground text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg backdrop-blur-sm shadow-lg">
                           Em preparação
                         </span>
                       </div>
                     )}
 
-                    <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 pt-12">
-                      <h3 className="text-xl font-black uppercase tracking-wider text-white">{v.name}</h3>
-                      <p className="text-sm text-white/60 italic font-light mt-1">{vehicleT?.subtitle}</p>
-                      <div className="flex items-center gap-4 mt-3 text-xs text-white/50">
-                        <span className="flex items-center gap-1">
-                          <Users size={13} className="text-primary" /> {v.passengers}
+                    <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 pt-16">
+                      <h3 className="text-xl sm:text-2xl font-black uppercase tracking-wider text-foreground">{v.name}</h3>
+                      <p className="text-sm text-muted-foreground italic font-light mt-1.5">{vehicleT?.subtitle}</p>
+                      <div className="flex items-center gap-5 mt-3.5 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1.5">
+                          <Users size={14} className="text-primary" /> {v.passengers} pass.
                         </span>
-                        <span className="flex items-center gap-1">
-                          <Briefcase size={13} className="text-primary" /> {v.luggage}
+                        <span className="flex items-center gap-1.5">
+                          <Briefcase size={14} className="text-primary" /> {v.luggage} malas
                         </span>
                       </div>
                     </div>
