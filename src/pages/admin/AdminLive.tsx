@@ -326,7 +326,7 @@ export default function AdminLive() {
                       <span className="font-semibold">{Math.round(v.battery)}%</span>
                     </div>
                     <button
-                      onClick={(e) => { e.stopPropagation(); navigate(`/reserva/${encodeURIComponent(v.name)}`); }}
+                      onClick={(e) => { e.stopPropagation(); navigate(`/reserva/${encodeURIComponent(v.name)}`, { state: { fromLive: true } }); }}
                       className="w-full mt-2 flex items-center justify-center gap-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors py-1.5 text-[11px] font-semibold"
                     >
                       <ExternalLink size={11} /> Abrir Reserva
