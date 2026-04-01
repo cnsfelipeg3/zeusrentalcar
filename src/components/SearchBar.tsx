@@ -40,7 +40,10 @@ const SearchBar = () => {
   const [driverAge, setDriverAge] = useState("");
   const [openPicker, setOpenPicker] = useState<string | null>(null);
 
+  const isUnderageBlocked = !driverOver26 && !!driverAge && Number(driverAge) < 21;
+
   const handleSearch = () => {
+    if (isUnderageBlocked) return;
     const params = new URLSearchParams();
     if (pickupDate) params.set("pickupDate", pickupDate.toISOString());
     if (returnDate) params.set("returnDate", returnDate.toISOString());
@@ -204,7 +207,8 @@ const SearchBar = () => {
           {/* Search Button */}
           <Button
             onClick={handleSearch}
-            className="gold-gradient text-primary-foreground font-bold uppercase tracking-widest h-auto py-3 rounded-xl hover:opacity-90 transition-opacity text-sm gap-2"
+            disabled={isUnderageBlocked}
+            className="gold-gradient text-primary-foreground font-bold uppercase tracking-widest h-auto py-3 rounded-xl hover:opacity-90 transition-opacity text-sm gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <Search size={16} />
             Buscar
@@ -293,8 +297,11 @@ const SearchBar = () => {
                 transition={{ duration: 0.25, ease: "easeInOut" }}
                 className="overflow-hidden"
               >
-                <div className="flex items-center gap-2 px-4 py-3 rounded-xl border border-primary/40 bg-background/50 w-full sm:w-auto sm:min-w-[280px]">
-                  <UserCheck size={16} className="text-primary shrink-0" />
+                <div className={cn(
+                  "flex items-center gap-2 px-4 py-3 rounded-xl border bg-background/50 w-full sm:w-auto sm:min-w-[280px]",
+                  isUnderageBlocked ? "border-destructive/60" : "border-primary/40"
+                )}>
+                  <UserCheck size={16} className={cn("shrink-0", isUnderageBlocked ? "text-destructive" : "text-primary")} />
                   <div className="min-w-0 flex-1">
                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Idade do Condutor</p>
                     <input
@@ -307,8 +314,17 @@ const SearchBar = () => {
                       className="text-sm text-foreground bg-transparent outline-none w-full placeholder:text-muted-foreground/50"
                     />
                   </div>
-                  <span className="text-[10px] text-primary font-semibold whitespace-nowrap">+8% na diária</span>
+                  {!isUnderageBlocked && (
+                    <span className="text-[10px] text-primary font-semibold whitespace-nowrap">+8% na diária</span>
+                  )}
                 </div>
+                {isUnderageBlocked && (
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-destructive/10 border border-destructive/20">
+                    <span className="text-xs text-destructive font-medium">
+                      ⚠ Idade mínima para locação: 21 anos. Não é possível prosseguir.
+                    </span>
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
