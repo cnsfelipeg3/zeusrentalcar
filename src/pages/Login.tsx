@@ -4,6 +4,7 @@ import { Mail, Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
+import zeusLogo from "@/assets/zeus-logo.png";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const Login = () => {
         {/* Logo / Brand */}
         <div className="text-center mb-8">
           <a href="/" className="inline-block">
+            <img src={zeusLogo} alt="Zeus Rental Car" className="h-20 w-auto mx-auto mb-4" />
             <h1 className="text-3xl font-bold tracking-tight">
               <span className="text-primary">ZEUS</span>
               <span className="text-muted-foreground font-light ml-1">RENTAL CAR</span>

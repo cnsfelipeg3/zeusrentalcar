@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { toast } from "@/hooks/use-toast";
+import zeusLogo from "@/assets/zeus-logo.png";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -23,7 +24,6 @@ export default function AdminLogin() {
     setSubmitting(true);
     try {
       await signIn(email.trim(), password.trim());
-      // onAuthStateChange will handle redirect
     } catch (err: any) {
       toast({
         title: "Erro de autenticação",
@@ -39,6 +39,7 @@ export default function AdminLogin() {
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
+          <img src={zeusLogo} alt="Zeus Rental Car" className="h-20 w-auto mx-auto mb-4" />
           <h1 className="text-2xl font-bold tracking-tight">
             <span className="text-primary">ZEUS</span>
             <span className="text-muted-foreground font-light ml-1.5">ADMIN</span>
