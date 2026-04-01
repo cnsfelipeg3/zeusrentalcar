@@ -40,6 +40,7 @@ const App = () => (
               <Route path="/sobre-nos" element={<AboutUs />} />
               <Route path="/buscar" element={<SearchResults />} />
               <Route path="/reserva/:vehicleName" element={<BookingDetails />} />
+              <Route path="/reserva/confirmada" element={<BookingConfirmed />} />
               <Route path="/login" element={<Login />} />
               <Route path="/minha-conta" element={<MyAccount />} />
               <Route path="/minha-conta/reserva/:bookingId" element={<BookingDetailClient />} />
