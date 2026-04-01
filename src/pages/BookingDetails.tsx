@@ -108,12 +108,75 @@ const BookingDetails = () => {
     ? Math.max(1, Math.ceil((returnDate.getTime() - pickupDate.getTime()) / (1000 * 60 * 60 * 24)))
     : 1;
 
+  const { toast } = useToast();
+
   // Extras state
   const [premiumInsurance, setPremiumInsurance] = useState(false);
   const [childSeat, setChildSeat] = useState(false);
   const [childSeatQty, setChildSeatQty] = useState(1);
   const [tollTag, setTollTag] = useState(false);
   const [extraDriver, setExtraDriver] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+
+  // Handle cancelled checkout
+  useEffect(() => {
+    if (searchParams.get("cancelled") === "true") {
+      toast({
+        title: "Pagamento cancelado",
+        description: "Sua reserva não foi finalizada. Você pode tentar novamente.",
+        variant: "destructive",
+      });
+    }
+  }, []);
+
+  const handleCheckout = async () => {
+    setIsProcessing(true);
+    setCheckoutError(null);
+
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: {
+          vehicleName: decodedName,
+          vehicleCategory: categoryLabels[vehicle?.categoryKey || ""],
+          dailyRate: dailyPrice,
+          rentalDays: days,
+          pickupDate: pickupDate ? format(pickupDate, "yyyy-MM-dd") : "",
+          dropoffDate: returnDate ? format(returnDate, "yyyy-MM-dd") : "",
+          pickupTime,
+          dropoffTime: returnTime,
+          pickupLocation,
+          dropoffLocation: returnLocation,
+          premiumInsurance,
+          childSeat,
+          childSeatQty,
+          tollTag,
+          extraDriver,
+          isDifferentCity,
+          pricing: {
+            subtotalRental: pricing.subtotalRental,
+            insuranceTotal: pricing.insuranceTotal,
+            extraDriverTotal: pricing.extraDriverTotal,
+            childSeatTotal: pricing.childSeatTotal,
+            tollTagTotal: pricing.tollTagTotal,
+            returnFee: isDifferentCity ? RETURN_FEE : 0,
+            discountAmount: pricing.discountAmount,
+            total: pricing.total,
+          },
+        },
+      });
+
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("Não foi possível criar a sessão de pagamento");
+      }
+    } catch (err: any) {
+      setCheckoutError(err.message || "Erro ao processar pagamento. Tente novamente.");
+      setIsProcessing(false);
+    }
+  };
 
   // Check if different cities
   const isDifferentCity = useMemo(() => {
