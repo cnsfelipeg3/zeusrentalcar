@@ -244,27 +244,33 @@ export default function AdminLive() {
               <button
                 key={v.id}
                 onClick={() => focusVehicle(v.id)}
-                className={`w-full text-left rounded-lg border p-3 transition-all ${
+                className={`w-full text-left rounded-lg border p-2.5 transition-all ${
                   selected === v.id
                     ? "bg-primary/5 border-primary/40 shadow-sm shadow-primary/10"
                     : "bg-card/50 border-border/30 hover:border-border/60 hover:bg-muted/20"
                 }`}
               >
-                <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex items-center gap-2">
-                    <Car size={14} className={selected === v.id ? "text-primary" : "text-muted-foreground"} />
-                    <span className="text-sm font-semibold text-foreground">{v.name}</span>
+                <div className="flex items-center gap-2.5">
+                  <img
+                    src={getCoverImage(v.name)}
+                    alt={v.name}
+                    className="w-12 h-9 rounded object-cover flex-shrink-0 border border-border/20"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-0.5">
+                      <span className="text-sm font-semibold text-foreground truncate">{v.name}</span>
+                      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                        v.status === "moving" ? "bg-green-500" : v.status === "idle" ? "bg-yellow-500" : "bg-muted-foreground"
+                      }`} />
+                    </div>
+                    <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                      <span className="font-mono">{v.plate}</span>
+                      <span className="flex items-center gap-1">
+                        <Gauge size={10} />
+                        {v.speed} mph
+                      </span>
+                    </div>
                   </div>
-                  <span className={`w-2 h-2 rounded-full ${
-                    v.status === "moving" ? "bg-green-500" : v.status === "idle" ? "bg-yellow-500" : "bg-muted-foreground"
-                  }`} />
-                </div>
-                <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                  <span className="font-mono">{v.plate}</span>
-                  <span className="flex items-center gap-1">
-                    <Gauge size={10} />
-                    {v.speed} mph
-                  </span>
                 </div>
               </button>
             ))}
