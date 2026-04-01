@@ -372,6 +372,7 @@ export default function AdminLive() {
               <div className="mt-3 pt-2 border-t border-border/30 text-[10px] text-muted-foreground/60">
                 Lat: {selectedVehicle.lat.toFixed(5)} / Lng: {selectedVehicle.lng.toFixed(5)}
               </div>
+              </div>
             </div>
           )}
         </div>
