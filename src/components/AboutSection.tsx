@@ -9,27 +9,27 @@ const AboutSection = () => {
   const features = [t.about.feat1, t.about.feat2, t.about.feat3, t.about.feat4];
 
   return (
-    <section id="quem-somos" className="py-12 sm:py-24 relative section-divider">
+    <section id="quem-somos" className="py-16 sm:py-28 relative section-divider">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
-          className="text-center max-w-3xl mx-auto mb-10 sm:mb-16"
+          className="text-center max-w-3xl mx-auto mb-12 sm:mb-20"
         >
-          <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-wider mb-4">
+          <h2 className="section-heading mb-5">
             {t.about.title}<span className="gold-text">{t.about.titleHighlight}</span>
           </h2>
-          <p className="text-muted-foreground text-lg font-light leading-relaxed">
+          <p className="text-muted-foreground text-base sm:text-lg font-light leading-relaxed">
             {t.about.description}
           </p>
-          <p className="mt-4 text-xl font-semibold gold-text italic tracking-wide">
+          <p className="mt-5 text-lg sm:text-xl font-semibold gold-text italic tracking-wide">
             {t.about.tagline}
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {features.map((title, i) => {
             const Icon = icons[i];
             return (
@@ -39,10 +39,12 @@ const AboutSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="glass-card p-6 text-center hover:gold-border-glow hover:scale-[1.02] transition-all duration-300"
+                className="glass-card p-6 sm:p-8 text-center hover-lift hover:gold-border-glow group"
               >
-                <Icon className="mx-auto text-primary" size={28} strokeWidth={1.5} />
-                <p className="mt-3 text-[10px] sm:text-xs md:text-sm font-semibold uppercase tracking-wider leading-snug">{title}</p>
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl gold-gradient flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300">
+                  <Icon className="text-primary-foreground" size={24} strokeWidth={1.5} />
+                </div>
+                <p className="mt-4 text-[11px] sm:text-xs md:text-sm font-semibold uppercase tracking-wider leading-snug">{title}</p>
               </motion.div>
             );
           })}

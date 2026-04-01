@@ -6,11 +6,12 @@ const Footer = () => {
   const { t } = useLanguage();
 
   return (
-    <footer id="contato" className="py-16 bg-black/50 border-t border-white/5">
-      <div className="container mx-auto px-4 text-center">
-        <img src={zeusLogo} alt="Zeus Rental Car" className="h-28 w-auto mx-auto" />
+    <footer id="contato" className="py-20 bg-background border-t border-border/10 relative">
+      <div className="absolute inset-0 bg-gradient-to-t from-primary/[0.02] to-transparent pointer-events-none" />
+      <div className="container mx-auto px-4 text-center relative z-10">
+        <img src={zeusLogo} alt="Zeus Rental Car" className="h-24 sm:h-28 w-auto mx-auto" />
 
-        <p className="mt-4 text-muted-foreground italic tracking-wide max-w-md mx-auto text-sm font-semibold">
+        <p className="mt-5 text-muted-foreground italic tracking-wide max-w-md mx-auto text-sm font-semibold">
           {t.footer.tagline}
         </p>
 
@@ -18,29 +19,31 @@ const Footer = () => {
           href={`https://wa.me/16892981754?text=${encodeURIComponent("Olá, venho do site da Zeus e gostaria de realizar uma reserva!")}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-8 inline-flex items-center gap-2 gold-gradient text-primary-foreground px-8 py-4 rounded-md text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-opacity"
+          className="mt-8 inline-flex items-center gap-2.5 gold-gradient text-primary-foreground px-9 py-4 rounded-xl text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-opacity shadow-lg shadow-primary/10"
         >
           <MessageCircle size={18} />
           {t.footer.whatsapp}
         </a>
 
-        <div className="mt-8 flex items-center justify-center gap-6 text-muted-foreground text-sm">
+        <div className="mt-10 flex items-center justify-center gap-8 text-muted-foreground text-sm">
           <a
             href="https://instagram.com/zeusrentalcar"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 hover:text-primary transition-colors"
+            className="flex items-center gap-2 hover:text-primary transition-colors duration-300"
           >
             <Instagram size={18} />
             @zeusrentalcar
           </a>
           <span className="flex items-center gap-2">
-            <MapPin size={18} />
+            <MapPin size={18} className="text-primary/60" />
             Orlando, FL, EUA
           </span>
         </div>
 
-        <p className="mt-8 text-xs text-muted-foreground/50">
+        <div className="section-separator mt-10 mb-6 max-w-xs mx-auto" />
+
+        <p className="text-xs text-muted-foreground/40 tracking-wide">
           {t.footer.rights}
         </p>
       </div>
