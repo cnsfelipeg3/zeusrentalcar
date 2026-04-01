@@ -62,8 +62,8 @@ const SearchBar = () => {
       transition={{ duration: 0.8, delay: 1 }}
       className="mt-10 w-full max-w-5xl mx-auto"
     >
-      <div className="glass-card p-4 sm:p-6 rounded-2xl">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="glass-card p-5 sm:p-7 rounded-2xl border border-border/15">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
           {/* Pickup Date */}
           <Popover open={openPicker === "pickupDate"} onOpenChange={(o) => setOpenPicker(o ? "pickupDate" : null)}>
             <PopoverTrigger asChild>
