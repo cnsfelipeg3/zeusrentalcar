@@ -32,6 +32,18 @@ const categoryLabels: Record<string, string> = {
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const { formatPrice } = useCurrency();
+  const { vehicles: dbVehicles } = useVehiclesDB();
+  const vehiclePrices = buildPriceMap(dbVehicles);
+
+  // Build vehicles list from DB
+  const vehicles: SearchVehicle[] = dbVehicles.map((dbv) => ({
+    name: dbv.name,
+    categoryKey: categoryToKey(dbv.category),
+    passengers: dbv.passengers,
+    luggage: dbv.bags,
+    coverImage: getCoverImage(dbv.name),
+    preparing: dbv.status === "preparing",
+  }));
 
   const pickupDateStr = searchParams.get("pickupDate");
   const returnDateStr = searchParams.get("returnDate");
