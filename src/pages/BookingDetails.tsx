@@ -74,6 +74,7 @@ const vehicleFeaturesMap: Record<string, string[]> = {
 const BookingDetails = () => {
   const { vehicleName } = useParams<{ vehicleName: string }>();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const { formatPrice, currencySymbol } = useCurrency();
   const { vehicles: dbVehicles } = useVehiclesDB();
   const vehiclePrices = buildPriceMap(dbVehicles);
