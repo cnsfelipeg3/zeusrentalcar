@@ -1,4 +1,5 @@
 import { LayoutDashboard, Car, CalendarRange, Users, LogOut, Settings, Radio } from "lucide-react";
+import zeusLogo from "@/assets/zeus-logo.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Sidebar,
