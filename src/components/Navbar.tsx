@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Globe, Home, Sun, Moon, User } from "lucide-react";
+import { Menu, X, Globe, Home, Sun, Moon, User, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -126,6 +126,13 @@ const Navbar = () => {
           >
             {t.nav.book}
           </a>
+          <button
+            onClick={() => navigate("/admin/login")}
+            className="flex items-center gap-1.5 text-muted-foreground/50 hover:text-primary transition-colors duration-300"
+            title="Admin"
+          >
+            <Shield size={16} />
+          </button>
 
           <button
             onClick={() => navigate(isLoggedIn ? "/minha-conta" : "/login")}
@@ -238,6 +245,14 @@ const Navbar = () => {
                   <span>{t.nav.myBookings}</span>
                 </>
               )}
+            </button>
+
+            <button
+              onClick={() => { navigate("/admin/login"); setMobileOpen(false); }}
+              className="flex items-center gap-2 text-sm font-medium tracking-wider uppercase text-muted-foreground/50 hover:text-primary transition-colors duration-300 pt-2 border-t border-border/30 w-full"
+            >
+              <Shield size={16} />
+              <span>Admin</span>
             </button>
           </div>
         </div>
