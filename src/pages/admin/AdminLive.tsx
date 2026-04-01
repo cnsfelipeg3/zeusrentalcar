@@ -1,8 +1,9 @@
 import { useEffect, useState, useRef, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { Car, Signal, Battery, Gauge, Clock, MapPin } from "lucide-react";
+import { Car, Signal, Battery, Gauge, Clock, MapPin, ExternalLink } from "lucide-react";
 import { getCoverImage } from "@/data/vehicleImages";
 
 // --- Simulated fleet data ---
@@ -147,6 +148,7 @@ export default function AdminLive() {
   );
   const [selected, setSelected] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "moving" | "idle" | "parked">("all");
+  const navigate = useNavigate();
   const mapRef = useRef<L.Map | null>(null);
 
   // Simulate real-time movement
@@ -323,6 +325,12 @@ export default function AdminLive() {
                       <span>Bateria</span>
                       <span className="font-semibold">{Math.round(v.battery)}%</span>
                     </div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); navigate(`/reserva/${encodeURIComponent(v.name)}`); }}
+                      className="w-full mt-2 flex items-center justify-center gap-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors py-1.5 text-[11px] font-semibold"
+                    >
+                      <ExternalLink size={11} /> Abrir Reserva
+                    </button>
                   </div>
                 </Popup>
               </Marker>
@@ -372,6 +380,12 @@ export default function AdminLive() {
               <div className="mt-3 pt-2 border-t border-border/30 text-[10px] text-muted-foreground/60">
                 Lat: {selectedVehicle.lat.toFixed(5)} / Lng: {selectedVehicle.lng.toFixed(5)}
               </div>
+              <button
+                onClick={() => navigate(`/reserva/${encodeURIComponent(selectedVehicle.name)}`)}
+                className="w-full mt-3 flex items-center justify-center gap-2 rounded-lg gold-gradient text-primary-foreground hover:opacity-90 transition-opacity py-2 text-xs font-bold"
+              >
+                <ExternalLink size={13} /> Abrir Página de Reserva
+              </button>
               </div>
             </div>
           )}
