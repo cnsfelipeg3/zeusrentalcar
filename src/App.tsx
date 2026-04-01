@@ -14,6 +14,13 @@ import NotFound from "./pages/NotFound.tsx";
 import Login from "./pages/Login.tsx";
 import MyAccount from "./pages/MyAccount.tsx";
 import BookingDetailClient from "./pages/BookingDetailClient.tsx";
+import AdminLogin from "./pages/admin/AdminLogin.tsx";
+import AdminLayout from "./components/admin/AdminLayout.tsx";
+import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
+import AdminBookings from "./pages/admin/AdminBookings.tsx";
+import AdminFleet from "./pages/admin/AdminFleet.tsx";
+import AdminCustomers from "./pages/admin/AdminCustomers.tsx";
+import AdminSettings from "./pages/admin/AdminSettings.tsx";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +41,17 @@ const App = () => (
               <Route path="/login" element={<Login />} />
               <Route path="/minha-conta" element={<MyAccount />} />
               <Route path="/minha-conta/reserva/:bookingId" element={<BookingDetailClient />} />
+
+              {/* Admin routes */}
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="bookings" element={<AdminBookings />} />
+                <Route path="fleet" element={<AdminFleet />} />
+                <Route path="customers" element={<AdminCustomers />} />
+                <Route path="settings" element={<AdminSettings />} />
+              </Route>
+
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
