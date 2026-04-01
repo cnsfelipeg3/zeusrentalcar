@@ -40,7 +40,10 @@ const SearchBar = () => {
   const [driverAge, setDriverAge] = useState("");
   const [openPicker, setOpenPicker] = useState<string | null>(null);
 
+  const isUnderageBlocked = !driverOver26 && !!driverAge && Number(driverAge) < 21;
+
   const handleSearch = () => {
+    if (isUnderageBlocked) return;
     const params = new URLSearchParams();
     if (pickupDate) params.set("pickupDate", pickupDate.toISOString());
     if (returnDate) params.set("returnDate", returnDate.toISOString());
