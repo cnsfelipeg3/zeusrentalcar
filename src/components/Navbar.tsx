@@ -246,6 +246,14 @@ const Navbar = () => {
                 </>
               )}
             </button>
+
+            <button
+              onClick={() => { navigate("/admin/login"); setMobileOpen(false); }}
+              className="flex items-center gap-2 text-sm font-medium tracking-wider uppercase text-muted-foreground/50 hover:text-primary transition-colors duration-300 pt-2 border-t border-border/30 w-full"
+            >
+              <Shield size={16} />
+              <span>Admin</span>
+            </button>
           </div>
         </div>
       )}
