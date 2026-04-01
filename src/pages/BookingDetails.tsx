@@ -169,6 +169,7 @@ const BookingDetails = () => {
       if (error) throw error;
       if (data?.url) {
         window.open(data.url, "_blank");
+        setIsProcessing(false);
       } else {
         throw new Error("Não foi possível criar a sessão de pagamento");
       }
