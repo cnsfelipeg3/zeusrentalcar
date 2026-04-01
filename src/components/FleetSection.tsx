@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, Briefcase, SlidersHorizontal, UserRound, ChevronDown, Check } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import VehicleModal from "./VehicleModal";
+import { useVehiclesDB, categoryToKey } from "@/hooks/useVehiclesDB";
 
 // Cover images (cinematic)
 import corvetteCover from "@/assets/fleet/covers/corvette-cover.jpg";
@@ -93,27 +94,50 @@ const nissanKicksGallery = buildSingleGallery("nissan-kicks");
 const vwAtlasGallery = buildSingleGallery("vw-atlas");
 const mercedesGlaGallery = buildSingleGallery("mercedes-gla");
 
-const vehicles: Vehicle[] = [
-  { name: "Corvette Stingray C8", categoryKey: "superSport", passengers: 2, luggage: 1, coverImage: corvetteCover, galleryImages: corvetteGallery.images, galleryThumbs: corvetteGallery.thumbs },
-  { name: "Mustang Conversível", categoryKey: "sport", passengers: 4, luggage: 2, coverImage: mustangCover, galleryImages: mustangGallery.images, galleryThumbs: mustangGallery.thumbs },
-  { name: "Cadillac Escalade", categoryKey: "suvPremium", passengers: 7, luggage: 5, coverImage: escaladeCover, galleryImages: escaladeGallery.images, galleryThumbs: escaladeGallery.thumbs },
-  { name: "BMW X5 M Sport", categoryKey: "suvPremium", passengers: 5, luggage: 3, coverImage: bmwX5Cover, galleryImages: bmwX5Gallery.images, galleryThumbs: bmwX5Gallery.thumbs },
-  { name: "Chevrolet Suburban", categoryKey: "suvFullSize", passengers: 7, luggage: 5, coverImage: suburbanCover, galleryImages: suburbanGallery.images, galleryThumbs: suburbanGallery.thumbs },
-  { name: "Dodge Durango", categoryKey: "suv", passengers: 7, luggage: 4, coverImage: durangoCover, galleryImages: durangoGallery.images, galleryThumbs: durangoGallery.thumbs },
-  { name: "Kia Sorento", categoryKey: "suv", passengers: 6, luggage: 3, coverImage: sorentoCover, galleryImages: sorentoGallery.images, galleryThumbs: sorentoGallery.thumbs },
-  { name: "Kia Sportage", categoryKey: "suv", passengers: 5, luggage: 3, coverImage: sportageCover, galleryImages: sportageGallery.images, galleryThumbs: sportageGallery.thumbs },
-  { name: "Mitsubishi Outlander", categoryKey: "suv", passengers: 7, luggage: 3, coverImage: outlanderCover, galleryImages: outlanderGallery.images, galleryThumbs: outlanderGallery.thumbs },
-  { name: "Volkswagen Tiguan", categoryKey: "suv", passengers: 7, luggage: 3, coverImage: tiguanCover, galleryImages: tiguanGallery.images, galleryThumbs: tiguanGallery.thumbs },
-  { name: "Chrysler Pacifica", categoryKey: "minivan", passengers: 7, luggage: 5, coverImage: pacificaCover, galleryImages: pacificaGallery.images, galleryThumbs: pacificaGallery.thumbs },
-  { name: "Lexus NX", categoryKey: "suvPremium", passengers: 5, luggage: 3, coverImage: lexusNxCover, galleryImages: lexusNxGallery.images, galleryThumbs: lexusNxGallery.thumbs, preparing: true },
-  { name: "Audi Q7", categoryKey: "suvPremium", passengers: 7, luggage: 4, coverImage: audiQ7Cover, galleryImages: audiQ7Gallery.images, galleryThumbs: audiQ7Gallery.thumbs, preparing: true },
-  { name: "Volvo XC60", categoryKey: "suvPremium", passengers: 5, luggage: 3, coverImage: volvoXc60Cover, galleryImages: volvoXc60Gallery.images, galleryThumbs: volvoXc60Gallery.thumbs, preparing: true },
-  { name: "MUSTANG CONVERSÍVEL", categoryKey: "sport", passengers: 4, luggage: 2, coverImage: mustangWhiteCover, galleryImages: mustangWhiteGallery.images, galleryThumbs: mustangWhiteGallery.thumbs, preparing: true },
-  { name: "VOLKSWAGEN TIGUAN", categoryKey: "suv", passengers: 7, luggage: 3, coverImage: tiguanWhiteCover, galleryImages: tiguanWhiteGallery.images, galleryThumbs: tiguanWhiteGallery.thumbs, preparing: true },
-  { name: "Nissan Kicks", categoryKey: "suvCompact", passengers: 5, luggage: 2, coverImage: nissanKicksCover, galleryImages: nissanKicksGallery.images, galleryThumbs: nissanKicksGallery.thumbs, preparing: true },
-  { name: "Volkswagen Atlas", categoryKey: "suvFullSize", passengers: 7, luggage: 5, coverImage: vwAtlasCover, galleryImages: vwAtlasGallery.images, galleryThumbs: vwAtlasGallery.thumbs, preparing: true },
-  { name: "Mercedes-Benz GLA", categoryKey: "suvPremium", passengers: 5, luggage: 3, coverImage: mercedesGlaCover, galleryImages: mercedesGlaGallery.images, galleryThumbs: mercedesGlaGallery.thumbs, preparing: true },
-];
+// Static image mapping (local assets keyed by vehicle name)
+const coverImageMap: Record<string, string> = {
+  "Corvette Stingray C8": corvetteCover,
+  "Mustang Conversível": mustangCover,
+  "Cadillac Escalade": escaladeCover,
+  "BMW X5 M Sport": bmwX5Cover,
+  "Chevrolet Suburban": suburbanCover,
+  "Dodge Durango": durangoCover,
+  "Kia Sorento": sorentoCover,
+  "Kia Sportage": sportageCover,
+  "Mitsubishi Outlander": outlanderCover,
+  "Volkswagen Tiguan": tiguanCover,
+  "Chrysler Pacifica": pacificaCover,
+  "Lexus NX": lexusNxCover,
+  "Audi Q7": audiQ7Cover,
+  "Volvo XC60": volvoXc60Cover,
+  "MUSTANG CONVERSÍVEL": mustangWhiteCover,
+  "VOLKSWAGEN TIGUAN": tiguanWhiteCover,
+  "Nissan Kicks": nissanKicksCover,
+  "Volkswagen Atlas": vwAtlasCover,
+  "Mercedes-Benz GLA": mercedesGlaCover,
+};
+
+const galleryMap: Record<string, { images: string[]; thumbs: string[] }> = {
+  "Corvette Stingray C8": corvetteGallery,
+  "Mustang Conversível": mustangGallery,
+  "Cadillac Escalade": escaladeGallery,
+  "BMW X5 M Sport": bmwX5Gallery,
+  "Chevrolet Suburban": suburbanGallery,
+  "Dodge Durango": durangoGallery,
+  "Kia Sorento": sorentoGallery,
+  "Kia Sportage": sportageGallery,
+  "Mitsubishi Outlander": outlanderGallery,
+  "Volkswagen Tiguan": tiguanGallery,
+  "Chrysler Pacifica": pacificaGallery,
+  "Lexus NX": lexusNxGallery,
+  "Audi Q7": audiQ7Gallery,
+  "Volvo XC60": volvoXc60Gallery,
+  "MUSTANG CONVERSÍVEL": mustangWhiteGallery,
+  "VOLKSWAGEN TIGUAN": tiguanWhiteGallery,
+  "Nissan Kicks": nissanKicksGallery,
+  "Volkswagen Atlas": vwAtlasGallery,
+  "Mercedes-Benz GLA": mercedesGlaGallery,
+};
 
 const categoryKeys = ["all", "superSport", "sport", "suvPremium", "suvFullSize", "suv", "suvCompact", "minivan"] as const;
 const passengerFilters = ["all", "2", "4-5", "6-7"];
@@ -132,6 +156,22 @@ const FleetSection = () => {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [openFilter, setOpenFilter] = useState<"category" | "passengers" | null>(null);
   const { t } = useLanguage();
+  const { vehicles: dbVehicles } = useVehiclesDB();
+
+  // Merge DB data with local image assets
+  const vehicles: Vehicle[] = dbVehicles.map((dbv) => {
+    const gallery = galleryMap[dbv.name] || { images: [], thumbs: [] };
+    return {
+      name: dbv.name,
+      categoryKey: categoryToKey(dbv.category),
+      passengers: dbv.passengers,
+      luggage: dbv.bags,
+      coverImage: coverImageMap[dbv.name] || "/placeholder.svg",
+      galleryImages: gallery.images,
+      galleryThumbs: gallery.thumbs,
+      preparing: dbv.status === "preparing",
+    };
+  });
 
   const categoryLabels: Record<string, string> = {
     all: t.fleet.all,
