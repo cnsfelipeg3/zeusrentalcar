@@ -769,20 +769,47 @@ const BookingDetails = () => {
                     )}
                   </div>
 
-                  {/* CTA */}
+                  {/* Payment CTA */}
+                  <button
+                    onClick={handleCheckout}
+                    disabled={isProcessing}
+                    className="mt-5 w-full gold-gradient text-primary-foreground py-3 rounded-lg text-xs font-bold uppercase tracking-[0.12em] flex items-center justify-center gap-1.5 hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <Loader2 size={14} className="animate-spin" />
+                        Processando...
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard size={14} />
+                        Pagar e Reservar — {formatPrice(pricing.total)}
+                      </>
+                    )}
+                  </button>
+
+                  {checkoutError && (
+                    <div className="mt-2 p-2 rounded-lg bg-destructive/10 border border-destructive/20 text-center">
+                      <p className="text-[10px] text-destructive">{checkoutError}</p>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-center gap-2 mt-2">
+                    <Lock size={10} className="text-muted-foreground" />
+                    <p className="text-[9px] text-muted-foreground">
+                      Pagamento seguro · Powered by Stripe
+                    </p>
+                  </div>
+
+                  {/* WhatsApp fallback */}
                   <a
                     href={whatsappMsg}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-5 w-full gold-gradient text-primary-foreground py-3 rounded-lg text-xs font-bold uppercase tracking-[0.12em] flex items-center justify-center gap-1.5 hover:opacity-90 transition-opacity"
+                    className="mt-2 text-[10px] text-muted-foreground hover:text-foreground transition-colors text-center block underline underline-offset-2"
                   >
-                    Reservar pelo WhatsApp
-                    <ChevronRight size={14} />
+                    Prefere reservar pelo WhatsApp?
                   </a>
-
-                  <p className="text-[9px] text-center text-muted-foreground mt-2">
-                    Sem compromisso · Resposta em até 15 minutos
-                  </p>
                 </div>
 
                 {/* Trust badges */}

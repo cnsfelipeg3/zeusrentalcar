@@ -22,6 +22,7 @@ import AdminFleet from "./pages/admin/AdminFleet.tsx";
 import AdminCustomers from "./pages/admin/AdminCustomers.tsx";
 import AdminSettings from "./pages/admin/AdminSettings.tsx";
 import AdminLive from "./pages/admin/AdminLive.tsx";
+import BookingConfirmed from "./pages/BookingConfirmed.tsx";
 
 const queryClient = new QueryClient();
 
