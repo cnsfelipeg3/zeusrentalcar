@@ -156,6 +156,22 @@ const FleetSection = () => {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [openFilter, setOpenFilter] = useState<"category" | "passengers" | null>(null);
   const { t } = useLanguage();
+  const { vehicles: dbVehicles } = useVehiclesDB();
+
+  // Merge DB data with local image assets
+  const vehicles: Vehicle[] = dbVehicles.map((dbv) => {
+    const gallery = galleryMap[dbv.name] || { images: [], thumbs: [] };
+    return {
+      name: dbv.name,
+      categoryKey: categoryToKey(dbv.category),
+      passengers: dbv.passengers,
+      luggage: dbv.bags,
+      coverImage: coverImageMap[dbv.name] || "/placeholder.svg",
+      galleryImages: gallery.images,
+      galleryThumbs: gallery.thumbs,
+      preparing: dbv.status === "preparing",
+    };
+  });
 
   const categoryLabels: Record<string, string> = {
     all: t.fleet.all,
