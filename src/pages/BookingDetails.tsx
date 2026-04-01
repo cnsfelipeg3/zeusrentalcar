@@ -10,30 +10,10 @@ import { pt } from "date-fns/locale";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppBubble from "@/components/WhatsAppBubble";
-import { vehiclePrices, vehicleTrims } from "@/data/vehicles";
 import { useCurrency } from "@/i18n/CurrencyContext";
 import { Switch } from "@/components/ui/switch";
-
-// Cover images
-import corvetteCover from "@/assets/fleet/covers/corvette-cover.jpg";
-import mustangCover from "@/assets/fleet/covers/mustang-cover.jpg";
-import escaladeCover from "@/assets/fleet/covers/escalade-cover.jpg";
-import bmwX5Cover from "@/assets/fleet/covers/bmw-x5-cover.jpg";
-import suburbanCover from "@/assets/fleet/covers/suburban-cover.jpg";
-import durangoCover from "@/assets/fleet/covers/durango-cover.jpg";
-import sorentoCover from "@/assets/fleet/covers/sorento-cover.jpg";
-import sportageCover from "@/assets/fleet/covers/sportage-cover.jpg";
-import outlanderCover from "@/assets/fleet/covers/outlander-cover.jpg";
-import tiguanCover from "@/assets/fleet/covers/tiguan-cover.jpg";
-import pacificaCover from "@/assets/fleet/covers/pacifica-cover.jpg";
-import lexusNxCover from "@/assets/fleet/covers/lexus-nx-cover.jpg";
-import audiQ7Cover from "@/assets/fleet/covers/audi-q7-cover.jpg";
-import volvoXc60Cover from "@/assets/fleet/covers/volvo-xc60-cover.jpg";
-import mustangWhiteCover from "@/assets/fleet/covers/mustang-white-cover.jpg";
-import tiguanWhiteCover from "@/assets/fleet/covers/tiguan-white-cover.jpg";
-import nissanKicksCover from "@/assets/fleet/covers/nissan-kicks-cover.jpg";
-import vwAtlasCover from "@/assets/fleet/covers/vw-atlas-cover.jpg";
-import mercedesGlaCover from "@/assets/fleet/covers/mercedes-gla-cover.jpg";
+import { useVehiclesDB, buildPriceMap, buildTrimMap, categoryToKey } from "@/hooks/useVehiclesDB";
+import { getCoverImage } from "@/data/vehicleImages";
 
 interface VehicleInfo {
   name: string;
@@ -52,28 +32,6 @@ const categoryLabels: Record<string, string> = {
   suv: "SUV",
   suvCompact: "SUV Compacto",
   minivan: "Minivan",
-};
-
-const vehicleMap: Record<string, VehicleInfo> = {
-  "Corvette Stingray C8": { name: "Corvette Stingray C8", categoryKey: "superSport", passengers: 2, luggage: 1, coverImage: corvetteCover, features: ["Motor 6.2L V8", "495 HP", "Câmbio automático 8 marchas", "Apple CarPlay / Android Auto", "Modo Track", "Teto Targa removível"] },
-  "Mustang Conversível": { name: "Mustang Conversível", categoryKey: "sport", passengers: 4, luggage: 2, coverImage: mustangCover, features: ["Motor 2.3L EcoBoost", "Capota conversível elétrica", "310 HP", "Apple CarPlay / Android Auto", "Câmbio automático 10 marchas", "Banco de couro aquecido"] },
-  "Cadillac Escalade": { name: "Cadillac Escalade", categoryKey: "suvPremium", passengers: 7, luggage: 5, coverImage: escaladeCover, features: ["Motor 6.2L V8", "420 HP", "Tela OLED 38\"", "Sistema AKG 36 alto-falantes", "Bancos de couro ventilados", "Wi-Fi nativo"] },
-  "BMW X5 M Sport": { name: "BMW X5 M Sport", categoryKey: "suvPremium", passengers: 5, luggage: 3, coverImage: bmwX5Cover, features: ["Motor 3.0L Turbo", "335 HP", "xDrive AWD", "Panoramic Roof", "Harman Kardon Sound", "Assistente de estacionamento"] },
-  "Chevrolet Suburban": { name: "Chevrolet Suburban", categoryKey: "suvFullSize", passengers: 7, luggage: 5, coverImage: suburbanCover, features: ["Motor 5.3L V8", "355 HP", "3ª fileira de bancos", "Tela 10.2\"", "Wi-Fi nativo", "Espaço para até 8 malas"] },
-  "Dodge Durango": { name: "Dodge Durango", categoryKey: "suv", passengers: 7, luggage: 4, coverImage: durangoCover, features: ["Motor 3.6L V6", "295 HP", "3ª fileira de bancos", "Uconnect 10.1\"", "Apple CarPlay", "Tração AWD disponível"] },
-  "Kia Sorento": { name: "Kia Sorento", categoryKey: "suv", passengers: 6, luggage: 3, coverImage: sorentoCover, features: ["Motor 2.5L Turbo", "281 HP", "Câmbio DCT 8 marchas", "Tela 10.25\"", "Carregador wireless", "Bancos de couro"] },
-  "Kia Sportage": { name: "Kia Sportage", categoryKey: "suv", passengers: 5, luggage: 3, coverImage: sportageCover, features: ["Motor 2.5L", "187 HP", "Tela panorâmica curva", "Apple CarPlay / Android Auto", "Assistente de faixa", "Câmera 360°"] },
-  "Mitsubishi Outlander": { name: "Mitsubishi Outlander", categoryKey: "suv", passengers: 7, luggage: 3, coverImage: outlanderCover, features: ["Motor 2.5L", "181 HP", "3ª fileira de bancos", "Tela 9\"", "AWC (tração integral)", "Controle de cruzeiro adaptativo"] },
-  "Volkswagen Tiguan": { name: "Volkswagen Tiguan", categoryKey: "suv", passengers: 7, luggage: 3, coverImage: tiguanCover, features: ["Motor 2.0L TSI", "184 HP", "3ª fileira de bancos", "Digital Cockpit", "App-Connect", "Tração 4Motion"] },
-  "Chrysler Pacifica": { name: "Chrysler Pacifica", categoryKey: "minivan", passengers: 7, luggage: 5, coverImage: pacificaCover, features: ["Motor 3.6L V6", "287 HP", "Stow 'n Go Seats", "Uconnect Theater", "Portas deslizantes elétricas", "Aspirador de pó integrado"] },
-  "Lexus NX": { name: "Lexus NX", categoryKey: "suvPremium", passengers: 5, luggage: 3, coverImage: lexusNxCover, features: ["Motor 2.5L Turbo", "275 HP", "Lexus Safety System+", "Tela 14\"", "Mark Levinson Audio", "Bancos ventilados"] },
-  "Audi Q7": { name: "Audi Q7", categoryKey: "suvPremium", passengers: 7, luggage: 4, coverImage: audiQ7Cover, features: ["Motor 2.0L TFSI", "261 HP", "Quattro AWD", "Virtual Cockpit", "Bang & Olufsen 3D Sound", "Suspensão pneumática"] },
-  "Volvo XC60": { name: "Volvo XC60", categoryKey: "suvPremium", passengers: 5, luggage: 3, coverImage: volvoXc60Cover, features: ["Motor 2.0L Turbo", "247 HP", "Pilot Assist", "Bowers & Wilkins Audio", "Tela Sensus 9\"", "City Safety"] },
-  "MUSTANG CONVERSÍVEL": { name: "MUSTANG CONVERSÍVEL", categoryKey: "sport", passengers: 4, luggage: 2, coverImage: mustangWhiteCover, features: ["Motor 2.3L EcoBoost", "Capota conversível elétrica", "310 HP", "Apple CarPlay / Android Auto", "Câmbio automático 10 marchas", "Cor: Branco Oxford"] },
-  "VOLKSWAGEN TIGUAN": { name: "VOLKSWAGEN TIGUAN", categoryKey: "suv", passengers: 7, luggage: 3, coverImage: tiguanWhiteCover, features: ["Motor 2.0L TSI", "184 HP", "3ª fileira de bancos", "Digital Cockpit", "App-Connect", "Cor: Branco Pure"] },
-  "Nissan Kicks": { name: "Nissan Kicks", categoryKey: "suvCompact", passengers: 5, luggage: 2, coverImage: nissanKicksCover, features: ["Motor 1.6L", "122 HP", "Câmbio CVT", "Tela 8\"", "Apple CarPlay / Android Auto", "Câmera de ré inteligente"] },
-  "Volkswagen Atlas": { name: "Volkswagen Atlas", categoryKey: "suvFullSize", passengers: 7, luggage: 5, coverImage: vwAtlasCover, features: ["Motor 3.6L V6", "276 HP", "3ª fileira de bancos", "Digital Cockpit Pro", "4Motion AWD", "Espaço amplo para família"] },
-  "Mercedes-Benz GLA": { name: "Mercedes-Benz GLA", categoryKey: "suvPremium", passengers: 5, luggage: 3, coverImage: mercedesGlaCover, features: ["Motor 2.0L Turbo", "221 HP", "MBUX Infotainment", "Tela dupla 10.25\"", "Pacote AMG Line", "Suspensão esportiva"] },
 };
 
 const RETURN_FEE = 150;
