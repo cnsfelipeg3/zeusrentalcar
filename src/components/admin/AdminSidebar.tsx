@@ -43,11 +43,14 @@ export function AdminSidebar({ onSignOut }: AdminSidebarProps) {
           <SidebarGroupLabel className="px-4 py-3">
             {!collapsed && (
               <div className="flex items-center gap-2">
-                <span className="text-lg font-bold text-primary">ZEUS</span>
-                <span className="text-xs text-sidebar-foreground/60 font-light uppercase tracking-widest">Admin</span>
+                <img src={zeusLogo} alt="Zeus" className="h-8 w-auto" />
+                <div className="flex items-center gap-1">
+                  <span className="text-lg font-bold text-primary">ZEUS</span>
+                  <span className="text-xs text-sidebar-foreground/60 font-light uppercase tracking-widest">Admin</span>
+                </div>
               </div>
             )}
-            {collapsed && <span className="text-lg font-bold text-primary">Z</span>}
+            {collapsed && <img src={zeusLogo} alt="Zeus" className="h-7 w-auto" />}
           </SidebarGroupLabel>
 
           <SidebarGroupContent>
