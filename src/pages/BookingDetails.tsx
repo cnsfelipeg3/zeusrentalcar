@@ -780,12 +780,12 @@ const BookingDetails = () => {
                       </div>
                     ) : (
                       <div className="space-y-0.5">
-                        <p className="flex items-center gap-1.5 text-amber-400 font-semibold">
+                        <p className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-semibold">
                           <AlertTriangle size={12} /> Seguro Básico
                         </p>
-                        <p className="text-amber-400/80">Caução: <strong>{formatPrice(BASIC_DEPOSIT)}</strong></p>
-                        <p className="text-amber-400/80">Franquia: <strong>{formatPrice(pricing.basicDeductible)}</strong></p>
-                        <p className="text-amber-400/60 mt-0.5">Upgrade para Premium e elimine esses custos</p>
+                        <p className="text-amber-700 dark:text-amber-400/80">Caução: <strong>{formatPrice(BASIC_DEPOSIT)}</strong></p>
+                        <p className="text-amber-700 dark:text-amber-400/80">Franquia: <strong>{formatPrice(pricing.basicDeductible)}</strong></p>
+                        <p className="text-amber-600/80 dark:text-amber-400/60 mt-0.5">Upgrade para Premium e elimine esses custos</p>
                       </div>
                     )}
                   </div>
