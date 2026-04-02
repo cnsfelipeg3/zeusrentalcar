@@ -9,7 +9,7 @@ const Footer = () => {
     <footer id="contato" className="py-20 bg-background border-t border-border/10 relative">
       <div className="absolute inset-0 bg-gradient-to-t from-primary/[0.02] to-transparent pointer-events-none" />
       <div className="container mx-auto px-4 text-center relative z-10">
-        <img src={zeusLogo} alt="Zeus Rental Car" className="h-24 sm:h-28 w-auto mx-auto" />
+        <img src={zeusLogo} alt="Zeus Rental Car" className="h-24 sm:h-28 w-auto mx-auto drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_2px_16px_rgba(212,175,55,0.3)] brightness-95 contrast-110 dark:brightness-100 dark:contrast-100" />
 
         <p className="mt-5 text-muted-foreground italic tracking-wide max-w-md mx-auto text-sm font-semibold">
           {t.footer.tagline}
