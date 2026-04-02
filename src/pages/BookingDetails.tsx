@@ -433,7 +433,7 @@ const BookingDetails = () => {
                         <CalendarIcon size={12} className="text-primary-foreground" />
                       </div>
                       <div>
-                        <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Devolucao</p>
+                        <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Devolução</p>
                         <p className="text-sm font-medium text-foreground">
                           {returnDate ? format(returnDate, "dd 'de' MMMM, yyyy", { locale: pt }) : ""}
                         </p>
@@ -445,7 +445,7 @@ const BookingDetails = () => {
                         <MapPin size={12} className="text-primary-foreground" />
                       </div>
                       <div>
-                        <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Local de Devolucao</p>
+                        <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Local de Devolução</p>
                         <p className="text-sm font-medium text-foreground">{returnLocation || ""}</p>
                         {isDifferentCity && (
                           <p className="text-[10px] text-amber-400 flex items-center gap-1 mt-1">
@@ -458,13 +458,13 @@ const BookingDetails = () => {
                 </div>
                 <div className="mt-3 p-2.5 rounded-lg bg-primary/8 border border-primary/15 text-center">
                   <p className="text-xs font-semibold text-primary">
-                    {days} {days === 1 ? "diaria" : "diarias"} · {formatPrice(dailyPrice)}/dia
+                    {days} {days === 1 ? "diária" : "diárias"} · {formatPrice(dailyPrice)}/dia
                   </p>
                 </div>
                 {isUnder26 && (
                   <div className="mt-2 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-center">
                     <p className="text-[11px] font-semibold text-amber-600 dark:text-amber-400">
-                      Condutor com {driverAgeParam} anos, acrescimo de 8% aplicado
+                      Condutor com {driverAgeParam} anos, acréscimo de 8% aplicado
                     </p>
                   </div>
                 )}
@@ -479,7 +479,7 @@ const BookingDetails = () => {
               >
                 <h2 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2 text-foreground">
                   <Car size={15} className="text-primary" />
-                  Destaques do <span className="gold-text">Veiculo</span>
+                  Destaques do <span className="gold-text">Veículo</span>
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {vehicle.features.map((feat) => (
@@ -540,7 +540,7 @@ const BookingDetails = () => {
                               </div>
                               <div>
                                 <p className="text-xs font-semibold text-foreground">Seguro Premium</p>
-                                <p className="text-[10px] text-muted-foreground">Franquia ZERO, Caucao ZERO</p>
+                                <p className="text-[10px] text-muted-foreground">Franquia ZERO, Caução ZERO</p>
                               </div>
                             </div>
                             <div className="flex items-center gap-2.5">
@@ -566,7 +566,7 @@ const BookingDetails = () => {
                                   <Zap size={14} className="text-[#378ADD] shrink-0 mt-0.5" />
                                   <div className="flex-1">
                                     <p className="text-[11px] text-foreground font-semibold mb-1">
-                                      O plano Zeus Conforto ja inclui Seguro Premium + TAG por apenas {formatPrice(29)}/dia
+                                      O plano Zeus Conforto já inclui Seguro Premium + TAG por apenas {formatPrice(29)}/dia
                                     </p>
                                     <button
                                       onClick={() => setSelectedPlanId("conforto")}
@@ -593,7 +593,7 @@ const BookingDetails = () => {
                                 <Baby size={16} className="text-primary" />
                               </div>
                               <div>
-                                <p className="text-xs font-semibold text-foreground">Cadeirinha Bebe/Crianca</p>
+                                <p className="text-xs font-semibold text-foreground">Cadeirinha Bebê/Criança</p>
                                 <p className="text-[10px] text-muted-foreground">Homologada ISOFIX</p>
                               </div>
                             </div>
@@ -650,7 +650,7 @@ const BookingDetails = () => {
                               <CircleDollarSign size={16} className="text-primary" />
                             </div>
                             <div>
-                              <p className="text-xs font-semibold text-foreground">TAG Ilimitada Pedagios FL</p>
+                              <p className="text-xs font-semibold text-foreground">TAG Ilimitada Pedágios FL</p>
                               <p className="text-[10px] text-muted-foreground">SunPass inclusos</p>
                             </div>
                           </div>
@@ -677,7 +677,7 @@ const BookingDetails = () => {
                     <div className="flex items-center justify-center gap-2 text-primary">
                       <ShieldCheck size={18} />
                       <p className="text-sm font-semibold">
-                        Seu plano {currentPlan.name} ja inclui todos os extras disponiveis
+                        Seu plano {currentPlan.name} já inclui todos os extras disponíveis
                       </p>
                     </div>
                   </motion.div>
@@ -697,13 +697,13 @@ const BookingDetails = () => {
                 <div className="rounded-xl border border-primary/20 bg-card p-5">
                   <h2 className="text-sm font-semibold uppercase tracking-wider mb-4 flex items-center gap-2 text-foreground">
                     <CircleDollarSign size={15} className="text-primary" />
-                    Resumo do <span className="gold-text">Orcamento</span>
+                    Resumo do <span className="gold-text">Orçamento</span>
                   </h2>
 
                   <div className="space-y-2.5 text-xs">
                     {/* Rental */}
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Locacao ({days} {days === 1 ? "dia" : "dias"} x {formatPrice(dailyPrice)})</span>
+                      <span className="text-muted-foreground">Locação ({days} {days === 1 ? "dia" : "dias"} x {formatPrice(dailyPrice)})</span>
                       <span className="font-semibold text-foreground">{formatPrice(pricing.subtotalRental)}</span>
                     </div>
 
@@ -734,7 +734,7 @@ const BookingDetails = () => {
                     {/* Add-on toll tag */}
                     {pricing.addonTollTagTotal > 0 && (
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">TAG Pedagios FL</span>
+                        <span className="text-muted-foreground">TAG Pedágios FL</span>
                         <span className="font-semibold text-foreground">{formatPrice(pricing.addonTollTagTotal)}</span>
                       </div>
                     )}
@@ -762,7 +762,7 @@ const BookingDetails = () => {
                       >
                         <span className="text-emerald-400 font-semibold flex items-center gap-1">
                           <Percent size={12} />
-                          Desconto 10+ diarias
+                          Desconto 10+ diárias
                         </span>
                         <span className="font-bold text-emerald-400">- {formatPrice(pricing.discountAmount)}</span>
                       </motion.div>
@@ -795,7 +795,7 @@ const BookingDetails = () => {
                         </div>
                       </div>
                       <p className="text-[9px] text-muted-foreground text-right mt-0.5">
-                        ≈ {formatPrice(Math.round(pricing.total / days))} /dia (media)
+                        ≈ {formatPrice(Math.round(pricing.total / days))} /dia (média)
                       </p>
                     </div>
                   </div>
