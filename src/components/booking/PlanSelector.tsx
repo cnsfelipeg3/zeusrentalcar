@@ -47,7 +47,7 @@ const features: FeatureRow[] = [
   { label: "Seguro básico + Assistência 24h", icon: Shield, getter: () => true },
   { label: "Seguro Premium (Franquia ZERO)", icon: ShieldCheck, getter: (p) => PLANS[p].insurance === "premium" },
   { label: "TAG Pedágio ilimitada (SunPass)", icon: CircleDollarSign, getter: (p) => PLANS[p].tollTag },
-  { label: "2º motorista grátis", icon: Users, getter: (p) => PLANS[p].extraDriver },
+  { label: "2º condutor grátis", icon: Users, getter: (p) => PLANS[p].extraDriver },
   { label: "Cadeirinha infantil inclusa", icon: Baby, getter: (p) => PLANS[p].childSeat },
   { label: "Entrega no hotel/endereço", icon: Truck, getter: (p) => PLANS[p].delivery },
   { label: "Prioridade WhatsApp", icon: MessageCircle, getter: (p) => PLANS[p].priority },
