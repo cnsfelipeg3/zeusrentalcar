@@ -104,7 +104,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
       if (currency === "BRL") {
         return `R$ ${value.toLocaleString("pt-BR")}`;
       }
-      return `US$ ${value}`;
+      return `US$ ${value.toLocaleString("en-US")}`;
     },
     [currency, formatPriceValue]
   );
