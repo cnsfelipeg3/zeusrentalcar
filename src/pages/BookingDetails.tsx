@@ -237,7 +237,7 @@ const BookingDetails = () => {
             extraDriverTotal: 0,
             childSeatTotal: pricing.addonChildSeatTotal,
             tollTagTotal: pricing.addonTollTagTotal,
-            returnFee: isDifferentCity ? RETURN_FEE : 0,
+            returnFee: isDifferentCity ? currentPlan.returnFee : 0,
             discountAmount: pricing.discountAmount,
             total: pricing.total,
           },
@@ -292,7 +292,7 @@ const BookingDetails = () => {
       pricing.addonInsuranceTotal > 0 ? `Seguro Premium (avulso): ${formatPrice(pricing.addonInsuranceTotal)}` : "",
       pricing.addonChildSeatTotal > 0 ? `Cadeirinha (avulsa): ${formatPrice(pricing.addonChildSeatTotal)}` : "",
       pricing.addonTollTagTotal > 0 ? `TAG Pedágio (avulso): ${formatPrice(pricing.addonTollTagTotal)}` : "",
-      isDifferentCity ? `Taxa de retorno: ${formatPrice(RETURN_FEE)}` : "",
+      isDifferentCity ? `Taxa de retorno: ${currentPlan.returnFee === 0 ? "GRÁTIS" : formatPrice(currentPlan.returnFee)}` : "",
       pricing.qualifiesDiscount ? `Desconto 10+ diárias: -${formatPrice(pricing.discountAmount)}` : "",
       ``,
       `*TOTAL: ${formatPrice(pricing.total)}*`,
@@ -746,7 +746,7 @@ const BookingDetails = () => {
                           Taxa de retorno
                           <span className="text-[9px] text-amber-400">(cidade diferente)</span>
                         </span>
-                        <span className="font-semibold text-foreground">{formatPrice(RETURN_FEE)}</span>
+                        <span className="font-semibold text-foreground">{currentPlan.returnFee === 0 ? "GRÁTIS" : formatPrice(currentPlan.returnFee)}</span>
                       </div>
                     )}
 
