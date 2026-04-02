@@ -45,7 +45,7 @@ interface FeatureRow {
 const features: FeatureRow[] = [
   { label: "Quilometragem ilimitada", icon: Check, getter: () => true },
   { label: "Seguro basico + Assistencia 24h", icon: Shield, getter: () => true },
-  { label: "GPS integrado", icon: Check, getter: () => true },
+  
   { label: "Seguro Premium (Franquia ZERO)", icon: ShieldCheck, getter: (p) => PLANS[p].insurance === "premium" },
   { label: "TAG Pedagio ilimitada (SunPass)", icon: CircleDollarSign, getter: (p) => PLANS[p].tollTag },
   { label: "2o motorista gratis", icon: Users, getter: (p) => PLANS[p].extraDriver },
