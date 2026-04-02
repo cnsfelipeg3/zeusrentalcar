@@ -146,7 +146,7 @@ const BookingDetails = () => {
     if (searchParams.get("cancelled") === "true") {
       toast({
         title: "Pagamento cancelado",
-        description: "Sua reserva nao foi finalizada. Voce pode tentar novamente.",
+        description: "Sua reserva não foi finalizada. Você pode tentar novamente.",
         variant: "destructive",
       });
     }
@@ -249,7 +249,7 @@ const BookingDetails = () => {
         window.open(data.url, "_blank");
         setIsProcessing(false);
       } else {
-        throw new Error("Nao foi possivel criar a sessao de pagamento");
+        throw new Error("Não foi possível criar a sessão de pagamento");
       }
     } catch (err: any) {
       setCheckoutError(err.message || "Erro ao processar pagamento. Tente novamente.");
@@ -261,42 +261,42 @@ const BookingDetails = () => {
   const whatsappMsg = useMemo(() => {
     const planBenefits: string[] = [];
     if (hasPremiumInsurance) planBenefits.push("Seguro Premium (Franquia ZERO)");
-    if (hasTollTag) planBenefits.push("TAG Pedagio ilimitada");
-    if (hasExtraDriver) planBenefits.push("2o motorista gratis");
+    if (hasTollTag) planBenefits.push("TAG Pedágio ilimitada");
+    if (hasExtraDriver) planBenefits.push("2º motorista grátis");
     if (hasChildSeat) planBenefits.push("Cadeirinha infantil");
     if (currentPlan.delivery) planBenefits.push("Entrega no hotel");
     if (currentPlan.priority) planBenefits.push("Prioridade WhatsApp");
-    if (currentPlan.upgrade) planBenefits.push("Upgrade gratis (quando disponivel)");
+    if (currentPlan.upgrade) planBenefits.push("Upgrade grátis (quando disponível)");
 
     const lines = [
-      `Ola! Gostaria de reservar o *${decodedName}*.`,
+      `Olá! Gostaria de reservar o *${decodedName}*.`,
       ``,
-      `📅 *Periodo:*`,
-      pickupDate ? `Retirada: ${format(pickupDate, "dd/MM/yyyy", { locale: pt })} as ${pickupTime}` : "",
-      returnDate ? `Devolucao: ${format(returnDate, "dd/MM/yyyy", { locale: pt })} as ${returnTime}` : "",
+      `📅 *Período:*`,
+      pickupDate ? `Retirada: ${format(pickupDate, "dd/MM/yyyy", { locale: pt })} às ${pickupTime}` : "",
+      returnDate ? `Devolução: ${format(returnDate, "dd/MM/yyyy", { locale: pt })} às ${returnTime}` : "",
       `Duracao: ${days} ${days === 1 ? "dia" : "dias"}`,
       ``,
       `📍 *Locais:*`,
       `Retirada: ${pickupLocation}`,
-      `Devolucao: ${returnLocation}`,
+      `Devolução: ${returnLocation}`,
       ``,
       `🏷️ *Plano: ${currentPlan.name}*`,
       ...planBenefits.map(b => `✅ ${b}`),
       `Cancelamento: ${currentPlan.cancellationLabel}`,
-      `Remarcacao: ${currentPlan.rescheduleLabel}`,
+      `Remarcação: ${currentPlan.rescheduleLabel}`,
       ``,
       `💰 *Resumo:*`,
       isUnder26 ? `⚠️ Condutor menor de 26 anos (idade: ${driverAgeParam})` : "",
-      `Diaria: ${formatPrice(dailyPrice)}`,
+      `Diária: ${formatPrice(dailyPrice)}`,
       currentPlan.dailyExtra > 0 ? `${currentPlan.name}: ${formatPrice(currentPlan.dailyExtra)}/dia` : "",
       pricing.addonInsuranceTotal > 0 ? `Seguro Premium (avulso): ${formatPrice(pricing.addonInsuranceTotal)}` : "",
       pricing.addonChildSeatTotal > 0 ? `Cadeirinha (avulsa): ${formatPrice(pricing.addonChildSeatTotal)}` : "",
-      pricing.addonTollTagTotal > 0 ? `TAG Pedagio (avulso): ${formatPrice(pricing.addonTollTagTotal)}` : "",
+      pricing.addonTollTagTotal > 0 ? `TAG Pedágio (avulso): ${formatPrice(pricing.addonTollTagTotal)}` : "",
       isDifferentCity ? `Taxa de retorno: ${formatPrice(RETURN_FEE)}` : "",
-      pricing.qualifiesDiscount ? `Desconto 10+ diarias: -${formatPrice(pricing.discountAmount)}` : "",
+      pricing.qualifiesDiscount ? `Desconto 10+ diárias: -${formatPrice(pricing.discountAmount)}` : "",
       ``,
       `*TOTAL: ${formatPrice(pricing.total)}*`,
-      hasPremiumInsurance ? `✅ Caucao: ZERO | Franquia: ZERO` : `⚠️ Caucao: ${formatPrice(BASIC_DEPOSIT)} | Franquia: ${formatPrice(basicDeductible)}`,
+      hasPremiumInsurance ? `✅ Caução: ZERO | Franquia: ZERO` : `⚠️ Caução: ${formatPrice(BASIC_DEPOSIT)} | Franquia: ${formatPrice(basicDeductible)}`,
     ].filter(Boolean);
 
     return `https://wa.me/16892981754?text=${encodeURIComponent(lines.join("\n"))}`;
@@ -307,8 +307,8 @@ const BookingDetails = () => {
       <div className="min-h-screen bg-background text-foreground">
         <Navbar />
         <div className="pt-32 pb-16 text-center">
-          <h1 className="text-2xl font-bold mb-4">Veiculo nao encontrado</h1>
-          <Link to="/buscar" className="text-primary hover:underline">Voltar a busca</Link>
+          <h1 className="text-2xl font-bold mb-4">Veículo não encontrado</h1>
+          <Link to="/buscar" className="text-primary hover:underline">Voltar à busca</Link>
         </div>
         <Footer />
       </div>
