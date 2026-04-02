@@ -17,6 +17,7 @@ export interface RentalPlan {
   delivery: boolean;
   priority: boolean;
   upgrade: boolean;
+  returnFee: number;
 }
 
 export const PLANS: Record<PlanId, RentalPlan> = {
@@ -37,6 +38,7 @@ export const PLANS: Record<PlanId, RentalPlan> = {
     delivery: true,
     priority: false,
     upgrade: false,
+    returnFee: 150,
   },
   conforto: {
     id: "conforto",
@@ -55,6 +57,7 @@ export const PLANS: Record<PlanId, RentalPlan> = {
     delivery: true,
     priority: false,
     upgrade: false,
+    returnFee: 90,
   },
   premium: {
     id: "premium",
@@ -73,6 +76,7 @@ export const PLANS: Record<PlanId, RentalPlan> = {
     delivery: true,
     priority: true,
     upgrade: true,
+    returnFee: 0,
   },
 };
 
