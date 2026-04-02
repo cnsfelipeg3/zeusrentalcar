@@ -300,11 +300,11 @@ const BookingDetails = () => {
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             {/* LEFT: Vehicle + Extras */}
             <div className="lg:col-span-3 space-y-5">
-              {/* Vehicle Hero Card */}
+              {/* Vehicle Photo */}
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="rounded-xl overflow-hidden border border-border/40 bg-card"
+                className="rounded-xl overflow-hidden border border-border/40"
               >
                 <div className="relative h-56 sm:h-72">
                   <img
@@ -312,24 +312,32 @@ const BookingDetails = () => {
                     alt={vehicle.name}
                     className="w-full h-full object-cover object-[center_40%]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-5">
-                    <p className="text-[10px] text-primary font-semibold uppercase tracking-[0.2em] mb-0.5">
-                      {categoryLabels[vehicle.categoryKey]}
-                    </p>
-                    <h1 className="text-lg sm:text-xl font-bold uppercase tracking-wide text-foreground">
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <h1 className="text-xl sm:text-2xl font-bold uppercase tracking-wide text-white drop-shadow-lg">
                       {vehicle.name}
                     </h1>
-                    {vehicleTrims[decodedName] && (
-                      <p className="text-[11px] text-muted-foreground mt-0.5">{vehicleTrims[decodedName]}</p>
-                    )}
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2">
-                      <span className="flex items-center gap-1"><Users size={12} className="text-primary" /> {vehicle.passengers}</span>
-                      {vehicle.luggage && <span className="flex items-center gap-1"><Briefcase size={12} className="text-primary" /> {vehicle.luggage}</span>}
-                      <span className="flex items-center gap-1"><Fuel size={12} className="text-primary" /> Gasolina</span>
-                      <span className="flex items-center gap-1"><Gauge size={12} className="text-primary" /> Auto</span>
-                    </div>
                   </div>
+                </div>
+              </motion.div>
+
+              {/* Vehicle Specs Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.03 }}
+                className="rounded-xl border border-border/40 bg-card p-5"
+              >
+                <p className="text-[10px] text-primary font-semibold uppercase tracking-[0.2em] mb-1">
+                  {categoryLabels[vehicle.categoryKey]}
+                </p>
+                {vehicleTrims[decodedName] && (
+                  <p className="text-sm text-muted-foreground mb-3">{vehicleTrims[decodedName]}</p>
+                )}
+                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1.5"><Users size={13} className="text-primary" /> {vehicle.passengers}</span>
+                  {vehicle.luggage && <span className="flex items-center gap-1.5"><Briefcase size={13} className="text-primary" /> {vehicle.luggage}</span>}
+                  <span className="flex items-center gap-1.5"><Fuel size={13} className="text-primary" /> Gasolina</span>
+                  <span className="flex items-center gap-1.5"><Gauge size={13} className="text-primary" /> Auto</span>
                 </div>
               </motion.div>
 
