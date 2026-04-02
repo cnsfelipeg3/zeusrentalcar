@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import {
   Check, X, ShieldCheck, Shield, CircleDollarSign, Baby, Users,
   CalendarX2, CalendarClock, Truck, MessageCircle, ArrowUpCircle,
-  Zap,
+  Zap, MapPin,
 } from "lucide-react";
 import { useCurrency } from "@/i18n/CurrencyContext";
 import { PLANS, PLAN_ORDER, type PlanId } from "@/data/rentalPlans";
@@ -161,6 +161,25 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
             return (
               <div key={planId} className="text-center text-[10px] font-semibold text-foreground leading-tight">
                 {plan.reschedule === "none" ? <X size={14} className="mx-auto text-destructive/40" /> : plan.reschedule === "once_75" ? "1x" : <Check size={14} className="mx-auto text-emerald-500" />}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Return fee row */}
+        <div className="grid grid-cols-[1fr_repeat(3,72px)] items-center text-[11px] px-3 py-1.5 border-t border-border/15 bg-muted/5">
+          <span className="text-muted-foreground flex items-center gap-1">
+            <MapPin size={11} /> Taxa devolução (outra cidade)
+          </span>
+          {PLAN_ORDER.map((planId) => {
+            const fee = PLANS[planId].returnFee;
+            return (
+              <div key={planId} className="text-center text-[10px] font-semibold text-foreground leading-tight">
+                {fee === 0 ? (
+                  <span className="text-emerald-500 font-bold">GRÁTIS</span>
+                ) : (
+                  <span>{formatPrice(fee)}</span>
+                )}
               </div>
             );
           })}

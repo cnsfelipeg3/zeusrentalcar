@@ -39,7 +39,7 @@ const categoryLabels: Record<string, string> = {
   minivan: "Minivan",
 };
 
-const RETURN_FEE = 150;
+const RETURN_FEE_DEFAULT = 150;
 const CHILD_SEAT_DAILY = 9;
 const TOLL_TAG_DAILY = 4;
 const PREMIUM_INSURANCE_DAILY = 22;
@@ -179,7 +179,7 @@ const BookingDetails = () => {
     const addonChildSeatTotal = (addonChildSeat && !currentPlan.childSeat) ? CHILD_SEAT_DAILY * addonChildSeatQty * days : 0;
     const addonTollTagTotal = (addonTollTag && !currentPlan.tollTag) ? TOLL_TAG_DAILY * days : 0;
 
-    const returnFee = isDifferentCity ? RETURN_FEE : 0;
+    const returnFee = isDifferentCity ? currentPlan.returnFee : 0;
 
     const subtotalBeforeDiscount = subtotalRental + planExtra + addonInsuranceTotal + addonChildSeatTotal + addonTollTagTotal + returnFee;
     const qualifiesDiscount = days >= LONG_RENTAL_MIN_DAYS;
