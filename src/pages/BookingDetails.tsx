@@ -174,7 +174,7 @@ const BookingDetails = () => {
     const planExtra = currentPlan.dailyExtra * days;
 
     // Add-on costs (only for items added on top of plan)
-    const addonInsuranceDailyExtra = (addonInsurance && currentPlan.insurance !== "premium") ? Math.round(dailyPrice * PREMIUM_INSURANCE_RATE) : 0;
+    const addonInsuranceDailyExtra = (addonInsurance && currentPlan.insurance !== "premium") ? PREMIUM_INSURANCE_DAILY : 0;
     const addonInsuranceTotal = addonInsuranceDailyExtra * days;
     const addonChildSeatTotal = (addonChildSeat && !currentPlan.childSeat) ? CHILD_SEAT_DAILY * addonChildSeatQty * days : 0;
     const addonTollTagTotal = (addonTollTag && !currentPlan.tollTag) ? TOLL_TAG_DAILY * days : 0;
@@ -544,7 +544,7 @@ const BookingDetails = () => {
                               </div>
                             </div>
                             <div className="flex items-center gap-2.5">
-                              <p className="text-xs font-bold text-foreground whitespace-nowrap">+{formatPrice(Math.round(dailyPrice * PREMIUM_INSURANCE_RATE))}/dia</p>
+                              <p className="text-xs font-bold text-foreground whitespace-nowrap">+{formatPrice(PREMIUM_INSURANCE_DAILY)}/dia</p>
                               <Switch
                                 checked={addonInsurance}
                                 onCheckedChange={setAddonInsurance}
