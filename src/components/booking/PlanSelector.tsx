@@ -108,10 +108,19 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
 
       {/* ── Feature comparison table ── */}
       <div className="rounded-xl border border-border/30 overflow-hidden">
+        {/* Column headers */}
+        <div className="grid grid-cols-[1fr_repeat(3,72px)] items-center text-[10px] font-bold px-3 py-2 border-b border-border/20 bg-muted/10">
+          <span></span>
+          {PLAN_ORDER.map((planId) => (
+            <div key={planId} className="text-center text-foreground/70 leading-tight">
+              {PLANS[planId].name.replace("Zeus ", "")}
+            </div>
+          ))}
+        </div>
         {features.map((feat, i) => (
           <div
             key={feat.label}
-            className={`grid grid-cols-[1fr_repeat(3,56px)] items-center text-[11px] px-3 py-1.5 ${
+            className={`grid grid-cols-[1fr_repeat(3,72px)] items-center text-[11px] px-3 py-1.5 ${
               i % 2 === 0 ? "bg-muted/5" : ""
             } ${i !== features.length - 1 ? "border-b border-border/15" : ""}`}
           >
@@ -132,7 +141,7 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
         ))}
 
         {/* Cancellation row */}
-        <div className="grid grid-cols-[1fr_repeat(3,56px)] items-center text-[11px] px-3 py-1.5 border-t border-border/15 bg-muted/5">
+        <div className="grid grid-cols-[1fr_repeat(3,72px)] items-center text-[11px] px-3 py-1.5 border-t border-border/15 bg-muted/5">
           <span className="text-muted-foreground flex items-center gap-1">
             <CalendarX2 size={11} /> Cancelamento
           </span>
@@ -144,7 +153,7 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
         </div>
 
         {/* Reschedule row */}
-        <div className="grid grid-cols-[1fr_repeat(3,56px)] items-center text-[11px] px-3 py-1.5 border-t border-border/15">
+        <div className="grid grid-cols-[1fr_repeat(3,72px)] items-center text-[11px] px-3 py-1.5 border-t border-border/15">
           <span className="text-muted-foreground flex items-center gap-1">
             <CalendarClock size={11} /> Remarcacao
           </span>
@@ -159,7 +168,7 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
         </div>
 
         {/* Insurance / deposit row */}
-        <div className="grid grid-cols-[1fr_repeat(3,56px)] items-center text-[11px] px-3 py-2 border-t border-border/20 bg-muted/10">
+        <div className="grid grid-cols-[1fr_repeat(3,72px)] items-center text-[11px] px-3 py-2 border-t border-border/20 bg-muted/10">
           <span className="text-muted-foreground flex items-center gap-1">
             <Shield size={11} /> Caucao / Franquia
           </span>
