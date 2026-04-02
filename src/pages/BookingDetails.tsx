@@ -809,18 +809,19 @@ const BookingDetails = () => {
                     {hasPremiumInsurance ? (
                       <div className="space-y-0.5">
                         <p className="flex items-center gap-1.5 text-emerald-400 font-semibold">
-                          <ShieldCheck size={12} /> Protecao Premium ativa
+                          <ShieldCheck size={12} /> Proteção Premium ativa
                         </p>
-                        <p className="text-emerald-400/80">Caucao: <strong>ZERO</strong> · Franquia: <strong>ZERO</strong></p>
-                        <p className="text-emerald-400/60">Voce esta 100% protegido</p>
+                        <p className="text-emerald-400/80">Caução: <strong>ZERO</strong> · Franquia: <strong>ZERO</strong></p>
+                        <p className="text-emerald-400/60">Você está 100% protegido</p>
                       </div>
                     ) : (
                       <div className="space-y-0.5">
                         <p className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-semibold">
-                          <AlertTriangle size={12} /> Seguro Basico
+                          <AlertTriangle size={12} /> Seguro Básico
                         </p>
-                        <p className="text-amber-700 dark:text-amber-400/80">Caucao: <strong>{formatPrice(BASIC_DEPOSIT)}</strong></p>
+                        <p className="text-amber-700 dark:text-amber-400/80">Caução: <strong>{formatPrice(BASIC_DEPOSIT)}</strong></p>
                         <p className="text-amber-700 dark:text-amber-400/80">Franquia: <strong>{formatPrice(basicDeductible)}</strong></p>
+                        <p className="text-amber-600/70 dark:text-amber-400/50 text-[10px] mt-1">Depósito de segurança cobrado na retirada do veículo</p>
                         <p className="text-amber-600/80 dark:text-amber-400/60 mt-0.5">Upgrade para Conforto e elimine esses custos</p>
                       </div>
                     )}
@@ -881,8 +882,8 @@ const BookingDetails = () => {
                     {[
                       { icon: ShieldCheck, label: "Seguro incluso" },
                       { icon: Car, label: "Km ilimitado" },
-                      { icon: Zap, label: "Retirada rapida" },
-                      { icon: Users, label: "2o motorista gratis" },
+                      { icon: Zap, label: "Retirada rápida" },
+                      { icon: Users, label: "2º motorista grátis" },
                     ].map(({ icon: Icon, label }) => (
                       <div key={label} className="flex flex-col items-center gap-1 p-1.5">
                         <Icon size={15} className="text-primary" />
