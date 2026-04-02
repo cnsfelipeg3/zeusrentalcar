@@ -193,11 +193,11 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
           {PLAN_ORDER.map((planId) => {
             const plan = PLANS[planId];
             return (
-              <div key={planId} className="text-center">
+              <div key={planId} className="text-center text-[10px] font-bold leading-tight">
                 {plan.insurance === "premium" ? (
-                  <span className="text-[9px] font-bold text-green-500">ZERO</span>
+                  <span className="text-green-500">ZERO</span>
                 ) : (
-                  <span className="text-[9px] font-bold text-amber-500">{formatPrice(plan.deposit)}</span>
+                  <span className="text-amber-500">{formatPrice(plan.deposit)}</span>
                 )}
               </div>
             );
