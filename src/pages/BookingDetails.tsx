@@ -292,7 +292,7 @@ const BookingDetails = () => {
       pricing.addonInsuranceTotal > 0 ? `Seguro Premium (avulso): ${formatPrice(pricing.addonInsuranceTotal)}` : "",
       pricing.addonChildSeatTotal > 0 ? `Cadeirinha (avulsa): ${formatPrice(pricing.addonChildSeatTotal)}` : "",
       pricing.addonTollTagTotal > 0 ? `TAG Pedágio (avulso): ${formatPrice(pricing.addonTollTagTotal)}` : "",
-      isDifferentCity ? `Taxa de retorno: ${currentPlan.returnFee === 0 ? "GRÁTIS" : formatPrice(currentPlan.returnFee)}` : "",
+      isDifferentCity ? `Taxa de retorno: ${currentPlan.returnFee === 0 ? "ZERO" : formatPrice(currentPlan.returnFee)}` : "",
       pricing.qualifiesDiscount ? `Desconto 10+ diárias: -${formatPrice(pricing.discountAmount)}` : "",
       ``,
       `*TOTAL: ${formatPrice(pricing.total)}*`,
@@ -746,7 +746,7 @@ const BookingDetails = () => {
                           Taxa de retorno
                           <span className="text-[9px] text-amber-400">(cidade diferente)</span>
                         </span>
-                        <span className="font-semibold text-foreground">{currentPlan.returnFee === 0 ? "GRÁTIS" : formatPrice(currentPlan.returnFee)}</span>
+                        <span className="font-semibold text-foreground">{currentPlan.returnFee === 0 ? "ZERO" : formatPrice(currentPlan.returnFee)}</span>
                       </div>
                     )}
 
