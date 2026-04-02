@@ -83,6 +83,6 @@ export const BASE_INCLUDES = [
   "Quilometragem ilimitada",
   "Seguro basico",
   "Assistencia 24h",
-  "GPS integrado",
+  
   "Limpeza completa",
 ];
