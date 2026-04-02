@@ -108,6 +108,15 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
 
       {/* ── Feature comparison table ── */}
       <div className="rounded-xl border border-border/30 overflow-hidden">
+        {/* Column headers */}
+        <div className="grid grid-cols-[1fr_repeat(3,72px)] items-center text-[10px] font-bold px-3 py-2 border-b border-border/20 bg-muted/10">
+          <span></span>
+          {PLAN_ORDER.map((planId) => (
+            <div key={planId} className="text-center text-foreground/70 leading-tight">
+              {PLANS[planId].name.replace("Zeus ", "")}
+            </div>
+          ))}
+        </div>
         {features.map((feat, i) => (
           <div
             key={feat.label}
