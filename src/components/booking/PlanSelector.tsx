@@ -145,8 +145,12 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
             <CalendarX2 size={11} /> Reembolso por Cancelamento
           </span>
           {PLAN_ORDER.map((planId) => (
-            <div key={planId} className="text-center text-[10px] font-semibold text-foreground leading-tight">
-              {PLANS[planId].cancellation}
+            <div key={planId} className="flex justify-center text-[10px] font-semibold text-foreground leading-tight">
+              {planId === "essencial" ? (
+                <X size={14} className="text-red-600" />
+              ) : (
+                <span>{PLANS[planId].cancellation}</span>
+              )}
             </div>
           ))}
         </div>
@@ -156,14 +160,17 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
           <span className="text-muted-foreground flex items-center gap-1">
             <CalendarClock size={11} /> Taxa para remarcação
           </span>
-          {PLAN_ORDER.map((planId) => {
-            const plan = PLANS[planId];
-            return (
-              <div key={planId} className="text-center text-[10px] font-semibold text-foreground leading-tight">
-                {plan.reschedule === "none" ? <X size={14} className="mx-auto text-red-600" /> : plan.reschedule === "once_75" ? "1x" : <Check size={14} className="mx-auto text-green-500" />}
-              </div>
-            );
-          })}
+          {PLAN_ORDER.map((planId) => (
+            <div key={planId} className="text-center text-[10px] font-semibold text-foreground leading-tight">
+              {planId === "essencial" ? (
+                <span>{formatPrice(300)}</span>
+              ) : planId === "conforto" ? (
+                <span>{formatPrice(150)}</span>
+              ) : (
+                <span className="text-green-500 font-bold">ZERO</span>
+              )}
+            </div>
+          ))}
         </div>
 
         {/* Return fee row */}
@@ -185,10 +192,29 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
           })}
         </div>
 
-        {/* Insurance / deposit row */}
-        <div className="grid grid-cols-[1fr_repeat(3,72px)] items-center text-[11px] px-3 py-2 border-t border-border/20 bg-muted/10">
+        {/* Caução row */}
+        <div className="grid grid-cols-[1fr_repeat(3,72px)] items-center text-[11px] px-3 py-1.5 border-t border-border/20 bg-muted/10">
           <span className="text-muted-foreground flex items-center gap-1">
-            <Shield size={11} /> Caução / Franquia
+            <Shield size={11} /> Caução
+          </span>
+          {PLAN_ORDER.map((planId) => {
+            const plan = PLANS[planId];
+            return (
+              <div key={planId} className="text-center text-[10px] font-bold leading-tight">
+                {plan.deposit > 0 ? (
+                  <span className="text-amber-500">{formatPrice(plan.deposit)}</span>
+                ) : (
+                  <span className="text-green-500">ZERO</span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Franquia row */}
+        <div className="grid grid-cols-[1fr_repeat(3,72px)] items-center text-[11px] px-3 py-1.5 border-t border-border/15">
+          <span className="text-muted-foreground flex items-center gap-1">
+            <ShieldCheck size={11} /> Franquia
           </span>
           {PLAN_ORDER.map((planId) => {
             const plan = PLANS[planId];
@@ -197,7 +223,7 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
                 {plan.insurance === "premium" ? (
                   <span className="text-green-500">ZERO</span>
                 ) : (
-                  <span className="text-amber-500">{formatPrice(plan.deposit)}</span>
+                  <span className="text-amber-500">{formatPrice(plan.deposit * plan.deductibleMultiplier)}</span>
                 )}
               </div>
             );
