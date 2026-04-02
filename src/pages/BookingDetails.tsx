@@ -487,19 +487,20 @@ const BookingDetails = () => {
                   {/* Premium */}
                   <button
                     onClick={() => setPremiumInsurance(true)}
-                    className={`relative p-4 rounded-lg border transition-all duration-300 text-left ${
+                    className={`relative pt-7 p-4 rounded-lg border-2 transition-all duration-300 text-left ${
                       premiumInsurance
-                        ? "border-primary/50 bg-primary/5 ring-1 ring-primary/15"
-                        : "border-border/30 bg-muted/10 hover:border-border/50"
+                        ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-lg shadow-primary/10"
+                        : "border-primary/40 bg-primary/[0.02] hover:border-primary/60"
                     }`}
                   >
                     {premiumInsurance && (
-                      <div className="absolute top-2.5 right-2.5 w-4 h-4 rounded-full gold-gradient flex items-center justify-center">
-                        <Check size={10} className="text-primary-foreground" />
+                      <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full gold-gradient flex items-center justify-center">
+                        <Check size={12} className="text-primary-foreground" />
                       </div>
                     )}
-                    <div className="absolute -top-2 left-3 px-2 py-0.5 rounded gold-gradient">
-                      <span className="text-[8px] font-bold uppercase tracking-widest text-primary-foreground">Recomendado</span>
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full gold-gradient flex items-center gap-1.5">
+                      <ShieldCheck size={11} className="text-primary-foreground" />
+                      <span className="text-[9px] font-bold uppercase tracking-widest text-primary-foreground">Recomendado</span>
                     </div>
                     <ShieldCheck size={18} className="text-primary mb-2" />
                     <h3 className="text-xs font-bold uppercase tracking-wider text-foreground mb-0.5">Seguro Premium</h3>
