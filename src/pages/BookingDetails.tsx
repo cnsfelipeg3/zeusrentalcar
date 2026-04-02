@@ -50,25 +50,25 @@ const DEDUCTIBLE_MULTIPLIER = 11;
 const YOUNG_DRIVER_SURCHARGE = 0.08;
 
 const vehicleFeaturesMap: Record<string, string[]> = {
-  "Corvette Stingray C8": ["Motor 6.2L V8", "495 HP", "Cambio automatico 8 marchas", "Apple CarPlay / Android Auto", "Modo Track", "Teto Targa removivel"],
-  "Mustang Conversível": ["Motor 2.3L EcoBoost", "Capota conversivel eletrica", "310 HP", "Apple CarPlay / Android Auto", "Cambio automatico 10 marchas", "Banco de couro aquecido"],
+  "Corvette Stingray C8": ["Motor 6.2L V8", "495 HP", "Câmbio automático 8 marchas", "Apple CarPlay / Android Auto", "Modo Track", "Teto Targa removível"],
+  "Mustang Conversível": ["Motor 2.3L EcoBoost", "Capota conversível elétrica", "310 HP", "Apple CarPlay / Android Auto", "Câmbio automático 10 marchas", "Banco de couro aquecido"],
   "Cadillac Escalade": ["Motor 6.2L V8", "420 HP", "Tela OLED 38\"", "Sistema AKG 36 alto-falantes", "Bancos de couro ventilados", "Wi-Fi nativo"],
-  "BMW X5 M Sport": ["Motor 3.0L Turbo", "335 HP", "xDrive AWD", "Panoramic Roof", "Harman Kardon Sound", "Assistente de estacionamento"],
-  "Chevrolet Suburban": ["Motor 5.3L V8", "355 HP", "3a fileira de bancos", "Tela 10.2\"", "Wi-Fi nativo", "Espaco para ate 8 malas"],
-  "Dodge Durango": ["Motor 3.6L V6", "295 HP", "3a fileira de bancos", "Uconnect 10.1\"", "Apple CarPlay", "Tracao AWD disponivel"],
-  "Kia Sorento": ["Motor 2.5L Turbo", "281 HP", "Cambio DCT 8 marchas", "Tela 10.25\"", "Carregador wireless", "Bancos de couro"],
-  "Kia Sportage": ["Motor 2.5L", "187 HP", "Tela panoramica curva", "Apple CarPlay / Android Auto", "Assistente de faixa", "Camera 360"],
-  "Mitsubishi Outlander": ["Motor 2.5L", "181 HP", "3a fileira de bancos", "Tela 9\"", "AWC (tracao integral)", "Controle de cruzeiro adaptativo"],
-  "Volkswagen Tiguan": ["Motor 2.0L TSI", "184 HP", "3a fileira de bancos", "Digital Cockpit", "App-Connect", "Tracao 4Motion"],
-  "Chrysler Pacifica": ["Motor 3.6L V6", "287 HP", "Stow 'n Go Seats", "Uconnect Theater", "Portas deslizantes eletricas", "Aspirador de po integrado"],
+  "BMW X5 M Sport": ["Motor 3.0L Turbo", "335 HP", "xDrive AWD", "Teto panorâmico", "Harman Kardon Sound", "Assistente de estacionamento"],
+  "Chevrolet Suburban": ["Motor 5.3L V8", "355 HP", "3ª fileira de bancos", "Tela 10.2\"", "Wi-Fi nativo", "Espaço para até 8 malas"],
+  "Dodge Durango": ["Motor 3.6L V6", "295 HP", "3ª fileira de bancos", "Uconnect 10.1\"", "Apple CarPlay", "Tração AWD disponível"],
+  "Kia Sorento": ["Motor 2.5L Turbo", "281 HP", "Câmbio DCT 8 marchas", "Tela 10.25\"", "Carregador wireless", "Bancos de couro"],
+  "Kia Sportage": ["Motor 2.5L", "187 HP", "Tela panorâmica curva", "Apple CarPlay / Android Auto", "Assistente de faixa", "Câmera 360°"],
+  "Mitsubishi Outlander": ["Motor 2.5L", "181 HP", "3ª fileira de bancos", "Tela 9\"", "AWC (tração integral)", "Controle de cruzeiro adaptativo"],
+  "Volkswagen Tiguan": ["Motor 2.0L TSI", "184 HP", "3ª fileira de bancos", "Digital Cockpit", "App-Connect", "Tração 4Motion"],
+  "Chrysler Pacifica": ["Motor 3.6L V6", "287 HP", "Stow 'n Go Seats", "Uconnect Theater", "Portas deslizantes elétricas", "Aspirador de pó integrado"],
   "Lexus NX": ["Motor 2.5L Turbo", "275 HP", "Lexus Safety System+", "Tela 14\"", "Mark Levinson Audio", "Bancos ventilados"],
-  "Audi Q7": ["Motor 2.0L TFSI", "261 HP", "Quattro AWD", "Virtual Cockpit", "Bang & Olufsen 3D Sound", "Suspensao pneumatica"],
+  "Audi Q7": ["Motor 2.0L TFSI", "261 HP", "Quattro AWD", "Virtual Cockpit", "Bang & Olufsen 3D Sound", "Suspensão pneumática"],
   "Volvo XC60": ["Motor 2.0L Turbo", "247 HP", "Pilot Assist", "Bowers & Wilkins Audio", "Tela Sensus 9\"", "City Safety"],
-  "MUSTANG CONVERSÍVEL": ["Motor 2.3L EcoBoost", "Capota conversivel eletrica", "310 HP", "Apple CarPlay / Android Auto", "Cambio automatico 10 marchas", "Cor: Branco Oxford"],
-  "VOLKSWAGEN TIGUAN": ["Motor 2.0L TSI", "184 HP", "3a fileira de bancos", "Digital Cockpit", "App-Connect", "Cor: Branco Pure"],
-  "Nissan Kicks": ["Motor 1.6L", "122 HP", "Cambio CVT", "Tela 8\"", "Apple CarPlay / Android Auto", "Camera de re inteligente"],
-  "Volkswagen Atlas": ["Motor 3.6L V6", "276 HP", "3a fileira de bancos", "Digital Cockpit Pro", "4Motion AWD", "Espaco amplo para familia"],
-  "Mercedes-Benz GLA": ["Motor 2.0L Turbo", "221 HP", "MBUX Infotainment", "Tela dupla 10.25\"", "Pacote AMG Line", "Suspensao esportiva"],
+  "MUSTANG CONVERSÍVEL": ["Motor 2.3L EcoBoost", "Capota conversível elétrica", "310 HP", "Apple CarPlay / Android Auto", "Câmbio automático 10 marchas", "Cor: Branco Oxford"],
+  "VOLKSWAGEN TIGUAN": ["Motor 2.0L TSI", "184 HP", "3ª fileira de bancos", "Digital Cockpit", "App-Connect", "Cor: Branco Pure"],
+  "Nissan Kicks": ["Motor 1.6L", "122 HP", "Câmbio CVT", "Tela 8\"", "Apple CarPlay / Android Auto", "Câmera de ré inteligente"],
+  "Volkswagen Atlas": ["Motor 3.6L V6", "276 HP", "3ª fileira de bancos", "Digital Cockpit Pro", "4Motion AWD", "Espaço amplo para família"],
+  "Mercedes-Benz GLA": ["Motor 2.0L Turbo", "221 HP", "MBUX Infotainment", "Tela dupla 10.25\"", "Pacote AMG Line", "Suspensão esportiva"],
 };
 
 const BookingDetails = () => {
@@ -146,7 +146,7 @@ const BookingDetails = () => {
     if (searchParams.get("cancelled") === "true") {
       toast({
         title: "Pagamento cancelado",
-        description: "Sua reserva nao foi finalizada. Voce pode tentar novamente.",
+        description: "Sua reserva não foi finalizada. Você pode tentar novamente.",
         variant: "destructive",
       });
     }
@@ -249,7 +249,7 @@ const BookingDetails = () => {
         window.open(data.url, "_blank");
         setIsProcessing(false);
       } else {
-        throw new Error("Nao foi possivel criar a sessao de pagamento");
+        throw new Error("Não foi possível criar a sessão de pagamento");
       }
     } catch (err: any) {
       setCheckoutError(err.message || "Erro ao processar pagamento. Tente novamente.");
@@ -261,42 +261,42 @@ const BookingDetails = () => {
   const whatsappMsg = useMemo(() => {
     const planBenefits: string[] = [];
     if (hasPremiumInsurance) planBenefits.push("Seguro Premium (Franquia ZERO)");
-    if (hasTollTag) planBenefits.push("TAG Pedagio ilimitada");
-    if (hasExtraDriver) planBenefits.push("2o motorista gratis");
+    if (hasTollTag) planBenefits.push("TAG Pedágio ilimitada");
+    if (hasExtraDriver) planBenefits.push("2º motorista grátis");
     if (hasChildSeat) planBenefits.push("Cadeirinha infantil");
     if (currentPlan.delivery) planBenefits.push("Entrega no hotel");
     if (currentPlan.priority) planBenefits.push("Prioridade WhatsApp");
-    if (currentPlan.upgrade) planBenefits.push("Upgrade gratis (quando disponivel)");
+    if (currentPlan.upgrade) planBenefits.push("Upgrade grátis (quando disponível)");
 
     const lines = [
-      `Ola! Gostaria de reservar o *${decodedName}*.`,
+      `Olá! Gostaria de reservar o *${decodedName}*.`,
       ``,
-      `📅 *Periodo:*`,
-      pickupDate ? `Retirada: ${format(pickupDate, "dd/MM/yyyy", { locale: pt })} as ${pickupTime}` : "",
-      returnDate ? `Devolucao: ${format(returnDate, "dd/MM/yyyy", { locale: pt })} as ${returnTime}` : "",
+      `📅 *Período:*`,
+      pickupDate ? `Retirada: ${format(pickupDate, "dd/MM/yyyy", { locale: pt })} às ${pickupTime}` : "",
+      returnDate ? `Devolução: ${format(returnDate, "dd/MM/yyyy", { locale: pt })} às ${returnTime}` : "",
       `Duracao: ${days} ${days === 1 ? "dia" : "dias"}`,
       ``,
       `📍 *Locais:*`,
       `Retirada: ${pickupLocation}`,
-      `Devolucao: ${returnLocation}`,
+      `Devolução: ${returnLocation}`,
       ``,
       `🏷️ *Plano: ${currentPlan.name}*`,
       ...planBenefits.map(b => `✅ ${b}`),
       `Cancelamento: ${currentPlan.cancellationLabel}`,
-      `Remarcacao: ${currentPlan.rescheduleLabel}`,
+      `Remarcação: ${currentPlan.rescheduleLabel}`,
       ``,
       `💰 *Resumo:*`,
       isUnder26 ? `⚠️ Condutor menor de 26 anos (idade: ${driverAgeParam})` : "",
-      `Diaria: ${formatPrice(dailyPrice)}`,
+      `Diária: ${formatPrice(dailyPrice)}`,
       currentPlan.dailyExtra > 0 ? `${currentPlan.name}: ${formatPrice(currentPlan.dailyExtra)}/dia` : "",
       pricing.addonInsuranceTotal > 0 ? `Seguro Premium (avulso): ${formatPrice(pricing.addonInsuranceTotal)}` : "",
       pricing.addonChildSeatTotal > 0 ? `Cadeirinha (avulsa): ${formatPrice(pricing.addonChildSeatTotal)}` : "",
-      pricing.addonTollTagTotal > 0 ? `TAG Pedagio (avulso): ${formatPrice(pricing.addonTollTagTotal)}` : "",
+      pricing.addonTollTagTotal > 0 ? `TAG Pedágio (avulso): ${formatPrice(pricing.addonTollTagTotal)}` : "",
       isDifferentCity ? `Taxa de retorno: ${formatPrice(RETURN_FEE)}` : "",
-      pricing.qualifiesDiscount ? `Desconto 10+ diarias: -${formatPrice(pricing.discountAmount)}` : "",
+      pricing.qualifiesDiscount ? `Desconto 10+ diárias: -${formatPrice(pricing.discountAmount)}` : "",
       ``,
       `*TOTAL: ${formatPrice(pricing.total)}*`,
-      hasPremiumInsurance ? `✅ Caucao: ZERO | Franquia: ZERO` : `⚠️ Caucao: ${formatPrice(BASIC_DEPOSIT)} | Franquia: ${formatPrice(basicDeductible)}`,
+      hasPremiumInsurance ? `✅ Caução: ZERO | Franquia: ZERO` : `⚠️ Caução: ${formatPrice(BASIC_DEPOSIT)} | Franquia: ${formatPrice(basicDeductible)}`,
     ].filter(Boolean);
 
     return `https://wa.me/16892981754?text=${encodeURIComponent(lines.join("\n"))}`;
@@ -307,8 +307,8 @@ const BookingDetails = () => {
       <div className="min-h-screen bg-background text-foreground">
         <Navbar />
         <div className="pt-32 pb-16 text-center">
-          <h1 className="text-2xl font-bold mb-4">Veiculo nao encontrado</h1>
-          <Link to="/buscar" className="text-primary hover:underline">Voltar a busca</Link>
+          <h1 className="text-2xl font-bold mb-4">Veículo não encontrado</h1>
+          <Link to="/buscar" className="text-primary hover:underline">Voltar à busca</Link>
         </div>
         <Footer />
       </div>
@@ -433,7 +433,7 @@ const BookingDetails = () => {
                         <CalendarIcon size={12} className="text-primary-foreground" />
                       </div>
                       <div>
-                        <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Devolucao</p>
+                        <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Devolução</p>
                         <p className="text-sm font-medium text-foreground">
                           {returnDate ? format(returnDate, "dd 'de' MMMM, yyyy", { locale: pt }) : ""}
                         </p>
@@ -445,7 +445,7 @@ const BookingDetails = () => {
                         <MapPin size={12} className="text-primary-foreground" />
                       </div>
                       <div>
-                        <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Local de Devolucao</p>
+                        <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Local de Devolução</p>
                         <p className="text-sm font-medium text-foreground">{returnLocation || ""}</p>
                         {isDifferentCity && (
                           <p className="text-[10px] text-amber-400 flex items-center gap-1 mt-1">
@@ -458,13 +458,13 @@ const BookingDetails = () => {
                 </div>
                 <div className="mt-3 p-2.5 rounded-lg bg-primary/8 border border-primary/15 text-center">
                   <p className="text-xs font-semibold text-primary">
-                    {days} {days === 1 ? "diaria" : "diarias"} · {formatPrice(dailyPrice)}/dia
+                    {days} {days === 1 ? "diária" : "diárias"} · {formatPrice(dailyPrice)}/dia
                   </p>
                 </div>
                 {isUnder26 && (
                   <div className="mt-2 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-center">
                     <p className="text-[11px] font-semibold text-amber-600 dark:text-amber-400">
-                      Condutor com {driverAgeParam} anos, acrescimo de 8% aplicado
+                      Condutor com {driverAgeParam} anos, acréscimo de 8% aplicado
                     </p>
                   </div>
                 )}
@@ -479,7 +479,7 @@ const BookingDetails = () => {
               >
                 <h2 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2 text-foreground">
                   <Car size={15} className="text-primary" />
-                  Destaques do <span className="gold-text">Veiculo</span>
+                  Destaques do <span className="gold-text">Veículo</span>
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {vehicle.features.map((feat) => (
@@ -540,7 +540,7 @@ const BookingDetails = () => {
                               </div>
                               <div>
                                 <p className="text-xs font-semibold text-foreground">Seguro Premium</p>
-                                <p className="text-[10px] text-muted-foreground">Franquia ZERO, Caucao ZERO</p>
+                                <p className="text-[10px] text-muted-foreground">Franquia ZERO, Caução ZERO</p>
                               </div>
                             </div>
                             <div className="flex items-center gap-2.5">
@@ -566,7 +566,7 @@ const BookingDetails = () => {
                                   <Zap size={14} className="text-[#378ADD] shrink-0 mt-0.5" />
                                   <div className="flex-1">
                                     <p className="text-[11px] text-foreground font-semibold mb-1">
-                                      O plano Zeus Conforto ja inclui Seguro Premium + TAG por apenas {formatPrice(29)}/dia
+                                      O plano Zeus Conforto já inclui Seguro Premium + TAG por apenas {formatPrice(29)}/dia
                                     </p>
                                     <button
                                       onClick={() => setSelectedPlanId("conforto")}
@@ -593,7 +593,7 @@ const BookingDetails = () => {
                                 <Baby size={16} className="text-primary" />
                               </div>
                               <div>
-                                <p className="text-xs font-semibold text-foreground">Cadeirinha Bebe/Crianca</p>
+                                <p className="text-xs font-semibold text-foreground">Cadeirinha Bebê/Criança</p>
                                 <p className="text-[10px] text-muted-foreground">Homologada ISOFIX</p>
                               </div>
                             </div>
@@ -650,7 +650,7 @@ const BookingDetails = () => {
                               <CircleDollarSign size={16} className="text-primary" />
                             </div>
                             <div>
-                              <p className="text-xs font-semibold text-foreground">TAG Ilimitada Pedagios FL</p>
+                              <p className="text-xs font-semibold text-foreground">TAG Ilimitada Pedágios FL</p>
                               <p className="text-[10px] text-muted-foreground">SunPass inclusos</p>
                             </div>
                           </div>
@@ -677,7 +677,7 @@ const BookingDetails = () => {
                     <div className="flex items-center justify-center gap-2 text-primary">
                       <ShieldCheck size={18} />
                       <p className="text-sm font-semibold">
-                        Seu plano {currentPlan.name} ja inclui todos os extras disponiveis
+                        Seu plano {currentPlan.name} já inclui todos os extras disponíveis
                       </p>
                     </div>
                   </motion.div>
@@ -697,13 +697,13 @@ const BookingDetails = () => {
                 <div className="rounded-xl border border-primary/20 bg-card p-5">
                   <h2 className="text-sm font-semibold uppercase tracking-wider mb-4 flex items-center gap-2 text-foreground">
                     <CircleDollarSign size={15} className="text-primary" />
-                    Resumo do <span className="gold-text">Orcamento</span>
+                    Resumo do <span className="gold-text">Orçamento</span>
                   </h2>
 
                   <div className="space-y-2.5 text-xs">
                     {/* Rental */}
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Locacao ({days} {days === 1 ? "dia" : "dias"} x {formatPrice(dailyPrice)})</span>
+                      <span className="text-muted-foreground">Locação ({days} {days === 1 ? "dia" : "dias"} x {formatPrice(dailyPrice)})</span>
                       <span className="font-semibold text-foreground">{formatPrice(pricing.subtotalRental)}</span>
                     </div>
 
@@ -734,7 +734,7 @@ const BookingDetails = () => {
                     {/* Add-on toll tag */}
                     {pricing.addonTollTagTotal > 0 && (
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">TAG Pedagios FL</span>
+                        <span className="text-muted-foreground">TAG Pedágios FL</span>
                         <span className="font-semibold text-foreground">{formatPrice(pricing.addonTollTagTotal)}</span>
                       </div>
                     )}
@@ -762,7 +762,7 @@ const BookingDetails = () => {
                       >
                         <span className="text-emerald-400 font-semibold flex items-center gap-1">
                           <Percent size={12} />
-                          Desconto 10+ diarias
+                          Desconto 10+ diárias
                         </span>
                         <span className="font-bold text-emerald-400">- {formatPrice(pricing.discountAmount)}</span>
                       </motion.div>
@@ -795,7 +795,7 @@ const BookingDetails = () => {
                         </div>
                       </div>
                       <p className="text-[9px] text-muted-foreground text-right mt-0.5">
-                        ≈ {formatPrice(Math.round(pricing.total / days))} /dia (media)
+                        ≈ {formatPrice(Math.round(pricing.total / days))} /dia (média)
                       </p>
                     </div>
                   </div>
@@ -809,18 +809,19 @@ const BookingDetails = () => {
                     {hasPremiumInsurance ? (
                       <div className="space-y-0.5">
                         <p className="flex items-center gap-1.5 text-emerald-400 font-semibold">
-                          <ShieldCheck size={12} /> Protecao Premium ativa
+                          <ShieldCheck size={12} /> Proteção Premium ativa
                         </p>
-                        <p className="text-emerald-400/80">Caucao: <strong>ZERO</strong> · Franquia: <strong>ZERO</strong></p>
-                        <p className="text-emerald-400/60">Voce esta 100% protegido</p>
+                        <p className="text-emerald-400/80">Caução: <strong>ZERO</strong> · Franquia: <strong>ZERO</strong></p>
+                        <p className="text-emerald-400/60">Você está 100% protegido</p>
                       </div>
                     ) : (
                       <div className="space-y-0.5">
                         <p className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-semibold">
-                          <AlertTriangle size={12} /> Seguro Basico
+                          <AlertTriangle size={12} /> Seguro Básico
                         </p>
-                        <p className="text-amber-700 dark:text-amber-400/80">Caucao: <strong>{formatPrice(BASIC_DEPOSIT)}</strong></p>
+                        <p className="text-amber-700 dark:text-amber-400/80">Caução: <strong>{formatPrice(BASIC_DEPOSIT)}</strong></p>
                         <p className="text-amber-700 dark:text-amber-400/80">Franquia: <strong>{formatPrice(basicDeductible)}</strong></p>
+                        <p className="text-amber-600/70 dark:text-amber-400/50 text-[10px] mt-1">Depósito de segurança cobrado na retirada do veículo</p>
                         <p className="text-amber-600/80 dark:text-amber-400/60 mt-0.5">Upgrade para Conforto e elimine esses custos</p>
                       </div>
                     )}
@@ -881,8 +882,8 @@ const BookingDetails = () => {
                     {[
                       { icon: ShieldCheck, label: "Seguro incluso" },
                       { icon: Car, label: "Km ilimitado" },
-                      { icon: Zap, label: "Retirada rapida" },
-                      { icon: Users, label: "2o motorista gratis" },
+                      { icon: Zap, label: "Retirada rápida" },
+                      { icon: Users, label: "2º motorista grátis" },
                     ].map(({ icon: Icon, label }) => (
                       <div key={label} className="flex flex-col items-center gap-1 p-1.5">
                         <Icon size={15} className="text-primary" />

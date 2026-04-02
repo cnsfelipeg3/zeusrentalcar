@@ -33,7 +33,7 @@ export const PLANS: Record<PlanId, RentalPlan> = {
     cancellation: "0%",
     cancellationLabel: "Sem reembolso",
     reschedule: "none",
-    rescheduleLabel: "Nao permitida",
+    rescheduleLabel: "Não permitida",
     delivery: false,
     priority: false,
     upgrade: false,
@@ -49,7 +49,7 @@ export const PLANS: Record<PlanId, RentalPlan> = {
     childSeat: false,
     extraDriver: true,
     cancellation: "50%",
-    cancellationLabel: "50% reembolso ate 48h",
+    cancellationLabel: "50% reembolso até 48h",
     reschedule: "once_75",
     rescheduleLabel: "1x com taxa de US$ 75",
     delivery: false,
@@ -67,7 +67,7 @@ export const PLANS: Record<PlanId, RentalPlan> = {
     childSeat: true,
     extraDriver: true,
     cancellation: "100%",
-    cancellationLabel: "100% reembolso ate 24h",
+    cancellationLabel: "100% reembolso até 24h",
     reschedule: "unlimited_free",
     rescheduleLabel: "Ilimitada sem taxa",
     delivery: true,
@@ -81,8 +81,7 @@ export const PLAN_ORDER: PlanId[] = ["essencial", "conforto", "premium"];
 // Items included in ALL plans
 export const BASE_INCLUDES = [
   "Quilometragem ilimitada",
-  "Seguro basico",
-  "Assistencia 24h",
-  
+  "Seguro básico",
+  "Assistência 24h",
   "Limpeza completa",
 ];

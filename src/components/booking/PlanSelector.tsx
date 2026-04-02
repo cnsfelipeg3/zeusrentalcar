@@ -44,15 +44,14 @@ interface FeatureRow {
 
 const features: FeatureRow[] = [
   { label: "Quilometragem ilimitada", icon: Check, getter: () => true },
-  { label: "Seguro basico + Assistencia 24h", icon: Shield, getter: () => true },
-  
+  { label: "Seguro básico + Assistência 24h", icon: Shield, getter: () => true },
   { label: "Seguro Premium (Franquia ZERO)", icon: ShieldCheck, getter: (p) => PLANS[p].insurance === "premium" },
-  { label: "TAG Pedagio ilimitada (SunPass)", icon: CircleDollarSign, getter: (p) => PLANS[p].tollTag },
-  { label: "2o motorista gratis", icon: Users, getter: (p) => PLANS[p].extraDriver },
+  { label: "TAG Pedágio ilimitada (SunPass)", icon: CircleDollarSign, getter: (p) => PLANS[p].tollTag },
+  { label: "2º motorista grátis", icon: Users, getter: (p) => PLANS[p].extraDriver },
   { label: "Cadeirinha infantil inclusa", icon: Baby, getter: (p) => PLANS[p].childSeat },
-  { label: "Entrega no hotel/endereco", icon: Truck, getter: (p) => PLANS[p].delivery },
+  { label: "Entrega no hotel/endereço", icon: Truck, getter: (p) => PLANS[p].delivery },
   { label: "Prioridade WhatsApp", icon: MessageCircle, getter: (p) => PLANS[p].priority },
-  { label: "Upgrade gratis (quando disponivel)", icon: ArrowUpCircle, getter: (p) => PLANS[p].upgrade },
+  { label: "Upgrade grátis (quando disponível)", icon: ArrowUpCircle, getter: (p) => PLANS[p].upgrade },
 ];
 
 const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible }: PlanSelectorProps) => {
@@ -68,7 +67,7 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
           const isSelected = selectedPlan === planId;
           const isConforto = planId === "conforto";
           const isPremium = planId === "premium";
-          const badge = isConforto ? "MAIS ESCOLHIDO" : isPremium ? "MAXIMA PROTECAO" : null;
+          const badge = isConforto ? "MAIS ESCOLHIDO" : isPremium ? "MÁXIMA PROTEÇÃO" : null;
 
           return (
             <motion.button
@@ -155,7 +154,7 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
         {/* Reschedule row */}
         <div className="grid grid-cols-[1fr_repeat(3,72px)] items-center text-[11px] px-3 py-1.5 border-t border-border/15">
           <span className="text-muted-foreground flex items-center gap-1">
-            <CalendarClock size={11} /> Remarcacao
+            <CalendarClock size={11} /> Remarcação
           </span>
           {PLAN_ORDER.map((planId) => {
             const plan = PLANS[planId];
@@ -170,7 +169,7 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
         {/* Insurance / deposit row */}
         <div className="grid grid-cols-[1fr_repeat(3,72px)] items-center text-[11px] px-3 py-2 border-t border-border/20 bg-muted/10">
           <span className="text-muted-foreground flex items-center gap-1">
-            <Shield size={11} /> Caucao / Franquia
+            <Shield size={11} /> Caução / Franquia
           </span>
           {PLAN_ORDER.map((planId) => {
             const plan = PLANS[planId];
