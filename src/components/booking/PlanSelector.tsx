@@ -129,9 +129,9 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
               return (
                 <div key={planId} className="flex justify-center">
                   {included ? (
-                    <Check size={14} className="text-emerald-500" />
+                    <Check size={14} className="text-green-500" />
                   ) : (
-                    <X size={14} className="text-destructive/40" />
+                    <X size={14} className="text-red-600" />
                   )}
                 </div>
               );
@@ -160,7 +160,7 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
             const plan = PLANS[planId];
             return (
               <div key={planId} className="text-center text-[10px] font-semibold text-foreground leading-tight">
-                {plan.reschedule === "none" ? <X size={14} className="mx-auto text-destructive/40" /> : plan.reschedule === "once_75" ? "1x" : <Check size={14} className="mx-auto text-emerald-500" />}
+                {plan.reschedule === "none" ? <X size={14} className="mx-auto text-red-600" /> : plan.reschedule === "once_75" ? "1x" : <Check size={14} className="mx-auto text-green-500" />}
               </div>
             );
           })}
@@ -176,7 +176,7 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
             return (
               <div key={planId} className="text-center text-[10px] font-semibold text-foreground leading-tight">
                 {fee === 0 ? (
-                  <span className="text-emerald-500 font-bold">GRÁTIS</span>
+                  <span className="text-green-500 font-bold">ZERO</span>
                 ) : (
                   <span>{formatPrice(fee)}</span>
                 )}
@@ -195,7 +195,7 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
             return (
               <div key={planId} className="text-center">
                 {plan.insurance === "premium" ? (
-                  <span className="text-[9px] font-bold text-emerald-500">ZERO</span>
+                  <span className="text-[9px] font-bold text-green-500">ZERO</span>
                 ) : (
                   <span className="text-[9px] font-bold text-amber-500">{formatPrice(plan.deposit)}</span>
                 )}
