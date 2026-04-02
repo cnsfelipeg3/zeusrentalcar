@@ -142,7 +142,7 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
         {/* Cancellation row */}
         <div className="grid grid-cols-[1fr_repeat(3,72px)] items-center text-[11px] px-3 py-1.5 border-t border-border/15 bg-muted/5">
           <span className="text-muted-foreground flex items-center gap-1">
-            <CalendarX2 size={11} /> Cancelamento
+            <CalendarX2 size={11} /> Reembolso por Cancelamento
           </span>
           {PLAN_ORDER.map((planId) => (
             <div key={planId} className="text-center text-[10px] font-semibold text-foreground leading-tight">
