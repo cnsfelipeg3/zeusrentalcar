@@ -765,45 +765,30 @@ const BookingDetails = () => {
                   </div>
 
                   {/* Deposit / Deductible info */}
-                  {premiumInsurance ? (
-                    <div className="mt-4 p-3.5 rounded-lg bg-emerald-500/8 border border-emerald-500/15">
+                  <div className={`mt-4 p-3 rounded-lg text-[11px] ${
+                    premiumInsurance
+                      ? "bg-emerald-500/8 border border-emerald-500/15"
+                      : "bg-amber-500/8 border border-amber-500/15"
+                  }`}>
+                    {premiumInsurance ? (
                       <div className="space-y-0.5">
-                        <p className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold">
+                        <p className="flex items-center gap-1.5 text-emerald-400 font-semibold">
                           <ShieldCheck size={12} /> Proteção Premium ativa
                         </p>
-                        <p className="text-emerald-600/80 dark:text-emerald-400/80">Caução: <strong>ZERO</strong> · Franquia: <strong>ZERO</strong></p>
-                        <p className="text-emerald-600/60 dark:text-emerald-400/60">Você está 100% protegido</p>
+                        <p className="text-emerald-400/80">Caução: <strong>ZERO</strong> · Franquia: <strong>ZERO</strong></p>
+                        <p className="text-emerald-400/60">Você está 100% protegido</p>
                       </div>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => setPremiumInsurance(true)}
-                      className="mt-4 w-full p-4 rounded-lg bg-destructive/8 border-2 border-destructive/20 hover:border-destructive/40 transition-all text-left group"
-                    >
-                      <div className="space-y-2">
-                        <p className="flex items-center gap-1.5 text-destructive font-bold text-xs">
-                          <AlertTriangle size={13} /> Você está desprotegido
+                    ) : (
+                      <div className="space-y-0.5">
+                        <p className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-semibold">
+                          <AlertTriangle size={12} /> Seguro Básico
                         </p>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div className="p-2 rounded-md bg-destructive/5">
-                            <p className="text-[9px] uppercase tracking-wider text-muted-foreground">Caução bloqueada</p>
-                            <p className="text-sm font-bold text-destructive">{formatPrice(BASIC_DEPOSIT)}</p>
-                          </div>
-                          <div className="p-2 rounded-md bg-destructive/5">
-                            <p className="text-[9px] uppercase tracking-wider text-muted-foreground">Franquia em sinistro</p>
-                            <p className="text-sm font-bold text-destructive">{formatPrice(pricing.basicDeductible)}</p>
-                          </div>
-                        </div>
-                        <p className="text-[10px] text-muted-foreground">
-                          Qualquer dano, risco ou sinistro será cobrado até o valor da franquia. A caução ficará retida no seu cartão durante toda a locação.
-                        </p>
-                        <div className="flex items-center justify-center gap-1.5 pt-1 text-primary font-semibold text-[11px] group-hover:underline">
-                          <ShieldCheck size={12} />
-                          Ativar Premium por apenas +{formatPrice(Math.round(dailyPrice * PREMIUM_INSURANCE_RATE))}/dia e zerar tudo
-                        </div>
+                        <p className="text-amber-700 dark:text-amber-400/80">Caução: <strong>{formatPrice(BASIC_DEPOSIT)}</strong></p>
+                        <p className="text-amber-700 dark:text-amber-400/80">Franquia: <strong>{formatPrice(pricing.basicDeductible)}</strong></p>
+                        <p className="text-amber-600/80 dark:text-amber-400/60 mt-0.5">Upgrade para Premium e elimine esses custos</p>
                       </div>
-                    </button>
-                  )}
+                    )}
+                  </div>
 
                   {/* Payment CTA */}
                   <button
