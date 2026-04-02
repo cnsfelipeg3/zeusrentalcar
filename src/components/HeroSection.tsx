@@ -8,11 +8,11 @@ const HeroSection = () => {
   const { t } = useLanguage();
 
   return (
-    <section className="relative min-h-[85vh] sm:min-h-screen flex items-center justify-center overflow-hidden pt-16 sm:pt-0">
+    <section className="relative min-h-screen flex flex-col items-center justify-start overflow-hidden pt-24 sm:pt-28 pb-12">
       <div className="absolute inset-0 bg-gradient-to-b from-black via-background to-background" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(40,100%,48%,0.06)_0%,_transparent_70%)]" />
 
-      {/* Remove checkered pattern on mobile */}
+      {/* Subtle pattern */}
       <div className="absolute top-0 right-0 w-40 h-40 opacity-[0.03] hidden md:block"
         style={{
           backgroundImage: "repeating-conic-gradient(hsl(0,0%,100%) 0% 25%, transparent 0% 50%)",
@@ -30,40 +30,44 @@ const HeroSection = () => {
         </defs>
       </svg>
 
-      <div className="relative z-10 container mx-auto px-4 text-center">
+      <div className="relative z-10 container mx-auto px-4 text-center flex flex-col items-center gap-6 sm:gap-8">
+        {/* Logo */}
         <motion.img
           src={zeusLogo}
           alt="Zeus Rental Car"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="h-28 sm:h-40 lg:h-48 w-auto mx-auto mb-4 sm:mb-8 mt-[-7rem] sm:mt-[-3rem]"
+          className="h-24 sm:h-36 lg:h-44 w-auto"
         />
 
+        {/* Title */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-2xl sm:text-4xl font-black uppercase tracking-tight leading-tight max-w-5xl mx-auto lg:text-6xl"
+          className="text-2xl sm:text-4xl lg:text-6xl font-black uppercase tracking-tight leading-tight max-w-5xl"
         >
           {t.hero.title}
           <span className="gold-text">{t.hero.titleHighlight}</span>
         </motion.h1>
 
+        {/* Subtitle */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="mt-6 text-[11px] sm:text-xl text-muted-foreground font-light tracking-wide max-w-2xl mx-auto italic whitespace-nowrap"
+          className="text-[11px] sm:text-xl text-muted-foreground font-light tracking-wide max-w-2xl italic whitespace-nowrap"
         >
           {t.hero.subtitle}
         </motion.p>
 
+        {/* CTA Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="mt-10 sm:mt-12 flex flex-col sm:flex-row gap-4 justify-center"
+          className="flex flex-col sm:flex-row gap-4 justify-center"
         >
           <a
             href="#frota"
@@ -81,6 +85,7 @@ const HeroSection = () => {
           </a>
         </motion.div>
 
+        {/* Search Bar */}
         <SearchBar />
       </div>
 
@@ -88,7 +93,7 @@ const HeroSection = () => {
         href="#frota"
         animate={{ y: [0, 6, 0] }}
         transition={{ repeat: Infinity, duration: 2.5 }}
-        className="absolute bottom-16 sm:bottom-8 left-1/2 -translate-x-1/2 cursor-pointer opacity-30 hover:opacity-60 transition-opacity duration-300"
+        className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 cursor-pointer opacity-30 hover:opacity-60 transition-opacity duration-300"
       >
         <ChevronDown className="text-primary/50" size={24} />
       </motion.a>
