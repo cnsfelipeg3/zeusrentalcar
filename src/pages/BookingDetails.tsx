@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Users, Briefcase, CalendarIcon, MapPin, Clock, ArrowLeft, Shield, ShieldCheck,
   Baby, CircleDollarSign, Zap, ChevronRight, Check, AlertTriangle, Percent, Car, Fuel, Gauge,
-  CreditCard, Lock, Loader2, MessageCircle
+  CreditCard, Lock, Loader2, MessageCircle, X
 } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
@@ -17,6 +17,8 @@ import { useVehiclesDB, buildPriceMap, buildTrimMap, categoryToKey } from "@/hoo
 import { getCoverImage } from "@/data/vehicleImages";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import PlanSelector from "@/components/booking/PlanSelector";
+import { PLANS, type PlanId } from "@/data/rentalPlans";
 
 interface VehicleInfo {
   name: string;
@@ -45,30 +47,28 @@ const LONG_RENTAL_DISCOUNT_RATE = 0.05;
 const LONG_RENTAL_MIN_DAYS = 10;
 const BASIC_DEPOSIT = 550;
 const DEDUCTIBLE_MULTIPLIER = 11;
-const EXTRA_DRIVER_RATE = 0.02;
 const YOUNG_DRIVER_SURCHARGE = 0.08;
 
-// Static features map (detailed specs not stored in DB)
 const vehicleFeaturesMap: Record<string, string[]> = {
-  "Corvette Stingray C8": ["Motor 6.2L V8", "495 HP", "Câmbio automático 8 marchas", "Apple CarPlay / Android Auto", "Modo Track", "Teto Targa removível"],
-  "Mustang Conversível": ["Motor 2.3L EcoBoost", "Capota conversível elétrica", "310 HP", "Apple CarPlay / Android Auto", "Câmbio automático 10 marchas", "Banco de couro aquecido"],
+  "Corvette Stingray C8": ["Motor 6.2L V8", "495 HP", "Cambio automatico 8 marchas", "Apple CarPlay / Android Auto", "Modo Track", "Teto Targa removivel"],
+  "Mustang Conversível": ["Motor 2.3L EcoBoost", "Capota conversivel eletrica", "310 HP", "Apple CarPlay / Android Auto", "Cambio automatico 10 marchas", "Banco de couro aquecido"],
   "Cadillac Escalade": ["Motor 6.2L V8", "420 HP", "Tela OLED 38\"", "Sistema AKG 36 alto-falantes", "Bancos de couro ventilados", "Wi-Fi nativo"],
   "BMW X5 M Sport": ["Motor 3.0L Turbo", "335 HP", "xDrive AWD", "Panoramic Roof", "Harman Kardon Sound", "Assistente de estacionamento"],
-  "Chevrolet Suburban": ["Motor 5.3L V8", "355 HP", "3ª fileira de bancos", "Tela 10.2\"", "Wi-Fi nativo", "Espaço para até 8 malas"],
-  "Dodge Durango": ["Motor 3.6L V6", "295 HP", "3ª fileira de bancos", "Uconnect 10.1\"", "Apple CarPlay", "Tração AWD disponível"],
-  "Kia Sorento": ["Motor 2.5L Turbo", "281 HP", "Câmbio DCT 8 marchas", "Tela 10.25\"", "Carregador wireless", "Bancos de couro"],
-  "Kia Sportage": ["Motor 2.5L", "187 HP", "Tela panorâmica curva", "Apple CarPlay / Android Auto", "Assistente de faixa", "Câmera 360°"],
-  "Mitsubishi Outlander": ["Motor 2.5L", "181 HP", "3ª fileira de bancos", "Tela 9\"", "AWC (tração integral)", "Controle de cruzeiro adaptativo"],
-  "Volkswagen Tiguan": ["Motor 2.0L TSI", "184 HP", "3ª fileira de bancos", "Digital Cockpit", "App-Connect", "Tração 4Motion"],
-  "Chrysler Pacifica": ["Motor 3.6L V6", "287 HP", "Stow 'n Go Seats", "Uconnect Theater", "Portas deslizantes elétricas", "Aspirador de pó integrado"],
+  "Chevrolet Suburban": ["Motor 5.3L V8", "355 HP", "3a fileira de bancos", "Tela 10.2\"", "Wi-Fi nativo", "Espaco para ate 8 malas"],
+  "Dodge Durango": ["Motor 3.6L V6", "295 HP", "3a fileira de bancos", "Uconnect 10.1\"", "Apple CarPlay", "Tracao AWD disponivel"],
+  "Kia Sorento": ["Motor 2.5L Turbo", "281 HP", "Cambio DCT 8 marchas", "Tela 10.25\"", "Carregador wireless", "Bancos de couro"],
+  "Kia Sportage": ["Motor 2.5L", "187 HP", "Tela panoramica curva", "Apple CarPlay / Android Auto", "Assistente de faixa", "Camera 360"],
+  "Mitsubishi Outlander": ["Motor 2.5L", "181 HP", "3a fileira de bancos", "Tela 9\"", "AWC (tracao integral)", "Controle de cruzeiro adaptativo"],
+  "Volkswagen Tiguan": ["Motor 2.0L TSI", "184 HP", "3a fileira de bancos", "Digital Cockpit", "App-Connect", "Tracao 4Motion"],
+  "Chrysler Pacifica": ["Motor 3.6L V6", "287 HP", "Stow 'n Go Seats", "Uconnect Theater", "Portas deslizantes eletricas", "Aspirador de po integrado"],
   "Lexus NX": ["Motor 2.5L Turbo", "275 HP", "Lexus Safety System+", "Tela 14\"", "Mark Levinson Audio", "Bancos ventilados"],
-  "Audi Q7": ["Motor 2.0L TFSI", "261 HP", "Quattro AWD", "Virtual Cockpit", "Bang & Olufsen 3D Sound", "Suspensão pneumática"],
+  "Audi Q7": ["Motor 2.0L TFSI", "261 HP", "Quattro AWD", "Virtual Cockpit", "Bang & Olufsen 3D Sound", "Suspensao pneumatica"],
   "Volvo XC60": ["Motor 2.0L Turbo", "247 HP", "Pilot Assist", "Bowers & Wilkins Audio", "Tela Sensus 9\"", "City Safety"],
-  "MUSTANG CONVERSÍVEL": ["Motor 2.3L EcoBoost", "Capota conversível elétrica", "310 HP", "Apple CarPlay / Android Auto", "Câmbio automático 10 marchas", "Cor: Branco Oxford"],
-  "VOLKSWAGEN TIGUAN": ["Motor 2.0L TSI", "184 HP", "3ª fileira de bancos", "Digital Cockpit", "App-Connect", "Cor: Branco Pure"],
-  "Nissan Kicks": ["Motor 1.6L", "122 HP", "Câmbio CVT", "Tela 8\"", "Apple CarPlay / Android Auto", "Câmera de ré inteligente"],
-  "Volkswagen Atlas": ["Motor 3.6L V6", "276 HP", "3ª fileira de bancos", "Digital Cockpit Pro", "4Motion AWD", "Espaço amplo para família"],
-  "Mercedes-Benz GLA": ["Motor 2.0L Turbo", "221 HP", "MBUX Infotainment", "Tela dupla 10.25\"", "Pacote AMG Line", "Suspensão esportiva"],
+  "MUSTANG CONVERSÍVEL": ["Motor 2.3L EcoBoost", "Capota conversivel eletrica", "310 HP", "Apple CarPlay / Android Auto", "Cambio automatico 10 marchas", "Cor: Branco Oxford"],
+  "VOLKSWAGEN TIGUAN": ["Motor 2.0L TSI", "184 HP", "3a fileira de bancos", "Digital Cockpit", "App-Connect", "Cor: Branco Pure"],
+  "Nissan Kicks": ["Motor 1.6L", "122 HP", "Cambio CVT", "Tela 8\"", "Apple CarPlay / Android Auto", "Camera de re inteligente"],
+  "Volkswagen Atlas": ["Motor 3.6L V6", "276 HP", "3a fileira de bancos", "Digital Cockpit Pro", "4Motion AWD", "Espaco amplo para familia"],
+  "Mercedes-Benz GLA": ["Motor 2.0L Turbo", "221 HP", "MBUX Infotainment", "Tela dupla 10.25\"", "Pacote AMG Line", "Suspensao esportiva"],
 };
 
 const BookingDetails = () => {
@@ -82,7 +82,6 @@ const BookingDetails = () => {
 
   const decodedName = decodeURIComponent(vehicleName || "");
 
-  // Build vehicle info from DB
   const dbVehicle = dbVehicles.find((v) => v.name === decodedName);
   const vehicle: VehicleInfo | undefined = dbVehicle ? {
     name: dbVehicle.name,
@@ -111,25 +110,101 @@ const BookingDetails = () => {
 
   const { toast } = useToast();
 
-  // Extras state
-  const [premiumInsurance, setPremiumInsurance] = useState(false);
-  const [childSeat, setChildSeat] = useState(false);
-  const [childSeatQty, setChildSeatQty] = useState(1);
-  const [tollTag, setTollTag] = useState(false);
-  const [extraDriver, setExtraDriver] = useState(false);
+  // Plan state (default = conforto for higher ticket)
+  const [selectedPlanId, setSelectedPlanId] = useState<PlanId>("conforto");
+  const currentPlan = PLANS[selectedPlanId];
+
+  // Extra add-ons (only for items NOT included in plan)
+  const [addonInsurance, setAddonInsurance] = useState(false);
+  const [addonChildSeat, setAddonChildSeat] = useState(false);
+  const [addonChildSeatQty, setAddonChildSeatQty] = useState(1);
+  const [addonTollTag, setAddonTollTag] = useState(false);
+
   const [isProcessing, setIsProcessing] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [showUpgradeSuggestion, setShowUpgradeSuggestion] = useState(false);
+
+  // Reset add-ons when plan changes (they might now be included)
+  useEffect(() => {
+    if (currentPlan.insurance === "premium") setAddonInsurance(false);
+    if (currentPlan.childSeat) setAddonChildSeat(false);
+    if (currentPlan.tollTag) setAddonTollTag(false);
+    setShowUpgradeSuggestion(false);
+  }, [selectedPlanId]);
+
+  // Show upgrade suggestion when essencial + addon insurance
+  useEffect(() => {
+    if (selectedPlanId === "essencial" && addonInsurance) {
+      setShowUpgradeSuggestion(true);
+    } else {
+      setShowUpgradeSuggestion(false);
+    }
+  }, [selectedPlanId, addonInsurance]);
 
   // Handle cancelled checkout
   useEffect(() => {
     if (searchParams.get("cancelled") === "true") {
       toast({
         title: "Pagamento cancelado",
-        description: "Sua reserva não foi finalizada. Você pode tentar novamente.",
+        description: "Sua reserva nao foi finalizada. Voce pode tentar novamente.",
         variant: "destructive",
       });
     }
   }, []);
+
+  // Derived: what's effectively active
+  const hasPremiumInsurance = currentPlan.insurance === "premium" || addonInsurance;
+  const hasChildSeat = currentPlan.childSeat || addonChildSeat;
+  const hasTollTag = currentPlan.tollTag || addonTollTag;
+  const hasExtraDriver = currentPlan.extraDriver;
+
+  // Check if different cities
+  const isDifferentCity = useMemo(() => {
+    if (!pickupLocation || !returnLocation) return false;
+    return pickupLocation.trim().toLowerCase() !== returnLocation.trim().toLowerCase();
+  }, [pickupLocation, returnLocation]);
+
+  // Pricing calculations
+  const basePrice = vehiclePrices[decodedName] || 99;
+  const dailyPrice = isUnder26 ? Math.ceil(basePrice * (1 + YOUNG_DRIVER_SURCHARGE)) : basePrice;
+  const basicDeductible = dailyPrice * DEDUCTIBLE_MULTIPLIER;
+
+  const pricing = useMemo(() => {
+    const subtotalRental = dailyPrice * days;
+    const planExtra = currentPlan.dailyExtra * days;
+
+    // Add-on costs (only for items added on top of plan)
+    const addonInsuranceDailyExtra = (addonInsurance && currentPlan.insurance !== "premium") ? Math.round(dailyPrice * PREMIUM_INSURANCE_RATE) : 0;
+    const addonInsuranceTotal = addonInsuranceDailyExtra * days;
+    const addonChildSeatTotal = (addonChildSeat && !currentPlan.childSeat) ? CHILD_SEAT_DAILY * addonChildSeatQty * days : 0;
+    const addonTollTagTotal = (addonTollTag && !currentPlan.tollTag) ? TOLL_TAG_DAILY * days : 0;
+
+    const returnFee = isDifferentCity ? RETURN_FEE : 0;
+
+    const subtotalBeforeDiscount = subtotalRental + planExtra + addonInsuranceTotal + addonChildSeatTotal + addonTollTagTotal + returnFee;
+    const qualifiesDiscount = days >= LONG_RENTAL_MIN_DAYS;
+    const discountAmount = qualifiesDiscount ? Math.round(subtotalBeforeDiscount * LONG_RENTAL_DISCOUNT_RATE) : 0;
+    const total = subtotalBeforeDiscount - discountAmount;
+
+    return {
+      dailyPrice,
+      subtotalRental,
+      planExtra,
+      planDailyExtra: currentPlan.dailyExtra,
+      addonInsuranceDailyExtra,
+      addonInsuranceTotal,
+      addonChildSeatTotal,
+      addonTollTagTotal,
+      returnFee,
+      subtotalBeforeDiscount,
+      qualifiesDiscount,
+      discountAmount,
+      total,
+      basicDeductible,
+      deposit: hasPremiumInsurance ? 0 : BASIC_DEPOSIT,
+      deductible: hasPremiumInsurance ? 0 : basicDeductible,
+    };
+  }, [dailyPrice, days, currentPlan, addonInsurance, addonChildSeat, addonChildSeatQty, addonTollTag, isDifferentCity, hasPremiumInsurance]);
 
   const handleCheckout = async () => {
     setIsProcessing(true);
@@ -148,18 +223,20 @@ const BookingDetails = () => {
           dropoffTime: returnTime,
           pickupLocation,
           dropoffLocation: returnLocation,
-          premiumInsurance,
-          childSeat,
-          childSeatQty,
-          tollTag,
-          extraDriver,
+          premiumInsurance: hasPremiumInsurance,
+          childSeat: hasChildSeat,
+          childSeatQty: addonChildSeatQty,
+          tollTag: hasTollTag,
+          extraDriver: hasExtraDriver,
           isDifferentCity,
+          selectedPlan: selectedPlanId,
           pricing: {
             subtotalRental: pricing.subtotalRental,
-            insuranceTotal: pricing.insuranceTotal,
-            extraDriverTotal: pricing.extraDriverTotal,
-            childSeatTotal: pricing.childSeatTotal,
-            tollTagTotal: pricing.tollTagTotal,
+            planExtra: pricing.planExtra,
+            insuranceTotal: pricing.addonInsuranceTotal,
+            extraDriverTotal: 0,
+            childSeatTotal: pricing.addonChildSeatTotal,
+            tollTagTotal: pricing.addonTollTagTotal,
             returnFee: isDifferentCity ? RETURN_FEE : 0,
             discountAmount: pricing.discountAmount,
             total: pricing.total,
@@ -172,7 +249,7 @@ const BookingDetails = () => {
         window.open(data.url, "_blank");
         setIsProcessing(false);
       } else {
-        throw new Error("Não foi possível criar a sessão de pagamento");
+        throw new Error("Nao foi possivel criar a sessao de pagamento");
       }
     } catch (err: any) {
       setCheckoutError(err.message || "Erro ao processar pagamento. Tente novamente.");
@@ -180,97 +257,71 @@ const BookingDetails = () => {
     }
   };
 
-  // Check if different cities
-  const isDifferentCity = useMemo(() => {
-    if (!pickupLocation || !returnLocation) return false;
-    return pickupLocation.trim().toLowerCase() !== returnLocation.trim().toLowerCase();
-  }, [pickupLocation, returnLocation]);
-
-  // Pricing calculations
-  const basePrice = vehiclePrices[decodedName] || 99;
-  const dailyPrice = isUnder26 ? Math.ceil(basePrice * (1 + YOUNG_DRIVER_SURCHARGE)) : basePrice;
-  const pricing = useMemo(() => {
-    const subtotalRental = dailyPrice * days;
-    const insuranceDailyExtra = premiumInsurance ? Math.round(dailyPrice * PREMIUM_INSURANCE_RATE) : 0;
-    const insuranceTotal = insuranceDailyExtra * days;
-    const extraDriverDailyExtra = extraDriver ? Math.round(dailyPrice * EXTRA_DRIVER_RATE) : 0;
-    const extraDriverTotal = extraDriverDailyExtra * days;
-    const childSeatTotal = childSeat ? CHILD_SEAT_DAILY * childSeatQty * days : 0;
-    const tollTagTotal = tollTag ? TOLL_TAG_DAILY * days : 0;
-    const returnFee = isDifferentCity ? RETURN_FEE : 0;
-
-    const subtotalBeforeDiscount = subtotalRental + insuranceTotal + extraDriverTotal + childSeatTotal + tollTagTotal + returnFee;
-
-    const qualifiesDiscount = days >= LONG_RENTAL_MIN_DAYS;
-    const discountAmount = qualifiesDiscount ? Math.round(subtotalBeforeDiscount * LONG_RENTAL_DISCOUNT_RATE) : 0;
-    const total = subtotalBeforeDiscount - discountAmount;
-
-    const basicDeductible = dailyPrice * DEDUCTIBLE_MULTIPLIER;
-
-    return {
-      dailyPrice,
-      subtotalRental,
-      insuranceDailyExtra,
-      insuranceTotal,
-      extraDriverDailyExtra,
-      extraDriverTotal,
-      childSeatTotal,
-      tollTagTotal,
-      returnFee,
-      subtotalBeforeDiscount,
-      qualifiesDiscount,
-      discountAmount,
-      total,
-      basicDeductible,
-      deposit: premiumInsurance ? 0 : BASIC_DEPOSIT,
-      deductible: premiumInsurance ? 0 : basicDeductible,
-    };
-  }, [dailyPrice, days, premiumInsurance, extraDriver, childSeat, childSeatQty, tollTag, isDifferentCity]);
-
   // WhatsApp message
   const whatsappMsg = useMemo(() => {
+    const planBenefits: string[] = [];
+    if (hasPremiumInsurance) planBenefits.push("Seguro Premium (Franquia ZERO)");
+    if (hasTollTag) planBenefits.push("TAG Pedagio ilimitada");
+    if (hasExtraDriver) planBenefits.push("2o motorista gratis");
+    if (hasChildSeat) planBenefits.push("Cadeirinha infantil");
+    if (currentPlan.delivery) planBenefits.push("Entrega no hotel");
+    if (currentPlan.priority) planBenefits.push("Prioridade WhatsApp");
+    if (currentPlan.upgrade) planBenefits.push("Upgrade gratis (quando disponivel)");
+
     const lines = [
-      `Olá! Gostaria de reservar o *${decodedName}*.`,
+      `Ola! Gostaria de reservar o *${decodedName}*.`,
       ``,
-      `📅 *Período:*`,
-      pickupDate ? `Retirada: ${format(pickupDate, "dd/MM/yyyy", { locale: pt })} às ${pickupTime}` : "",
-      returnDate ? `Devolução: ${format(returnDate, "dd/MM/yyyy", { locale: pt })} às ${returnTime}` : "",
-      `Duração: ${days} ${days === 1 ? "dia" : "dias"}`,
+      `📅 *Periodo:*`,
+      pickupDate ? `Retirada: ${format(pickupDate, "dd/MM/yyyy", { locale: pt })} as ${pickupTime}` : "",
+      returnDate ? `Devolucao: ${format(returnDate, "dd/MM/yyyy", { locale: pt })} as ${returnTime}` : "",
+      `Duracao: ${days} ${days === 1 ? "dia" : "dias"}`,
       ``,
       `📍 *Locais:*`,
       `Retirada: ${pickupLocation}`,
-      `Devolução: ${returnLocation}`,
+      `Devolucao: ${returnLocation}`,
       ``,
-      `💰 *Resumo do Orçamento:*`,
-      isUnder26 ? `⚠️ Condutor menor de 26 anos (idade: ${driverAgeParam}) — acréscimo de 8% na diária` : "",
-      `Diária: ${formatPrice(dailyPrice)}${isUnder26 ? " (com acréscimo +8%)" : ""}`,
-      `Subtotal locação: ${formatPrice(pricing.subtotalRental)}`,
-      premiumInsurance ? `Seguro Premium: ${formatPrice(pricing.insuranceTotal)}` : `Seguro Básico: Incluso`,
-      childSeat ? `Cadeirinha (x${childSeatQty}): ${formatPrice(pricing.childSeatTotal)}` : "",
-      tollTag ? `TAG Pedágios: ${formatPrice(pricing.tollTagTotal)}` : "",
-      extraDriver ? `Condutor Extra (${formatPrice(pricing.extraDriverDailyExtra)}/dia): ${formatPrice(pricing.extraDriverTotal)}` : "",
+      `🏷️ *Plano: ${currentPlan.name}*`,
+      ...planBenefits.map(b => `✅ ${b}`),
+      `Cancelamento: ${currentPlan.cancellationLabel}`,
+      `Remarcacao: ${currentPlan.rescheduleLabel}`,
+      ``,
+      `💰 *Resumo:*`,
+      isUnder26 ? `⚠️ Condutor menor de 26 anos (idade: ${driverAgeParam})` : "",
+      `Diaria: ${formatPrice(dailyPrice)}`,
+      currentPlan.dailyExtra > 0 ? `${currentPlan.name}: ${formatPrice(currentPlan.dailyExtra)}/dia` : "",
+      pricing.addonInsuranceTotal > 0 ? `Seguro Premium (avulso): ${formatPrice(pricing.addonInsuranceTotal)}` : "",
+      pricing.addonChildSeatTotal > 0 ? `Cadeirinha (avulsa): ${formatPrice(pricing.addonChildSeatTotal)}` : "",
+      pricing.addonTollTagTotal > 0 ? `TAG Pedagio (avulso): ${formatPrice(pricing.addonTollTagTotal)}` : "",
       isDifferentCity ? `Taxa de retorno: ${formatPrice(RETURN_FEE)}` : "",
-      pricing.qualifiesDiscount ? `Desconto 10+ diárias: -${formatPrice(pricing.discountAmount)}` : "",
+      pricing.qualifiesDiscount ? `Desconto 10+ diarias: -${formatPrice(pricing.discountAmount)}` : "",
       ``,
       `*TOTAL: ${formatPrice(pricing.total)}*`,
-      premiumInsurance ? `✅ Franquia: ZERO | Caução: ZERO` : `⚠️ Caução: ${formatPrice(BASIC_DEPOSIT)} | Franquia: ${formatPrice(pricing.basicDeductible)}`,
+      hasPremiumInsurance ? `✅ Caucao: ZERO | Franquia: ZERO` : `⚠️ Caucao: ${formatPrice(BASIC_DEPOSIT)} | Franquia: ${formatPrice(basicDeductible)}`,
     ].filter(Boolean);
 
     return `https://wa.me/16892981754?text=${encodeURIComponent(lines.join("\n"))}`;
-  }, [decodedName, pickupDate, returnDate, pickupTime, returnTime, days, pickupLocation, returnLocation, dailyPrice, pricing, premiumInsurance, extraDriver, childSeat, childSeatQty, tollTag, isDifferentCity]);
+  }, [decodedName, pickupDate, returnDate, pickupTime, returnTime, days, pickupLocation, returnLocation, dailyPrice, pricing, currentPlan, hasPremiumInsurance, hasChildSeat, hasTollTag, hasExtraDriver, isDifferentCity]);
 
   if (!vehicle) {
     return (
       <div className="min-h-screen bg-background text-foreground">
         <Navbar />
         <div className="pt-32 pb-16 text-center">
-          <h1 className="text-2xl font-bold mb-4">Veículo não encontrado</h1>
-          <Link to="/buscar" className="text-primary hover:underline">Voltar à busca</Link>
+          <h1 className="text-2xl font-bold mb-4">Veiculo nao encontrado</h1>
+          <Link to="/buscar" className="text-primary hover:underline">Voltar a busca</Link>
         </div>
         <Footer />
       </div>
     );
   }
+
+  // Which add-ons are available for the current plan
+  const availableAddons = {
+    insurance: currentPlan.insurance !== "premium",
+    childSeat: !currentPlan.childSeat,
+    tollTag: !currentPlan.tollTag,
+  };
+  const hasAnyAddonAvailable = availableAddons.insurance || availableAddons.childSeat || availableAddons.tollTag;
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
@@ -298,7 +349,7 @@ const BookingDetails = () => {
           )}
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-            {/* LEFT: Vehicle + Extras */}
+            {/* LEFT: Vehicle + Plans */}
             <div className="lg:col-span-3 space-y-5">
               {/* Vehicle Photo */}
               <motion.div
@@ -382,7 +433,7 @@ const BookingDetails = () => {
                         <CalendarIcon size={12} className="text-primary-foreground" />
                       </div>
                       <div>
-                        <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Devolução</p>
+                        <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Devolucao</p>
                         <p className="text-sm font-medium text-foreground">
                           {returnDate ? format(returnDate, "dd 'de' MMMM, yyyy", { locale: pt }) : ""}
                         </p>
@@ -394,7 +445,7 @@ const BookingDetails = () => {
                         <MapPin size={12} className="text-primary-foreground" />
                       </div>
                       <div>
-                        <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Local de Devolução</p>
+                        <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Local de Devolucao</p>
                         <p className="text-sm font-medium text-foreground">{returnLocation || ""}</p>
                         {isDifferentCity && (
                           <p className="text-[10px] text-amber-400 flex items-center gap-1 mt-1">
@@ -407,13 +458,13 @@ const BookingDetails = () => {
                 </div>
                 <div className="mt-3 p-2.5 rounded-lg bg-primary/8 border border-primary/15 text-center">
                   <p className="text-xs font-semibold text-primary">
-                    {days} {days === 1 ? "diária" : "diárias"} · {formatPrice(dailyPrice)}/dia
+                    {days} {days === 1 ? "diaria" : "diarias"} · {formatPrice(dailyPrice)}/dia
                   </p>
                 </div>
                 {isUnder26 && (
                   <div className="mt-2 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-center">
-                    <p className="text-[11px] font-semibold text-amber-400">
-                      ⚠️ Condutor com {driverAgeParam} anos — acréscimo de 8% aplicado
+                    <p className="text-[11px] font-semibold text-amber-600 dark:text-amber-400">
+                      Condutor com {driverAgeParam} anos, acrescimo de 8% aplicado
                     </p>
                   </div>
                 )}
@@ -428,7 +479,7 @@ const BookingDetails = () => {
               >
                 <h2 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2 text-foreground">
                   <Car size={15} className="text-primary" />
-                  Destaques do <span className="gold-text">Veículo</span>
+                  Destaques do <span className="gold-text">Veiculo</span>
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {vehicle.features.map((feat) => (
@@ -440,216 +491,198 @@ const BookingDetails = () => {
                 </div>
               </motion.div>
 
-              {/* Insurance Selection */}
+              {/* PLAN SELECTOR */}
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
                 className="rounded-xl border border-border/40 bg-card p-5"
               >
-                <h2 className="text-sm font-semibold uppercase tracking-wider mb-4 flex items-center gap-2 text-foreground">
+                <h2 className="text-sm font-semibold uppercase tracking-wider mb-5 flex items-center gap-2 text-foreground">
                   <Shield size={15} className="text-primary" />
-                  Proteção & <span className="gold-text">Seguro</span>
+                  Escolha seu <span className="gold-text">Plano</span>
                 </h2>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {/* Basic */}
-                  <button
-                    onClick={() => setPremiumInsurance(false)}
-                    className={`relative p-4 rounded-lg border transition-all duration-300 text-left ${
-                      !premiumInsurance
-                        ? "border-primary/50 bg-primary/5"
-                        : "border-border/30 bg-muted/10 hover:border-border/50"
-                    }`}
-                  >
-                    {!premiumInsurance && (
-                      <div className="absolute top-2.5 right-2.5 w-4 h-4 rounded-full gold-gradient flex items-center justify-center">
-                        <Check size={10} className="text-primary-foreground" />
-                      </div>
-                    )}
-                    <Shield size={18} className="text-muted-foreground mb-2" />
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-foreground mb-0.5">Seguro Básico</h3>
-                    <p className="text-[10px] text-emerald-400 font-semibold mb-2.5">Já incluso</p>
-                    <ul className="space-y-1.5 text-[11px] text-muted-foreground">
-                      <li className="flex items-start gap-1.5"><Check size={10} className="text-emerald-400 mt-0.5 shrink-0" /> Cobertura contra colisão</li>
-                      <li className="flex items-start gap-1.5"><Check size={10} className="text-emerald-400 mt-0.5 shrink-0" /> Cobertura contra roubo</li>
-                      <li className="flex items-start gap-1.5">
-                        <AlertTriangle size={10} className="text-amber-400 mt-0.5 shrink-0" />
-                        <span>Caução: <strong className="text-foreground">{formatPrice(BASIC_DEPOSIT)}</strong></span>
-                      </li>
-                      <li className="flex items-start gap-1.5">
-                        <AlertTriangle size={10} className="text-amber-400 mt-0.5 shrink-0" />
-                        <span>Franquia: <strong className="text-foreground">{formatPrice(pricing.basicDeductible)}</strong></span>
-                      </li>
-                    </ul>
-                  </button>
-
-                  {/* Premium */}
-                  <button
-                    onClick={() => setPremiumInsurance(true)}
-                    className={`relative pt-7 p-4 rounded-lg border-2 transition-all duration-300 text-left ${
-                      premiumInsurance
-                        ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-lg shadow-primary/10"
-                        : "border-primary/40 bg-primary/[0.02] hover:border-primary/60"
-                    }`}
-                  >
-                    {premiumInsurance && (
-                      <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full gold-gradient flex items-center justify-center">
-                        <Check size={12} className="text-primary-foreground" />
-                      </div>
-                    )}
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full gold-gradient flex items-center gap-1.5">
-                      <ShieldCheck size={11} className="text-primary-foreground" />
-                      <span className="text-[9px] font-bold uppercase tracking-widest text-primary-foreground">Recomendado</span>
-                    </div>
-                    <ShieldCheck size={18} className="text-primary mb-2" />
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-foreground mb-0.5">Seguro Premium</h3>
-                    <p className="text-[10px] text-primary font-semibold mb-2.5">+ {formatPrice(Math.round(dailyPrice * PREMIUM_INSURANCE_RATE))} /dia</p>
-                    <ul className="space-y-1.5 text-[11px] text-muted-foreground">
-                      <li className="flex items-start gap-1.5"><Check size={10} className="text-emerald-400 mt-0.5 shrink-0" /> Cobertura total contra colisão</li>
-                      <li className="flex items-start gap-1.5"><Check size={10} className="text-emerald-400 mt-0.5 shrink-0" /> Cobertura total contra roubo</li>
-                      <li className="flex items-start gap-1.5">
-                        <Check size={10} className="text-emerald-400 mt-0.5 shrink-0" />
-                        <span>Caução: <strong className="text-emerald-400">ZERO</strong></span>
-                      </li>
-                      <li className="flex items-start gap-1.5">
-                        <Check size={10} className="text-emerald-400 mt-0.5 shrink-0" />
-                        <span>Franquia: <strong className="text-emerald-400">ZERO</strong></span>
-                      </li>
-                      <li className="flex items-start gap-1.5"><Check size={10} className="text-emerald-400 mt-0.5 shrink-0" /> Proteção de vidros e pneus</li>
-                      <li className="flex items-start gap-1.5"><Check size={10} className="text-emerald-400 mt-0.5 shrink-0" /> Assistência 24h prioritária</li>
-                    </ul>
-                  </button>
-                </div>
+                <PlanSelector
+                  selectedPlan={selectedPlanId}
+                  onSelectPlan={setSelectedPlanId}
+                  dailyPrice={dailyPrice}
+                  basicDeductible={basicDeductible}
+                />
               </motion.div>
 
-              {/* Add-ons */}
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="rounded-xl border border-border/40 bg-card p-5"
-              >
-                <h2 className="text-sm font-semibold uppercase tracking-wider mb-4 flex items-center gap-2 text-foreground">
-                  <Zap size={15} className="text-primary" />
-                  Adicionais & <span className="gold-text">Extras</span>
-                </h2>
+              {/* ADD-ONS (only items not in plan) */}
+              <AnimatePresence mode="wait">
+                {hasAnyAddonAvailable ? (
+                  <motion.div
+                    key="addons"
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="rounded-xl border border-border/40 bg-card p-5"
+                  >
+                    <h2 className="text-sm font-semibold uppercase tracking-wider mb-4 flex items-center gap-2 text-foreground">
+                      <Zap size={15} className="text-primary" />
+                      Quer adicionar algo ao seu <span className="gold-text">plano</span>?
+                    </h2>
 
-                <div className="space-y-3">
-                  {/* Child seat */}
-                  <div className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-300 ${
-                    childSeat ? "border-primary/30 bg-primary/5" : "border-border/20 bg-muted/10"
-                  }`}>
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-md bg-muted/30 flex items-center justify-center">
-                        <Baby size={16} className="text-primary" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-semibold text-foreground">Cadeirinha Bebê/Criança</p>
-                        <p className="text-[10px] text-muted-foreground">Homologada ISOFIX</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                      <p className="text-xs font-bold text-foreground whitespace-nowrap">{formatPrice(CHILD_SEAT_DAILY)}/dia</p>
-                      <Switch
-                        checked={childSeat}
-                        onCheckedChange={setChildSeat}
-                        className="data-[state=checked]:bg-emerald-500"
-                      />
-                    </div>
-                  </div>
-
-                  <AnimatePresence>
-                    {childSeat && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="flex items-center gap-2.5 pl-12 pb-1">
-                          <p className="text-[10px] text-muted-foreground">Qtd:</p>
-                          <div className="flex items-center gap-1.5">
-                            <button
-                              onClick={() => setChildSeatQty(Math.max(1, childSeatQty - 1))}
-                              className="w-6 h-6 rounded bg-muted/30 border border-border/30 text-foreground font-medium text-xs hover:bg-muted/50 transition-colors"
-                            >
-                              −
-                            </button>
-                            <span className="w-5 text-center text-xs font-semibold text-foreground">{childSeatQty}</span>
-                            <button
-                              onClick={() => setChildSeatQty(Math.min(3, childSeatQty + 1))}
-                              className="w-6 h-6 rounded bg-muted/30 border border-border/30 text-foreground font-medium text-xs hover:bg-muted/50 transition-colors"
-                            >
-                              +
-                            </button>
+                    <div className="space-y-3">
+                      {/* Addon: Premium Insurance */}
+                      {availableAddons.insurance && (
+                        <>
+                          <div className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-300 ${
+                            addonInsurance ? "border-primary/30 bg-primary/5" : "border-border/20 bg-muted/10"
+                          }`}>
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-md bg-muted/30 flex items-center justify-center">
+                                <ShieldCheck size={16} className="text-primary" />
+                              </div>
+                              <div>
+                                <p className="text-xs font-semibold text-foreground">Seguro Premium</p>
+                                <p className="text-[10px] text-muted-foreground">Franquia ZERO, Caucao ZERO</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2.5">
+                              <p className="text-xs font-bold text-foreground whitespace-nowrap">+{formatPrice(Math.round(dailyPrice * PREMIUM_INSURANCE_RATE))}/dia</p>
+                              <Switch
+                                checked={addonInsurance}
+                                onCheckedChange={setAddonInsurance}
+                                className="data-[state=checked]:bg-emerald-500"
+                              />
+                            </div>
                           </div>
-                          <p className="text-[10px] text-primary font-semibold">= {formatPrice(CHILD_SEAT_DAILY * childSeatQty)}/dia</p>
+
+                          {/* Upgrade suggestion */}
+                          <AnimatePresence>
+                            {showUpgradeSuggestion && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="overflow-hidden"
+                              >
+                                <div className="p-3 rounded-lg bg-[#378ADD]/10 border border-[#378ADD]/20 flex items-start gap-2.5">
+                                  <Zap size={14} className="text-[#378ADD] shrink-0 mt-0.5" />
+                                  <div className="flex-1">
+                                    <p className="text-[11px] text-foreground font-semibold mb-1">
+                                      O plano Zeus Conforto ja inclui Seguro Premium + TAG por apenas {formatPrice(29)}/dia
+                                    </p>
+                                    <button
+                                      onClick={() => setSelectedPlanId("conforto")}
+                                      className="text-[10px] font-bold text-[#378ADD] hover:underline"
+                                    >
+                                      Trocar para Zeus Conforto →
+                                    </button>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </>
+                      )}
+
+                      {/* Addon: Child Seat */}
+                      {availableAddons.childSeat && (
+                        <>
+                          <div className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-300 ${
+                            addonChildSeat ? "border-primary/30 bg-primary/5" : "border-border/20 bg-muted/10"
+                          }`}>
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-md bg-muted/30 flex items-center justify-center">
+                                <Baby size={16} className="text-primary" />
+                              </div>
+                              <div>
+                                <p className="text-xs font-semibold text-foreground">Cadeirinha Bebe/Crianca</p>
+                                <p className="text-[10px] text-muted-foreground">Homologada ISOFIX</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2.5">
+                              <p className="text-xs font-bold text-foreground whitespace-nowrap">{formatPrice(CHILD_SEAT_DAILY)}/dia</p>
+                              <Switch
+                                checked={addonChildSeat}
+                                onCheckedChange={setAddonChildSeat}
+                                className="data-[state=checked]:bg-emerald-500"
+                              />
+                            </div>
+                          </div>
+
+                          <AnimatePresence>
+                            {addonChildSeat && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="overflow-hidden"
+                              >
+                                <div className="flex items-center gap-2.5 pl-12 pb-1">
+                                  <p className="text-[10px] text-muted-foreground">Qtd:</p>
+                                  <div className="flex items-center gap-1.5">
+                                    <button
+                                      onClick={() => setAddonChildSeatQty(Math.max(1, addonChildSeatQty - 1))}
+                                      className="w-6 h-6 rounded bg-muted/30 border border-border/30 text-foreground font-medium text-xs hover:bg-muted/50 transition-colors"
+                                    >
+                                      −
+                                    </button>
+                                    <span className="w-5 text-center text-xs font-semibold text-foreground">{addonChildSeatQty}</span>
+                                    <button
+                                      onClick={() => setAddonChildSeatQty(Math.min(3, addonChildSeatQty + 1))}
+                                      className="w-6 h-6 rounded bg-muted/30 border border-border/30 text-foreground font-medium text-xs hover:bg-muted/50 transition-colors"
+                                    >
+                                      +
+                                    </button>
+                                  </div>
+                                  <p className="text-[10px] text-primary font-semibold">= {formatPrice(CHILD_SEAT_DAILY * addonChildSeatQty)}/dia</p>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </>
+                      )}
+
+                      {/* Addon: Toll Tag */}
+                      {availableAddons.tollTag && (
+                        <div className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-300 ${
+                          addonTollTag ? "border-primary/30 bg-primary/5" : "border-border/20 bg-muted/10"
+                        }`}>
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-md bg-muted/30 flex items-center justify-center">
+                              <CircleDollarSign size={16} className="text-primary" />
+                            </div>
+                            <div>
+                              <p className="text-xs font-semibold text-foreground">TAG Ilimitada Pedagios FL</p>
+                              <p className="text-[10px] text-muted-foreground">SunPass inclusos</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2.5">
+                            <p className="text-xs font-bold text-foreground whitespace-nowrap">{formatPrice(TOLL_TAG_DAILY)}/dia</p>
+                            <Switch
+                              checked={addonTollTag}
+                              onCheckedChange={setAddonTollTag}
+                              className="data-[state=checked]:bg-emerald-500"
+                            />
+                          </div>
                         </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Toll Tag */}
-                  <div className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-300 ${
-                    tollTag ? "border-primary/30 bg-primary/5" : "border-border/20 bg-muted/10"
-                  }`}>
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-md bg-muted/30 flex items-center justify-center">
-                        <CircleDollarSign size={16} className="text-primary" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-semibold text-foreground">TAG Ilimitada Pedágios FL</p>
-                        <p className="text-[10px] text-muted-foreground">SunPass inclusos</p>
-                      </div>
+                      )}
                     </div>
-                    <div className="flex items-center gap-2.5">
-                      <p className="text-xs font-bold text-foreground whitespace-nowrap">{formatPrice(TOLL_TAG_DAILY)}/dia</p>
-                      <Switch
-                        checked={tollTag}
-                        onCheckedChange={setTollTag}
-                        className="data-[state=checked]:bg-emerald-500"
-                      />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="all-included"
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="rounded-xl border border-primary/20 bg-primary/5 p-5 text-center"
+                  >
+                    <div className="flex items-center justify-center gap-2 text-primary">
+                      <ShieldCheck size={18} />
+                      <p className="text-sm font-semibold">
+                        Seu plano {currentPlan.name} ja inclui todos os extras disponiveis
+                      </p>
                     </div>
-                  </div>
-
-                  {/* Extra Driver */}
-                  <div className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-300 ${
-                    extraDriver ? "border-primary/30 bg-primary/5" : "border-border/20 bg-muted/10"
-                  }`}>
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-md bg-muted/30 flex items-center justify-center">
-                        <Users size={16} className="text-primary" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-semibold text-foreground">Condutor Extra</p>
-                        <p className="text-[10px] text-muted-foreground">Motorista adicional habilitado</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                      <p className="text-xs font-bold text-foreground whitespace-nowrap">+{formatPrice(pricing.extraDriverDailyExtra)} /dia</p>
-                      <Switch
-                        checked={extraDriver}
-                        onCheckedChange={setExtraDriver}
-                        className="data-[state=checked]:bg-emerald-500"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Included for free */}
-                  <div className="p-3 rounded-lg border border-border/15 bg-muted/5">
-                    <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-muted-foreground mb-2">Já incluso na sua reserva</p>
-                    <div className="grid grid-cols-2 gap-1.5 text-[11px] text-muted-foreground">
-                      {["Quilometragem ilimitada", "Segundo motorista grátis", "Seguro básico", "Assistência 24h", "GPS integrado", "Limpeza completa"].map((item) => (
-                        <div key={item} className="flex items-center gap-1">
-                          <Check size={10} className="text-emerald-400 shrink-0" />
-                          {item}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* RIGHT: Sticky Summary */}
@@ -664,47 +697,45 @@ const BookingDetails = () => {
                 <div className="rounded-xl border border-primary/20 bg-card p-5">
                   <h2 className="text-sm font-semibold uppercase tracking-wider mb-4 flex items-center gap-2 text-foreground">
                     <CircleDollarSign size={15} className="text-primary" />
-                    Resumo do <span className="gold-text">Orçamento</span>
+                    Resumo do <span className="gold-text">Orcamento</span>
                   </h2>
 
                   <div className="space-y-2.5 text-xs">
                     {/* Rental */}
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Locação ({days} {days === 1 ? "dia" : "dias"} × {formatPrice(dailyPrice)})</span>
+                      <span className="text-muted-foreground">Locacao ({days} {days === 1 ? "dia" : "dias"} x {formatPrice(dailyPrice)})</span>
                       <span className="font-semibold text-foreground">{formatPrice(pricing.subtotalRental)}</span>
                     </div>
 
-                    {/* Insurance */}
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">
-                        {premiumInsurance ? "Seguro Premium" : "Seguro Básico"}
-                      </span>
-                      <span className={`font-semibold ${premiumInsurance ? "text-foreground" : "text-emerald-400"}`}>
-                        {premiumInsurance ? formatPrice(pricing.insuranceTotal) : "Incluso"}
-                      </span>
-                    </div>
-
-                    {/* Child seat */}
-                    {childSeat && (
+                    {/* Plan extra */}
+                    {pricing.planExtra > 0 && (
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Cadeirinha (x{childSeatQty})</span>
-                        <span className="font-semibold text-foreground">{formatPrice(pricing.childSeatTotal)}</span>
+                        <span className="text-muted-foreground">{currentPlan.name} ({days} x {formatPrice(currentPlan.dailyExtra)})</span>
+                        <span className="font-semibold text-foreground">{formatPrice(pricing.planExtra)}</span>
                       </div>
                     )}
 
-                    {/* Toll tag */}
-                    {tollTag && (
+                    {/* Add-on insurance */}
+                    {pricing.addonInsuranceTotal > 0 && (
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">TAG Pedágios FL</span>
-                        <span className="font-semibold text-foreground">{formatPrice(pricing.tollTagTotal)}</span>
+                        <span className="text-muted-foreground">Seguro Premium (avulso)</span>
+                        <span className="font-semibold text-foreground">{formatPrice(pricing.addonInsuranceTotal)}</span>
                       </div>
                     )}
 
-                    {/* Extra driver */}
-                    {extraDriver && (
+                    {/* Add-on child seat */}
+                    {pricing.addonChildSeatTotal > 0 && (
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Condutor Extra ({formatPrice(pricing.extraDriverDailyExtra)}/dia)</span>
-                        <span className="font-semibold text-foreground">{formatPrice(pricing.extraDriverTotal)}</span>
+                        <span className="text-muted-foreground">Cadeirinha (x{addonChildSeatQty})</span>
+                        <span className="font-semibold text-foreground">{formatPrice(pricing.addonChildSeatTotal)}</span>
+                      </div>
+                    )}
+
+                    {/* Add-on toll tag */}
+                    {pricing.addonTollTagTotal > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">TAG Pedagios FL</span>
+                        <span className="font-semibold text-foreground">{formatPrice(pricing.addonTollTagTotal)}</span>
                       </div>
                     )}
 
@@ -731,7 +762,7 @@ const BookingDetails = () => {
                       >
                         <span className="text-emerald-400 font-semibold flex items-center gap-1">
                           <Percent size={12} />
-                          Desconto 10+ diárias
+                          Desconto 10+ diarias
                         </span>
                         <span className="font-bold text-emerald-400">- {formatPrice(pricing.discountAmount)}</span>
                       </motion.div>
@@ -753,41 +784,52 @@ const BookingDetails = () => {
                           {pricing.qualifiesDiscount && (
                             <p className="text-[10px] text-muted-foreground line-through">{formatPrice(pricing.subtotalBeforeDiscount)}</p>
                           )}
-                          <p className="text-xl font-bold text-foreground">
+                          <motion.p
+                            key={pricing.total}
+                            initial={{ scale: 1.05, opacity: 0.7 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="text-xl font-bold text-foreground"
+                          >
                             {formatPrice(pricing.total)}
-                          </p>
+                          </motion.p>
                         </div>
                       </div>
                       <p className="text-[9px] text-muted-foreground text-right mt-0.5">
-                        ≈ {formatPrice(Math.round(pricing.total / days))} /dia (média)
+                        ≈ {formatPrice(Math.round(pricing.total / days))} /dia (media)
                       </p>
                     </div>
                   </div>
 
                   {/* Deposit / Deductible info */}
                   <div className={`mt-4 p-3 rounded-lg text-[11px] ${
-                    premiumInsurance
+                    hasPremiumInsurance
                       ? "bg-emerald-500/8 border border-emerald-500/15"
                       : "bg-amber-500/8 border border-amber-500/15"
                   }`}>
-                    {premiumInsurance ? (
+                    {hasPremiumInsurance ? (
                       <div className="space-y-0.5">
                         <p className="flex items-center gap-1.5 text-emerald-400 font-semibold">
-                          <ShieldCheck size={12} /> Proteção Premium ativa
+                          <ShieldCheck size={12} /> Protecao Premium ativa
                         </p>
-                        <p className="text-emerald-400/80">Caução: <strong>ZERO</strong> · Franquia: <strong>ZERO</strong></p>
-                        <p className="text-emerald-400/60">Você está 100% protegido</p>
+                        <p className="text-emerald-400/80">Caucao: <strong>ZERO</strong> · Franquia: <strong>ZERO</strong></p>
+                        <p className="text-emerald-400/60">Voce esta 100% protegido</p>
                       </div>
                     ) : (
                       <div className="space-y-0.5">
                         <p className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-semibold">
-                          <AlertTriangle size={12} /> Seguro Básico
+                          <AlertTriangle size={12} /> Seguro Basico
                         </p>
-                        <p className="text-amber-700 dark:text-amber-400/80">Caução: <strong>{formatPrice(BASIC_DEPOSIT)}</strong></p>
-                        <p className="text-amber-700 dark:text-amber-400/80">Franquia: <strong>{formatPrice(pricing.basicDeductible)}</strong></p>
-                        <p className="text-amber-600/80 dark:text-amber-400/60 mt-0.5">Upgrade para Premium e elimine esses custos</p>
+                        <p className="text-amber-700 dark:text-amber-400/80">Caucao: <strong>{formatPrice(BASIC_DEPOSIT)}</strong></p>
+                        <p className="text-amber-700 dark:text-amber-400/80">Franquia: <strong>{formatPrice(basicDeductible)}</strong></p>
+                        <p className="text-amber-600/80 dark:text-amber-400/60 mt-0.5">Upgrade para Conforto e elimine esses custos</p>
                       </div>
                     )}
+                  </div>
+
+                  {/* Plan badge */}
+                  <div className="mt-3 p-2 rounded-lg bg-muted/20 border border-border/20 text-center">
+                    <p className="text-[10px] text-muted-foreground">Plano selecionado</p>
+                    <p className="text-xs font-bold text-foreground">{currentPlan.name}</p>
                   </div>
 
                   {/* Payment CTA */}
@@ -804,7 +846,7 @@ const BookingDetails = () => {
                     ) : (
                       <>
                         <CreditCard size={14} />
-                        Pagar e Reservar — {formatPrice(pricing.total)}
+                        Pagar e Reservar {formatPrice(pricing.total)}
                       </>
                     )}
                   </button>
@@ -839,8 +881,8 @@ const BookingDetails = () => {
                     {[
                       { icon: ShieldCheck, label: "Seguro incluso" },
                       { icon: Car, label: "Km ilimitado" },
-                      { icon: Zap, label: "Retirada rápida" },
-                      { icon: Users, label: "2º motorista grátis" },
+                      { icon: Zap, label: "Retirada rapida" },
+                      { icon: Users, label: "2o motorista gratis" },
                     ].map(({ icon: Icon, label }) => (
                       <div key={label} className="flex flex-col items-center gap-1 p-1.5">
                         <Icon size={15} className="text-primary" />
