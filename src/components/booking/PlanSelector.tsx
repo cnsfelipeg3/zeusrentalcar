@@ -154,7 +154,7 @@ const PlanSelector = ({ selectedPlan, onSelectPlan, dailyPrice, basicDeductible 
         {/* Reschedule row */}
         <div className="grid grid-cols-[1fr_repeat(3,72px)] items-center text-[11px] px-3 py-1.5 border-t border-border/15">
           <span className="text-muted-foreground flex items-center gap-1">
-            <CalendarClock size={11} /> Remarcação
+            <CalendarClock size={11} /> Taxa para remarcação
           </span>
           {PLAN_ORDER.map((planId) => {
             const plan = PLANS[planId];
