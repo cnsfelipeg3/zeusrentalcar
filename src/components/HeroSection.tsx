@@ -22,7 +22,7 @@ const HeroSection = () => {
         </defs>
       </svg>
 
-      <div className="relative z-10 container mx-auto px-4 text-center flex flex-col items-center gap-6 sm:gap-8">
+      <div className="relative z-10 container mx-auto px-4 text-center flex flex-col items-center gap-4 md:gap-6 lg:gap-8">
         {/* Logo */}
         <motion.img
           src={zeusLogo}
