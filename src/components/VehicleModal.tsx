@@ -78,6 +78,13 @@ const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleM
         </button>
 
         <div className="relative aspect-[16/10] sm:aspect-[16/9] overflow-hidden rounded-t-xl">
+          <button
+            onClick={toggleFullscreen}
+            className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/70 transition-colors"
+            title="Tela cheia"
+          >
+            <Maximize size={16} />
+          </button>
           <AnimatePresence mode="wait">
             <motion.img
               key={currentImage}
