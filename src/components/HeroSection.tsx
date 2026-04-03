@@ -8,7 +8,7 @@ const HeroSection = () => {
   const { t } = useLanguage();
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-start overflow-hidden pt-24 sm:pt-28 pb-12">
+    <section className="relative min-h-screen flex flex-col items-center justify-start overflow-hidden pt-24 sm:pt-28 pb-8 sm:pb-12">
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-background dark:from-black dark:via-background dark:to-background" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(40,100%,48%,0.06)_0%,_transparent_70%)]" />
 
@@ -22,7 +22,7 @@ const HeroSection = () => {
         </defs>
       </svg>
 
-      <div className="relative z-10 container mx-auto px-4 text-center flex flex-col items-center gap-6 sm:gap-8">
+      <div className="relative z-10 container mx-auto px-4 text-center flex flex-col items-center gap-4 md:gap-6 lg:gap-8">
         {/* Logo */}
         <motion.img
           src={zeusLogo}
@@ -30,7 +30,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="h-24 sm:h-36 lg:h-44 w-auto drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_2px_16px_rgba(212,175,55,0.3)] dark:brightness-100 brightness-95 contrast-110"
+          className="h-20 sm:h-28 md:h-32 lg:h-44 w-auto drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_2px_16px_rgba(212,175,55,0.3)] dark:brightness-100 brightness-95 contrast-110"
         />
 
         {/* Title */}
@@ -38,7 +38,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-2xl sm:text-4xl lg:text-6xl font-black uppercase tracking-tight leading-tight max-w-5xl"
+          className="text-xl sm:text-3xl md:text-4xl lg:text-6xl font-black uppercase tracking-tight leading-tight max-w-5xl"
         >
           {t.hero.title}
           <span className="gold-text">{t.hero.titleHighlight}</span>
@@ -49,7 +49,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="text-[11px] sm:text-xl text-muted-foreground font-light tracking-wide max-w-2xl italic whitespace-nowrap"
+          className="text-[11px] sm:text-base md:text-lg lg:text-xl text-muted-foreground font-light tracking-wide max-w-2xl italic whitespace-nowrap"
         >
           {t.hero.subtitle}
         </motion.p>
@@ -59,11 +59,11 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center"
+          className="flex flex-col sm:flex-row gap-3 justify-center"
         >
           <a
             href="#frota"
-            className="gold-gradient text-primary-foreground px-9 py-4 rounded-xl text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-opacity shadow-lg shadow-primary/15"
+            className="gold-gradient text-primary-foreground px-7 py-3 md:px-9 md:py-4 rounded-xl text-xs md:text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-opacity shadow-lg shadow-primary/15"
           >
             {t.hero.exploreFleet}
           </a>
@@ -71,7 +71,7 @@ const HeroSection = () => {
             href={`https://wa.me/16892981754?text=${encodeURIComponent("Olá, venho do site da Zeus e gostaria de realizar uma reserva!")}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="border-2 border-primary/60 text-primary px-9 py-4 rounded-xl text-sm font-bold uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all duration-300 backdrop-blur-sm"
+            className="border-2 border-primary/60 text-primary px-7 py-3 md:px-9 md:py-4 rounded-xl text-xs md:text-sm font-bold uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all duration-300 backdrop-blur-sm"
           >
             {t.hero.contactUs}
           </a>
