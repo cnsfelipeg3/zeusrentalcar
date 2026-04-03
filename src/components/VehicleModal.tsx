@@ -194,6 +194,59 @@ const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleM
           </a>
         </div>
       </motion.div>
+
+      {/* Fullscreen overlay */}
+      <AnimatePresence>
+        {isFullscreen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] bg-black flex items-center justify-center"
+            onClick={toggleFullscreen}
+          >
+            <button
+              onClick={toggleFullscreen}
+              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+            >
+              <Minimize size={20} />
+            </button>
+
+            <button
+              onClick={(e) => { e.stopPropagation(); prevImage(); }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+            >
+              <ChevronLeft size={24} />
+            </button>
+
+            <img
+              src={vehicle.images[currentImage]}
+              alt={`${vehicle.name} - ${currentImage + 1}`}
+              className="max-w-[95vw] max-h-[90vh] object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+
+            <button
+              onClick={(e) => { e.stopPropagation(); nextImage(); }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+            >
+              <ChevronRight size={24} />
+            </button>
+
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+              {vehicle.images.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={(e) => { e.stopPropagation(); setCurrentImage(i); }}
+                  className={`w-3 h-3 rounded-full transition-all ${
+                    i === currentImage ? "bg-primary scale-125" : "bg-white/40 hover:bg-white/70"
+                  }`}
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
