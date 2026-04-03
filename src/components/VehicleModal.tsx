@@ -19,11 +19,25 @@ interface VehicleModalProps {
 
 const VehicleModal = ({ vehicle, categoryLabel, onClose, whatsappUrl }: VehicleModalProps) => {
   const [currentImage, setCurrentImage] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const { t } = useLanguage();
   const vehicleT = t.vehicles[vehicle.name];
 
   const nextImage = () => setCurrentImage((prev) => (prev + 1) % vehicle.images.length);
   const prevImage = () => setCurrentImage((prev) => (prev - 1 + vehicle.images.length) % vehicle.images.length);
+
+  const toggleFullscreen = useCallback(() => setIsFullscreen((prev) => !prev), []);
+
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsFullscreen(false);
+      if (e.key === "ArrowRight") nextImage();
+      if (e.key === "ArrowLeft") prevImage();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [isFullscreen, currentImage]);
 
   useEffect(() => {
     setCurrentImage(0);
