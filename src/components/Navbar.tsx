@@ -101,6 +101,15 @@ const Navbar = () => {
             )
           )}
 
+          {/* Fullscreen Toggle */}
+          <button
+            onClick={toggleFullscreen}
+            className="text-muted-foreground hover:text-primary transition-colors duration-300"
+            aria-label="Tela cheia"
+          >
+            {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
+          </button>
+
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
