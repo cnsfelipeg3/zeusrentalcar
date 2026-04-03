@@ -1,5 +1,5 @@
 import { Instagram, MapPin, MessageCircle } from "lucide-react";
-import zeusLogo from "@/assets/zeus-logo-hd.png";
+import zeusLogo from "@/assets/zeus-logo-new.png";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 const Footer = () => {

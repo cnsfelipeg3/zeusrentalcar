@@ -4,7 +4,7 @@ import { Mail, Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
-import zeusLogo from "@/assets/zeus-logo-hd.png";
+import zeusLogo from "@/assets/zeus-logo-new.png";
 
 const Login = () => {
   const navigate = useNavigate();
