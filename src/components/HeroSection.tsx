@@ -30,7 +30,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="h-24 sm:h-36 lg:h-44 w-auto drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_2px_16px_rgba(212,175,55,0.3)] dark:brightness-100 brightness-95 contrast-110"
+          className="h-20 sm:h-28 md:h-32 lg:h-44 w-auto drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_2px_16px_rgba(212,175,55,0.3)] dark:brightness-100 brightness-95 contrast-110"
         />
 
         {/* Title */}
