@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { toast } from "@/hooks/use-toast";
-import zeusLogo from "@/assets/zeus-logo-new.png";
+import zeusLogo from "@/assets/zeus-logo-hd.png";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
