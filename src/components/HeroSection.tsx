@@ -49,7 +49,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="text-[11px] sm:text-xl text-muted-foreground font-light tracking-wide max-w-2xl italic whitespace-nowrap"
+          className="text-[11px] sm:text-base md:text-lg lg:text-xl text-muted-foreground font-light tracking-wide max-w-2xl italic whitespace-nowrap"
         >
           {t.hero.subtitle}
         </motion.p>
