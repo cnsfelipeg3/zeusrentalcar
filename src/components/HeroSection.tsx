@@ -63,7 +63,7 @@ const HeroSection = () => {
         >
           <a
             href="#frota"
-            className="gold-gradient text-primary-foreground px-9 py-4 rounded-xl text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-opacity shadow-lg shadow-primary/15"
+            className="gold-gradient text-primary-foreground px-7 py-3 md:px-9 md:py-4 rounded-xl text-xs md:text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-opacity shadow-lg shadow-primary/15"
           >
             {t.hero.exploreFleet}
           </a>
