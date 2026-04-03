@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Globe, Home, Sun, Moon, User, Shield } from "lucide-react";
+import { Menu, X, Globe, Home, Sun, Moon, User, Shield, Maximize, Minimize } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -17,11 +17,26 @@ import {
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
   const { theme, toggleTheme } = useThemeMode();
   const navigate = useNavigate();
   const { isLoggedIn, user } = useAuth();
   const { currency, toggleCurrency } = useCurrency();
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  };
+
+  useEffect(() => {
+    const onFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", onFsChange);
+    return () => document.removeEventListener("fullscreenchange", onFsChange);
+  }, []);
 
   const navLinks = [
     { label: t.nav.fleet, href: "#frota" },
@@ -85,6 +100,15 @@ const Navbar = () => {
               </a>
             )
           )}
+
+          {/* Fullscreen Toggle */}
+          <button
+            onClick={toggleFullscreen}
+            className="text-muted-foreground hover:text-primary transition-colors duration-300"
+            aria-label="Tela cheia"
+          >
+            {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
+          </button>
 
           {/* Theme Toggle */}
           <button
