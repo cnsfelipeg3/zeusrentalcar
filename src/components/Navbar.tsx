@@ -163,7 +163,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-background/95 backdrop-blur-xl border-t border-border/30 animate-fade-in">
+        <div className="lg:hidden bg-background/95 backdrop-blur-xl border-t border-border/30 animate-fade-in">
           <div className="flex flex-col gap-4 px-6 py-6">
             {navLinks.map((link) =>
               link.isRoute ? (
