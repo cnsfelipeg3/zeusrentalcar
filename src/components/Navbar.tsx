@@ -65,13 +65,13 @@ const Navbar = () => {
         </a>
 
         {/* Desktop */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden lg:flex items-center gap-6">
           {navLinks.map((link) =>
             link.isRoute ? (
               <button
                 key={link.href}
                 onClick={() => navigate(link.href)}
-                className="text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300"
+                className="text-xs font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300"
               >
                 {link.label}
               </button>
@@ -79,7 +79,7 @@ const Navbar = () => {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300"
+                className="text-xs font-medium tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors duration-300"
               >
                 {link.label}
               </a>
@@ -154,7 +154,7 @@ const Navbar = () => {
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden text-foreground"
+          className="lg:hidden text-foreground"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
@@ -163,7 +163,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-background/95 backdrop-blur-xl border-t border-border/30 animate-fade-in">
+        <div className="lg:hidden bg-background/95 backdrop-blur-xl border-t border-border/30 animate-fade-in">
           <div className="flex flex-col gap-4 px-6 py-6">
             {navLinks.map((link) =>
               link.isRoute ? (
