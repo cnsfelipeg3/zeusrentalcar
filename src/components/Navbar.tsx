@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Globe, Home, Sun, Moon, User, Shield } from "lucide-react";
+import { Menu, X, Globe, Home, Sun, Moon, User, Shield, Maximize, Minimize } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { useLanguage } from "@/i18n/LanguageContext";
