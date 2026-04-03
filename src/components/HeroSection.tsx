@@ -71,7 +71,7 @@ const HeroSection = () => {
             href={`https://wa.me/16892981754?text=${encodeURIComponent("Olá, venho do site da Zeus e gostaria de realizar uma reserva!")}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="border-2 border-primary/60 text-primary px-9 py-4 rounded-xl text-sm font-bold uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all duration-300 backdrop-blur-sm"
+            className="border-2 border-primary/60 text-primary px-7 py-3 md:px-9 md:py-4 rounded-xl text-xs md:text-sm font-bold uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all duration-300 backdrop-blur-sm"
           >
             {t.hero.contactUs}
           </a>
