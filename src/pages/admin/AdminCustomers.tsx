@@ -33,12 +33,12 @@ export default function AdminCustomers() {
     setLoading(true);
     const { data: customersData } = await supabase.from("customers").select("*").order("full_name");
     const { data: bookingsData } = await supabase.from("bookings").select("customer_id");
-    
+
     const countMap: Record<string, number> = {};
     (bookingsData || []).forEach((b: any) => {
       if (b.customer_id) countMap[b.customer_id] = (countMap[b.customer_id] || 0) + 1;
     });
-    
+
     setCustomers((customersData || []).map(c => ({ ...c, booking_count: countMap[c.id] || 0 })));
     setLoading(false);
   };
@@ -82,75 +82,81 @@ export default function AdminCustomers() {
     load();
   };
 
+  const fields = [
+    { label: "Nome completo", key: "full_name" },
+    { label: "E-mail", key: "email" },
+    { label: "Telefone", key: "phone" },
+    { label: "Documento (CPF)", key: "document_number" },
+    { label: "Nacionalidade", key: "nationality" },
+    { label: "CNH / Driver License", key: "driver_license" },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Clientes</h1>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">Clientes</h1>
           <p className="text-sm text-muted-foreground mt-1">{customers.length} clientes cadastrados</p>
         </div>
         <button
           onClick={() => { setEditing({ ...emptyCustomer }); setIsNew(true); }}
-          className="gold-gradient text-primary-foreground px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 hover:opacity-90 transition-opacity"
+          className="gold-gradient text-primary-foreground px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider flex items-center gap-2 hover:opacity-90 transition-opacity"
         >
-          <Plus size={16} /> Adicionar
+          <Plus size={14} /> Adicionar
         </button>
       </div>
 
       <div className="relative">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar cliente..."
-          className="w-full h-9 pl-9 pr-3 rounded-lg border border-border/60 bg-background text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/30"
+          className="w-full h-9 pl-9 pr-3 rounded-lg border border-border/40 bg-card/50 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all"
         />
       </div>
 
       {/* Edit Modal */}
       {editing && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => setEditing(null)}>
-          <div className="bg-card rounded-xl border border-border/50 shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold text-foreground">{isNew ? "Novo Cliente" : "Editar Cliente"}</h2>
-              <button onClick={() => setEditing(null)} className="text-muted-foreground hover:text-foreground"><X size={18} /></button>
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setEditing(null)}>
+          <div className="bg-card rounded-2xl border border-border/40 shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border/20">
+              <h2 className="text-base font-bold text-foreground">{isNew ? "Novo Cliente" : "Editar Cliente"}</h2>
+              <button onClick={() => setEditing(null)} className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors">
+                <X size={16} />
+              </button>
             </div>
 
-            <div className="space-y-4">
-              {[
-                { label: "Nome completo", key: "full_name" },
-                { label: "E-mail", key: "email" },
-                { label: "Telefone", key: "phone" },
-                { label: "Documento", key: "document_number" },
-                { label: "Nacionalidade", key: "nationality" },
-                { label: "CNH / Driver License", key: "driver_license" },
-              ].map((field) => (
+            <div className="p-6 space-y-4">
+              {fields.map((field) => (
                 <div key={field.key}>
-                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">{field.label}</label>
+                  <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">{field.label}</label>
                   <input
                     type="text"
                     value={(editing as any)[field.key] ?? ""}
                     onChange={(e) => setEditing({ ...editing, [field.key]: e.target.value })}
-                    className="w-full h-9 px-3 rounded-lg border border-border/60 bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    className="w-full h-9 px-3 rounded-lg border border-border/40 bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all"
                   />
                 </div>
               ))}
 
               <div>
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Observações</label>
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Observações</label>
                 <textarea
                   value={editing.notes ?? ""}
                   onChange={(e) => setEditing({ ...editing, notes: e.target.value })}
                   rows={3}
-                  className="w-full px-3 py-2 rounded-lg border border-border/60 bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+                  className="w-full px-3 py-2 rounded-lg border border-border/40 bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all resize-none"
                 />
               </div>
+            </div>
 
+            <div className="px-6 py-4 border-t border-border/20">
               <button
                 onClick={save}
-                className="w-full h-10 gold-gradient text-primary-foreground rounded-lg text-sm font-semibold uppercase tracking-wider hover:opacity-90 transition-opacity mt-2"
+                className="w-full h-10 gold-gradient text-primary-foreground rounded-lg text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-opacity"
               >
-                {isNew ? "Adicionar" : "Salvar"}
+                {isNew ? "Adicionar Cliente" : "Salvar Alterações"}
               </button>
             </div>
           </div>
@@ -158,59 +164,63 @@ export default function AdminCustomers() {
       )}
 
       {/* Table */}
-      <Card className="bg-card/50 border-border/40">
+      <Card className="bg-card/80 border-border/30 overflow-hidden">
         <CardContent className="p-0">
           {loading ? (
-            <p className="p-6 text-sm text-muted-foreground">Carregando...</p>
+            <div className="p-8 flex justify-center">
+              <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+            </div>
           ) : filtered.length === 0 ? (
-            <p className="p-6 text-sm text-muted-foreground">Nenhum cliente encontrado.</p>
+            <p className="p-8 text-sm text-muted-foreground text-center">Nenhum cliente encontrado.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border/40 text-left">
-                    <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Nome</th>
-                    <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Contato</th>
-                    <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Documento</th>
-                    <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">CNH</th>
-                    <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Nacionalidade</th>
-                    <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Reservas</th>
-                    <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Ações</th>
+                  <tr className="border-b border-border/30 bg-muted/20">
+                    <th className="px-5 py-3 text-left text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Nome</th>
+                    <th className="px-5 py-3 text-left text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Contato</th>
+                    <th className="px-5 py-3 text-left text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">CPF</th>
+                    <th className="px-5 py-3 text-left text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">CNH</th>
+                    <th className="px-5 py-3 text-left text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Nacionalidade</th>
+                    <th className="px-5 py-3 text-center text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Reservas</th>
+                    <th className="px-5 py-3 w-20"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {filtered.map((c) => (
-                    <tr key={c.id} className="border-b border-border/20 hover:bg-muted/20 transition-colors">
-                      <td className="p-4 text-foreground font-medium">{c.full_name}</td>
-                      <td className="p-4">
-                        <p className="text-muted-foreground">{c.email || "—"}</p>
-                        <p className="text-xs text-muted-foreground/70">{c.phone || ""}</p>
+                    <tr key={c.id} className="border-b border-border/10 hover:bg-muted/20 transition-colors group">
+                      <td className="px-5 py-3.5 text-foreground font-medium text-[13px]">{c.full_name}</td>
+                      <td className="px-5 py-3.5">
+                        <p className="text-muted-foreground text-xs">{c.email || "—"}</p>
+                        <p className="text-[11px] text-muted-foreground/50 mt-0.5">{c.phone || ""}</p>
                       </td>
-                      <td className="p-4 text-muted-foreground text-xs font-mono">{c.document_number || "—"}</td>
-                      <td className="p-4 text-muted-foreground text-xs">{c.driver_license || "—"}</td>
-                      <td className="p-4 text-muted-foreground">{c.nationality || "—"}</td>
-                      <td className="p-4">
+                      <td className="px-5 py-3.5 text-muted-foreground text-xs font-mono tabular-nums">{c.document_number || "—"}</td>
+                      <td className="px-5 py-3.5 text-muted-foreground text-xs">{c.driver_license || "—"}</td>
+                      <td className="px-5 py-3.5 text-muted-foreground text-xs">{c.nationality || "—"}</td>
+                      <td className="px-5 py-3.5 text-center">
                         {c.booking_count ? (
-                          <span className="inline-flex items-center gap-1 text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-primary bg-primary/8 px-2 py-0.5 rounded-md border border-primary/15">
                             <FileText size={10} /> {c.booking_count}
                           </span>
                         ) : (
-                          <span className="text-xs text-muted-foreground/50">0</span>
+                          <span className="text-[10px] text-muted-foreground/30">0</span>
                         )}
                       </td>
-                      <td className="p-4 flex gap-2">
-                        <button
-                          onClick={() => { setEditing(c); setIsNew(false); }}
-                          className="text-muted-foreground hover:text-primary transition-colors"
-                        >
-                          <Pencil size={14} />
-                        </button>
-                        <button
-                          onClick={() => deleteCustomer(c.id)}
-                          className="text-muted-foreground hover:text-destructive transition-colors"
-                        >
-                          <Trash2 size={14} />
-                        </button>
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => { setEditing(c); setIsNew(false); }}
+                            className="w-7 h-7 rounded-md bg-muted/50 flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            <Pencil size={12} />
+                          </button>
+                          <button
+                            onClick={() => deleteCustomer(c.id)}
+                            className="w-7 h-7 rounded-md bg-muted/50 flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
