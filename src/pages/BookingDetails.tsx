@@ -18,6 +18,7 @@ import { getCoverImage } from "@/data/vehicleImages";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import PlanSelector from "@/components/booking/PlanSelector";
+import CustomerDataStep, { type CustomerData } from "@/components/booking/CustomerDataStep";
 import { PLANS, type PlanId } from "@/data/rentalPlans";
 
 interface VehicleInfo {
