@@ -134,7 +134,6 @@ export default function AdminCustomers() {
     { label: "Número", key: "house_number" },
     { label: "Complemento", key: "complement" },
     { label: "CEP / Zip Code", key: "zip_code" },
-    { label: "CNH / Driver License", key: "driver_license" },
   ];
 
   return (
