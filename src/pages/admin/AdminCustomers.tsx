@@ -208,7 +208,7 @@ export default function AdminCustomers() {
                           <span className="text-[10px] text-muted-foreground/30">0</span>
                         )}
                       </td>
-                      <td className="px-5 py-3.5">
+                      <td className="px-5 py-3.5" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={() => { setEditing(c); setIsNew(false); }}
