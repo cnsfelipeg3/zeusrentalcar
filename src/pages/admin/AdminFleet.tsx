@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, Plus, Pencil, Trash2, Car, Users as UsersIcon, Briefcase, X } from "lucide-react";
+import { Search, Plus, Pencil, Trash2, Car, Users as UsersIcon, Briefcase, X, History } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 type Vehicle = {
@@ -26,6 +27,7 @@ const emptyVehicle = {
 };
 
 export default function AdminFleet() {
+  const navigate = useNavigate();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -226,23 +228,30 @@ export default function AdminFleet() {
                   <span>{v.transmission === "Automatic" ? "Auto" : "Manual"}</span>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-border/30">
-                  <span className="text-lg font-bold text-primary">${v.daily_price_usd}/dia</span>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => { setEditing(v); setIsNew(false); }}
-                      className="text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      <Pencil size={14} />
-                    </button>
-                    <button
-                      onClick={() => deleteVehicle(v.id)}
-                      className="text-muted-foreground hover:text-destructive transition-colors"
-                    >
-                      <Trash2 size={14} />
-                    </button>
+                  <div className="flex items-center justify-between pt-2 border-t border-border/30">
+                    <span className="text-lg font-bold text-primary">${v.daily_price_usd}/dia</span>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => navigate(`/admin/vehicle-history/${v.id}`)}
+                        className="text-muted-foreground hover:text-primary transition-colors"
+                        title="Histórico de Locações"
+                      >
+                        <History size={14} />
+                      </button>
+                      <button
+                        onClick={() => { setEditing(v); setIsNew(false); }}
+                        className="text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        <Pencil size={14} />
+                      </button>
+                      <button
+                        onClick={() => deleteVehicle(v.id)}
+                        className="text-muted-foreground hover:text-destructive transition-colors"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   </div>
-                </div>
               </CardContent>
             </Card>
           ))}

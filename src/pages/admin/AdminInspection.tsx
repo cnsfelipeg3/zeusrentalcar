@@ -9,8 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import {
   Camera, Check, ChevronLeft, Fuel, Gauge, Car, ClipboardCheck,
-  PenTool, Save, Loader2, X, Plus, Trash2, AlertTriangle, CheckCircle2
+  PenTool, Save, Loader2, X, Plus, Trash2, AlertTriangle, CheckCircle2,
+  Download, GitCompare
 } from "lucide-react";
+import { generateInspectionPDF } from "@/utils/inspectionPdf";
 
 type DamageItem = {
   id: string;
@@ -359,6 +361,24 @@ export default function AdminInspection() {
             {booking.customer_name} • {vehicle?.name || "Veículo não vinculado"} •{" "}
             {new Date(booking.pickup_date).toLocaleDateString("pt-BR")} → {new Date(booking.return_date).toLocaleDateString("pt-BR")}
           </p>
+        </div>
+        <div className="flex gap-2">
+          {isCompleted && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => generateInspectionPDF({ type, booking, vehicle, inspection: existingInspection })}
+            >
+              <Download size={14} className="mr-1" /> PDF
+            </Button>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate(`/admin/inspection/compare/${bookingId}`)}
+          >
+            <GitCompare size={14} className="mr-1" /> Comparar
+          </Button>
         </div>
       </div>
 

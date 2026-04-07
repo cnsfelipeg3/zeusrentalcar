@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Plus, Eye, Trash2, LogIn, LogOut } from "lucide-react";
+import { Search, Plus, Eye, Trash2, LogIn, LogOut, GitCompare } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -165,6 +165,13 @@ export default function AdminBookings() {
                                title="Devolução do Veículo"
                              >
                                <LogOut size={12} /> Devolução
+                             </button>
+                             <button
+                               onClick={() => navigate(`/admin/inspection/compare/${b.id}`)}
+                               className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md bg-muted text-muted-foreground hover:text-foreground transition-colors font-medium"
+                               title="Comparar Inspeções"
+                             >
+                               <GitCompare size={12} />
                              </button>
                            </div>
                          </td>
