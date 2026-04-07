@@ -126,7 +126,7 @@ const BookingDetails = () => {
   const [showUpgradeSuggestion, setShowUpgradeSuggestion] = useState(false);
   const [customerData, setCustomerData] = useState<CustomerData>({
     full_name: "", email: "", phone: "", date_of_birth: "",
-    nationality: "", document_number: "", address: "", zip_code: "",
+    nationality: "", document_number: "", address: "", house_number: "", complement: "", zip_code: "",
     licenseFile: null,
   });
 
