@@ -31,6 +31,24 @@ export default function AdminCustomers() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<Customer> | null>(null);
   const [isNew, setIsNew] = useState(false);
+  const [licenseFile, setLicenseFile] = useState<File | null>(null);
+  const [cepLoading, setCepLoading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const lookupCep = async (cep: string) => {
+    const clean = cep.replace(/\D/g, "");
+    if (clean.length !== 8) return;
+    setCepLoading(true);
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
+      const data = await res.json();
+      if (!data.erro && editing) {
+        const addr = [data.logradouro, data.bairro, data.localidade, data.uf].filter(Boolean).join(", ");
+        setEditing(prev => prev ? { ...prev, address: addr } : prev);
+      }
+    } catch {}
+    setCepLoading(false);
+  };
 
   const load = async () => {
     setLoading(true);
