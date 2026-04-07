@@ -21,7 +21,7 @@ type Customer = {
 const emptyCustomer = {
   full_name: "", email: "", phone: "", document_number: "",
   nationality: "", driver_license: "", notes: "",
-  date_of_birth: "", address: "", zip_code: "",
+  date_of_birth: "", address: "", house_number: "", complement: "", zip_code: "",
 };
 
 export default function AdminCustomers() {
@@ -98,6 +98,8 @@ export default function AdminCustomers() {
       notes: editing.notes || null,
       date_of_birth: (editing as any).date_of_birth || null,
       address: (editing as any).address || null,
+      house_number: (editing as any).house_number || null,
+      complement: (editing as any).complement || null,
       zip_code: (editing as any).zip_code || null,
       driver_license_file_url: driverLicenseFileUrl,
     };
@@ -128,7 +130,9 @@ export default function AdminCustomers() {
     { label: "Data de Nascimento", key: "date_of_birth", type: "date" },
     { label: "Documento (CPF)", key: "document_number" },
     { label: "Nacionalidade", key: "nationality" },
-    { label: "Endereço", key: "address" },
+    { label: "Rua / Logradouro", key: "address" },
+    { label: "Número", key: "house_number" },
+    { label: "Complemento", key: "complement" },
     { label: "CEP / Zip Code", key: "zip_code" },
     { label: "CNH / Driver License", key: "driver_license" },
   ];

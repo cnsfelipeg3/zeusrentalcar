@@ -126,7 +126,7 @@ const BookingDetails = () => {
   const [showUpgradeSuggestion, setShowUpgradeSuggestion] = useState(false);
   const [customerData, setCustomerData] = useState<CustomerData>({
     full_name: "", email: "", phone: "", date_of_birth: "",
-    nationality: "", document_number: "", address: "", zip_code: "",
+    nationality: "", document_number: "", address: "", house_number: "", complement: "", zip_code: "",
     licenseFile: null,
   });
 
@@ -253,6 +253,8 @@ const BookingDetails = () => {
         nationality: customerData.nationality.trim() || null,
         date_of_birth: customerData.date_of_birth || null,
         address: customerData.address.trim() || null,
+        house_number: customerData.house_number.trim() || null,
+        complement: customerData.complement.trim() || null,
         zip_code: customerData.zip_code.trim() || null,
         ...(driverLicenseUrl ? { driver_license_file_url: driverLicenseUrl } : {}),
       };

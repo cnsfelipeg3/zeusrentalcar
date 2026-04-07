@@ -92,6 +92,7 @@ export type Database = {
       customers: {
         Row: {
           address: string | null
+          complement: string | null
           created_at: string
           date_of_birth: string | null
           document_number: string | null
@@ -99,6 +100,7 @@ export type Database = {
           driver_license_file_url: string | null
           email: string | null
           full_name: string
+          house_number: string | null
           id: string
           nationality: string | null
           notes: string | null
@@ -108,6 +110,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          complement?: string | null
           created_at?: string
           date_of_birth?: string | null
           document_number?: string | null
@@ -115,6 +118,7 @@ export type Database = {
           driver_license_file_url?: string | null
           email?: string | null
           full_name: string
+          house_number?: string | null
           id?: string
           nationality?: string | null
           notes?: string | null
@@ -124,6 +128,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          complement?: string | null
           created_at?: string
           date_of_birth?: string | null
           document_number?: string | null
@@ -131,6 +136,7 @@ export type Database = {
           driver_license_file_url?: string | null
           email?: string | null
           full_name?: string
+          house_number?: string | null
           id?: string
           nationality?: string | null
           notes?: string | null

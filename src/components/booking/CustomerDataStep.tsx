@@ -9,6 +9,8 @@ export interface CustomerData {
   nationality: string;
   document_number: string;
   address: string;
+  house_number: string;
+  complement: string;
   zip_code: string;
   licenseFile: File | null;
 }
@@ -26,7 +28,9 @@ const fields = [
   { key: "nationality", label: "Nacionalidade", icon: Globe, type: "text", placeholder: "Brasileira" },
   { key: "document_number", label: "CPF (se brasileiro)", icon: FileText, type: "text", placeholder: "000.000.000-00" },
   { key: "zip_code", label: "CEP / Zip Code", icon: MapPin, type: "text", placeholder: "00000-000" },
-  { key: "address", label: "Endereço Completo", icon: MapPin, type: "text", placeholder: "Rua, número, bairro, cidade" },
+  { key: "address", label: "Rua / Logradouro", icon: MapPin, type: "text", placeholder: "Rua, bairro, cidade" },
+  { key: "house_number", label: "Número", icon: MapPin, type: "text", placeholder: "123" },
+  { key: "complement", label: "Complemento", icon: MapPin, type: "text", placeholder: "Apto, bloco, sala..." },
 ];
 
 export default function CustomerDataStep({ data, onChange }: Props) {
