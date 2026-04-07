@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Booking } from "@/data/mockBookings";
 import { useCurrency } from "@/i18n/CurrencyContext";
 import BookingStatusBadge from "./BookingStatusBadge";
+import { Progress } from "@/components/ui/progress";
 
 interface BookingCardProps {
   booking: Booking;
@@ -16,9 +17,28 @@ const formatDate = (iso: string) => {
   return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
 };
 
+function getBookingProgress(b: Booking): number {
+  if (b.status === "completed") return 100;
+  if (b.status === "pending" || b.status === "confirmed" || b.status === "cancelled") return 0;
+  const now = new Date().getTime();
+  const start = new Date(b.pickupDate).getTime();
+  const end = new Date(b.dropoffDate).getTime();
+  if (now <= start) return 0;
+  if (now >= end) return 100;
+  return Math.round(((now - start) / (end - start)) * 100);
+}
+
+function getProgressColor(b: Booking): string {
+  if (b.status === "completed") return "bg-emerald-500";
+  if (b.status === "active" || b.status === "in_progress") return "bg-amber-500";
+  return "bg-muted-foreground/30";
+}
+
 const BookingCard = ({ booking, index, featured }: BookingCardProps) => {
   const navigate = useNavigate();
   const { formatPrice } = useCurrency();
+  const progress = getBookingProgress(booking);
+  const progressColor = getProgressColor(booking);
 
   if (featured) {
     return (
@@ -44,7 +64,7 @@ const BookingCard = ({ booking, index, featured }: BookingCardProps) => {
           <div className="p-5 md:p-6 flex-1 flex flex-col justify-between">
             <div>
               <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-                Reserva ativa
+                Reserva {booking.status === "in_progress" ? "em andamento" : "ativa"}
               </p>
               <h3 className="text-xl font-bold text-foreground">{booking.vehicle}</h3>
               <p className="text-sm text-muted-foreground italic">{booking.category}</p>
@@ -60,22 +80,23 @@ const BookingCard = ({ booking, index, featured }: BookingCardProps) => {
               </div>
             </div>
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-5 gap-3">
-              <div>
-                {booking.daysRemaining != null && (
-                  <div className="space-y-1.5">
+              <div className="w-full sm:w-auto">
+                <div className="space-y-1.5">
+                  {booking.daysRemaining != null && (
                     <p className="text-sm font-semibold text-foreground">
                       Devolução em {booking.daysRemaining} dias
                     </p>
-                    <div className="w-48 h-1.5 rounded-full bg-muted overflow-hidden">
+                  )}
+                  <div className="flex items-center gap-2 w-48">
+                    <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
                       <div
-                        className="h-full rounded-full gold-gradient"
-                        style={{
-                          width: `${((booking.rentalDays - booking.daysRemaining) / booking.rentalDays) * 100}%`,
-                        }}
+                        className={`h-full rounded-full transition-all ${progressColor}`}
+                        style={{ width: `${progress}%` }}
                       />
                     </div>
+                    <span className="text-[11px] text-muted-foreground font-medium">{progress}%</span>
                   </div>
-                )}
+                </div>
               </div>
               <button className="flex items-center gap-1 gold-gradient text-primary-foreground px-4 py-2 rounded-lg text-sm font-semibold uppercase tracking-wider hover:opacity-90 transition-opacity">
                 Ver detalhes
@@ -107,13 +128,23 @@ const BookingCard = ({ booking, index, featured }: BookingCardProps) => {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <h3 className="font-semibold text-foreground truncate">{booking.vehicle}</h3>
-            <BookingStatusBadge status={booking.status} pulse={booking.status === "active"} />
+            <BookingStatusBadge status={booking.status} pulse={booking.status === "active" || booking.status === "in_progress"} />
           </div>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1.5">
             <Calendar size={12} />
             {formatDate(booking.pickupDate)} — {formatDate(booking.dropoffDate)}
           </div>
           <p className="text-xs text-muted-foreground/70 mt-0.5">{booking.pickupLocation}</p>
+          {/* Progress bar */}
+          <div className="flex items-center gap-2 mt-2 w-32">
+            <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all ${progressColor}`}
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <span className="text-[10px] text-muted-foreground">{progress}%</span>
+          </div>
         </div>
         <div className="flex items-center gap-4">
           <p className="text-lg font-bold gold-text">{formatPrice(booking.pricing.total)}</p>
