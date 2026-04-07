@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, Plus, Pencil, Trash2, X, FileText } from "lucide-react";
@@ -23,6 +24,7 @@ const emptyCustomer = {
 };
 
 export default function AdminCustomers() {
+  const navigate = useNavigate();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -188,7 +190,7 @@ export default function AdminCustomers() {
                 </thead>
                 <tbody>
                   {filtered.map((c) => (
-                    <tr key={c.id} className="border-b border-border/10 hover:bg-muted/20 transition-colors group">
+                    <tr key={c.id} onClick={() => navigate(`/admin/customers/${c.id}`)} className="border-b border-border/10 hover:bg-muted/20 transition-colors group cursor-pointer">
                       <td className="px-5 py-3.5 text-foreground font-medium text-[13px]">{c.full_name}</td>
                       <td className="px-5 py-3.5">
                         <p className="text-muted-foreground text-xs">{c.email || "—"}</p>
@@ -206,7 +208,7 @@ export default function AdminCustomers() {
                           <span className="text-[10px] text-muted-foreground/30">0</span>
                         )}
                       </td>
-                      <td className="px-5 py-3.5">
+                      <td className="px-5 py-3.5" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={() => { setEditing(c); setIsNew(false); }}

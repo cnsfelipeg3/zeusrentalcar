@@ -20,6 +20,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import AdminBookings from "./pages/admin/AdminBookings.tsx";
 import AdminFleet from "./pages/admin/AdminFleet.tsx";
 import AdminCustomers from "./pages/admin/AdminCustomers.tsx";
+import AdminCustomerDetail from "./pages/admin/AdminCustomerDetail.tsx";
 import AdminSettings from "./pages/admin/AdminSettings.tsx";
 import AdminLive from "./pages/admin/AdminLive.tsx";
 import AdminInspection from "./pages/admin/AdminInspection.tsx";
@@ -59,6 +60,7 @@ const App = () => (
                 <Route path="live" element={<AdminLive />} />
                 <Route path="fleet" element={<AdminFleet />} />
                 <Route path="customers" element={<AdminCustomers />} />
+                <Route path="customers/:customerId" element={<AdminCustomerDetail />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="inspection/:bookingId" element={<AdminInspection />} />
                 <Route path="inspection/compare/:bookingId" element={<AdminInspectionCompare />} />
