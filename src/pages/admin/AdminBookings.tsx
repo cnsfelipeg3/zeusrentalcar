@@ -142,7 +142,7 @@ export default function AdminBookings() {
                   {filtered.map((b) => {
                     const progress = getBookingProgress(b.pickup_date, b.return_date, b.status);
                     return (
-                      <tr key={b.id} className="border-b border-border/20 hover:bg-muted/20 transition-colors">
+                      <tr key={b.id} className="border-b border-border/20 hover:bg-muted/20 transition-colors cursor-pointer" onClick={() => navigate(`/admin/bookings/${b.id}`)}>
                         <td className="p-4">
                           <p className="text-foreground font-medium">{b.customer_name}</p>
                           <p className="text-xs text-muted-foreground">{b.customer_email}</p>
