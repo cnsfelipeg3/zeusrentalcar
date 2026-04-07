@@ -30,7 +30,14 @@ import AdminFleetReport from "./pages/admin/AdminFleetReport.tsx";
 import AdminBookingDetail from "./pages/admin/AdminBookingDetail.tsx";
 import BookingConfirmed from "./pages/BookingConfirmed.tsx";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
