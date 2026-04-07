@@ -165,7 +165,16 @@ export default function AdminBookings() {
                         </td>
                         <td className="p-4">
                           <div className="flex items-center gap-2">
-                            <Progress value={progress} className="h-2 flex-1" />
+                            <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
+                              <div
+                                className={`h-full rounded-full transition-all ${
+                                  b.status === "completed" ? "bg-emerald-500"
+                                  : b.status === "active" || b.status === "in_progress" ? "bg-amber-500"
+                                  : "bg-muted-foreground/30"
+                                }`}
+                                style={{ width: `${progress}%` }}
+                              />
+                            </div>
                             <span className="text-[11px] text-muted-foreground font-medium min-w-[32px] text-right">{progress}%</span>
                           </div>
                         </td>
