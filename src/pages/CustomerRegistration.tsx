@@ -185,18 +185,35 @@ const CustomerRegistration = () => {
               ref={fileRef}
               type="file"
               accept="image/*,.pdf"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            <input
+              id="cameraInputReg"
+              type="file"
+              accept="image/*"
               capture="environment"
               onChange={handleFileChange}
               className="hidden"
             />
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              className="w-full h-10 px-3 rounded-lg border border-dashed border-border/60 bg-card/50 text-sm text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-2"
-            >
-              <Upload size={14} />
-              {licenseFile ? licenseFile.name : "Tirar foto ou anexar arquivo"}
-            </button>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => document.getElementById("cameraInputReg")?.click()}
+                className="h-10 px-3 rounded-lg border border-dashed border-border/60 bg-card/50 text-sm text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-2"
+              >
+                <Camera size={14} />
+                Câmera
+              </button>
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                className="flex-1 h-10 px-3 rounded-lg border border-dashed border-border/60 bg-card/50 text-sm text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-2"
+              >
+                <Upload size={14} />
+                {licenseFile ? licenseFile.name : "Anexar arquivo"}
+              </button>
+            </div>
           </div>
 
           <button

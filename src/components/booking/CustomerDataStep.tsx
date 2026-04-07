@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { User, Mail, Phone, Calendar, Globe, FileText, MapPin, Upload, Loader2 } from "lucide-react";
+import { User, Mail, Phone, Calendar, Globe, FileText, MapPin, Upload, Camera, Loader2 } from "lucide-react";
 
 export interface CustomerData {
   full_name: string;
@@ -102,6 +102,16 @@ export default function CustomerDataStep({ data, onChange }: Props) {
           ref={fileRef}
           type="file"
           accept="image/*,.pdf"
+          onChange={(e) => {
+            const file = e.target.files?.[0] || null;
+            onChange({ ...data, licenseFile: file });
+          }}
+          className="hidden"
+        />
+        <input
+          id="cameraInputBooking"
+          type="file"
+          accept="image/*"
           capture="environment"
           onChange={(e) => {
             const file = e.target.files?.[0] || null;
@@ -109,14 +119,24 @@ export default function CustomerDataStep({ data, onChange }: Props) {
           }}
           className="hidden"
         />
-        <button
-          type="button"
-          onClick={() => fileRef.current?.click()}
-          className="w-full h-8 px-2.5 rounded-md border border-dashed border-border/50 bg-background/50 text-[11px] text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-1.5"
-        >
-          <Upload size={11} />
-          {data.licenseFile ? data.licenseFile.name : "Tirar foto ou anexar arquivo"}
-        </button>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => document.getElementById("cameraInputBooking")?.click()}
+            className="h-8 px-2.5 rounded-md border border-dashed border-border/50 bg-background/50 text-[11px] text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-1.5"
+          >
+            <Camera size={11} />
+            Câmera
+          </button>
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            className="flex-1 h-8 px-2.5 rounded-md border border-dashed border-border/50 bg-background/50 text-[11px] text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-1.5"
+          >
+            <Upload size={11} />
+            {data.licenseFile ? data.licenseFile.name : "Anexar arquivo"}
+          </button>
+        </div>
       </div>
     </div>
   );
