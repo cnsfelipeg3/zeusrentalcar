@@ -253,6 +253,8 @@ const BookingDetails = () => {
         nationality: customerData.nationality.trim() || null,
         date_of_birth: customerData.date_of_birth || null,
         address: customerData.address.trim() || null,
+        house_number: customerData.house_number.trim() || null,
+        complement: customerData.complement.trim() || null,
         zip_code: customerData.zip_code.trim() || null,
         ...(driverLicenseUrl ? { driver_license_file_url: driverLicenseUrl } : {}),
       };
