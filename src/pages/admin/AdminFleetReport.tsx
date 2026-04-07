@@ -139,6 +139,45 @@ export default function AdminFleetReport() {
 
   const damageRanking = [...report].filter((r) => r.damageCount > 0).sort((a, b) => b.damageCount - a.damageCount).slice(0, 10);
 
+  // Addon revenue calculations
+  const addonTotals = bookings.reduce(
+    (acc, b: any) => {
+      const addons = b.addons || {};
+      acc.planExtra += Number(addons.plan_extra) || 0;
+      acc.insurance += Number(addons.insurance_total) || 0;
+      acc.childSeat += Number(addons.child_seat_total) || 0;
+      acc.tollTag += Number(addons.toll_tag_total) || 0;
+      acc.extraDriver += Number(addons.extra_driver_total) || 0;
+      acc.returnFee += Number(addons.return_fee) || 0;
+      return acc;
+    },
+    { planExtra: 0, insurance: 0, childSeat: 0, tollTag: 0, extraDriver: 0, returnFee: 0 }
+  );
+
+  const addonChartData = [
+    { name: "Upgrade de Plano", value: addonTotals.planExtra, icon: "✨" },
+    { name: "Seguro Premium", value: addonTotals.insurance, icon: "🛡" },
+    { name: "Cadeirinha Infantil", value: addonTotals.childSeat, icon: "👶" },
+    { name: "TAG Pedágio", value: addonTotals.tollTag, icon: "📡" },
+    { name: "Condutor Extra", value: addonTotals.extraDriver, icon: "👥" },
+    { name: "Taxa One-Way", value: addonTotals.returnFee, icon: "🔄" },
+  ].filter((d) => d.value > 0);
+
+  const totalAddonRevenue = addonChartData.reduce((s, d) => s + d.value, 0);
+
+  // Plan distribution
+  const planCounts = bookings.reduce((acc, b: any) => {
+    const plan = b.plan_id || "essencial";
+    acc[plan] = (acc[plan] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const planDistributionData = [
+    { name: "Zeus Essencial", value: planCounts["essencial"] || 0 },
+    { name: "Zeus Conforto", value: planCounts["conforto"] || 0 },
+    { name: "Zeus Premium", value: planCounts["premium"] || 0 },
+  ].filter((d) => d.value > 0);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
