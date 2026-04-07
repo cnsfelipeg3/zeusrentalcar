@@ -9,7 +9,7 @@ const HeroSection = () => {
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-start overflow-hidden pt-24 sm:pt-28 pb-8 sm:pb-12">
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-background dark:from-black dark:via-background dark:to-background" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-background" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(40,100%,48%,0.06)_0%,_transparent_70%)]" />
 
       <svg className="absolute bottom-0 left-0 right-0 w-full opacity-10" viewBox="0 0 1440 200" fill="none">
