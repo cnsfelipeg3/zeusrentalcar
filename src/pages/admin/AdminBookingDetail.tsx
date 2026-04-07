@@ -4,9 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  ArrowLeft, User, Mail, Phone, FileText, MapPin, Calendar,
-  DollarSign, Car, LogIn, LogOut, GitCompare, Clock, Users,
-  Shield, Fuel, Gauge, CheckCircle2, AlertTriangle, ChevronRight
+  User, FileText, LogIn, LogOut, GitCompare,
+  Fuel, Gauge, CheckCircle2, AlertTriangle, ChevronRight,
+  Camera, PenTool, Image, Check, X as XIcon
 } from "lucide-react";
 
 type Booking = {
@@ -61,6 +61,9 @@ type Inspection = {
   fuel_level: string | null;
   damages: any;
   accessories_check: any;
+  exterior_photos: any;
+  customer_signature: string | null;
+  agent_signature: string | null;
   notes: string | null;
   agent_name: string | null;
   completed_at: string | null;
@@ -83,6 +86,7 @@ export default function AdminBookingDetail() {
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [inspections, setInspections] = useState<Inspection[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedPhoto, setExpandedPhoto] = useState<string | null>(null);
 
   useEffect(() => {
     if (!bookingId) return;
@@ -92,16 +96,17 @@ export default function AdminBookingDetail() {
       if (!b) { setLoading(false); return; }
       setBooking(b);
 
-      if (b.customer_id) {
-        const { data: c } = await supabase.from("customers").select("*").eq("id", b.customer_id).single();
-        setCustomer(c);
-      }
-      if (b.vehicle_id) {
-        const { data: v } = await supabase.from("vehicles").select("*").eq("id", b.vehicle_id).single();
-        setVehicle(v);
-      }
-      const { data: insp } = await supabase.from("vehicle_inspections").select("*").eq("booking_id", bookingId);
-      setInspections(insp || []);
+      const promises: Promise<any>[] = [];
+      if (b.customer_id) promises.push(supabase.from("customers").select("*").eq("id", b.customer_id).single());
+      else promises.push(Promise.resolve({ data: null }));
+      if (b.vehicle_id) promises.push(supabase.from("vehicles").select("*").eq("id", b.vehicle_id).single());
+      else promises.push(Promise.resolve({ data: null }));
+      promises.push(supabase.from("vehicle_inspections").select("*").eq("booking_id", bookingId));
+
+      const [cRes, vRes, iRes] = await Promise.all(promises);
+      setCustomer(cRes.data);
+      setVehicle(vRes.data);
+      setInspections(iRes.data || []);
       setLoading(false);
     };
     load();
@@ -138,36 +143,24 @@ export default function AdminBookingDetail() {
   );
 
   const MetricCard = ({ icon: Icon, label, value, color = "text-foreground" }: { icon: any; label: string; value: string | number; color?: string }) => (
-    <div className="flex flex-col items-center justify-center p-4 rounded-xl border border-border/30 bg-card/80 gap-1.5 min-h-[88px]">
-      <Icon size={16} className="text-primary/60" />
-      <span className="text-[10px] text-muted-foreground uppercase tracking-wider text-center leading-tight">{label}</span>
+    <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border/30 bg-card/80 gap-1 min-h-[80px]">
+      <Icon size={14} className="text-primary/60" />
+      <span className="text-[9px] text-muted-foreground uppercase tracking-wider text-center leading-tight">{label}</span>
       <span className={`text-sm font-bold ${color}`}>{value}</span>
     </div>
   );
 
-  const InspectionCard = ({ insp, label, type }: { insp: Inspection | undefined; label: string; type: "checkin" | "checkout" }) => {
-    const damages = insp && Array.isArray(insp.damages) ? insp.damages : [];
-    const accessories = insp?.accessories_check && typeof insp.accessories_check === "object" ? insp.accessories_check as Record<string, boolean> : {};
-    const accessoryOk = Object.values(accessories).filter(Boolean).length;
-    const accessoryTotal = Object.keys(accessories).length;
-
-    return (
-      <Card className="bg-card/80 border-border/30 overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-3 border-b border-border/20 bg-muted/20">
-          <div className="flex items-center gap-2">
-            {type === "checkin" ? <LogIn size={14} className="text-primary" /> : <LogOut size={14} className="text-primary" />}
-            <h3 className="text-sm font-semibold text-foreground">{label}</h3>
-          </div>
-          {insp?.completed_at ? (
-            <span className="text-[10px] text-muted-foreground font-medium">
-              {new Date(insp.completed_at).toLocaleDateString("pt-BR")} · {new Date(insp.completed_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
-            </span>
-          ) : (
+  const FullInspectionSection = ({ insp, label, type }: { insp: Inspection | undefined; label: string; type: "checkin" | "checkout" }) => {
+    if (!insp) {
+      return (
+        <Card className="bg-card/80 border-border/30 overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-3 border-b border-border/20 bg-muted/20">
+            <div className="flex items-center gap-2">
+              {type === "checkin" ? <LogIn size={14} className="text-primary" /> : <LogOut size={14} className="text-primary" />}
+              <h3 className="text-sm font-semibold text-foreground">{label}</h3>
+            </div>
             <span className="text-[10px] text-muted-foreground/50 italic">Não realizada</span>
-          )}
-        </div>
-
-        {!insp ? (
+          </div>
           <CardContent className="p-5 flex flex-col items-center justify-center py-8 gap-2">
             <div className="w-10 h-10 rounded-full bg-muted/50 flex items-center justify-center">
               <FileText size={18} className="text-muted-foreground/40" />
@@ -180,50 +173,176 @@ export default function AdminBookingDetail() {
               Realizar inspeção →
             </button>
           </CardContent>
-        ) : (
-          <CardContent className="p-5 space-y-4">
-            <div className="grid grid-cols-4 gap-2">
-              <MetricCard icon={Gauge} label="Odômetro" value={insp.odometer_reading ? `${insp.odometer_reading.toLocaleString()} km` : "—"} />
-              <MetricCard icon={Fuel} label="Combustível" value={insp.fuel_level || "—"} />
-              <MetricCard icon={AlertTriangle} label="Avarias" value={damages.length} color={damages.length > 0 ? "text-red-500" : "text-emerald-500"} />
-              <MetricCard icon={CheckCircle2} label="Acessórios" value={`${accessoryOk}/${accessoryTotal}`} />
-            </div>
+        </Card>
+      );
+    }
 
+    const damages = Array.isArray(insp.damages) ? insp.damages : [];
+    const accessories = insp.accessories_check && typeof insp.accessories_check === "object" ? insp.accessories_check as Record<string, boolean> : {};
+    const accessoryEntries = Object.entries(accessories);
+    const accessoryOk = accessoryEntries.filter(([, v]) => v).length;
+    const photos = Array.isArray(insp.exterior_photos) ? insp.exterior_photos as { id: string; position: string; url: string }[] : [];
+
+    return (
+      <Card className="bg-card/80 border-border/30 overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-border/20 bg-muted/20">
+          <div className="flex items-center gap-2">
+            {type === "checkin" ? <LogIn size={14} className="text-primary" /> : <LogOut size={14} className="text-primary" />}
+            <h3 className="text-sm font-semibold text-foreground">{label}</h3>
+          </div>
+          <div className="flex items-center gap-3">
             {insp.agent_name && (
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <User size={12} className="text-primary/50" />
-                Agente: <span className="font-medium text-foreground">{insp.agent_name}</span>
-              </div>
+              <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                <User size={10} /> {insp.agent_name}
+              </span>
             )}
-
-            {insp.notes && (
-              <div className="rounded-lg bg-muted/30 border border-border/20 p-3">
-                <p className="text-xs text-muted-foreground italic leading-relaxed">{insp.notes}</p>
-              </div>
+            {insp.completed_at && (
+              <span className="text-[10px] text-muted-foreground font-medium">
+                {new Date(insp.completed_at).toLocaleDateString("pt-BR")} · {new Date(insp.completed_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+              </span>
             )}
+          </div>
+        </div>
 
-            {damages.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Avarias</p>
-                {damages.map((d: any, i: number) => (
-                  <div key={i} className="flex items-start gap-2.5 text-xs pl-1">
-                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-1.5 ${d.severity === "medium" ? "bg-amber-500" : d.severity === "heavy" ? "bg-red-500" : "bg-yellow-400"}`} />
-                    <div>
-                      <span className="text-foreground">{d.description}</span>
-                      <span className="text-muted-foreground/50 ml-1.5">({d.position})</span>
+        <CardContent className="p-5 space-y-5">
+          {/* Metrics row */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <MetricCard icon={Gauge} label="Odômetro" value={insp.odometer_reading ? `${insp.odometer_reading.toLocaleString()} km` : "—"} />
+            <MetricCard icon={Fuel} label="Combustível" value={insp.fuel_level || "—"} />
+            <MetricCard icon={AlertTriangle} label="Avarias" value={damages.length} color={damages.length > 0 ? "text-red-500" : "text-emerald-500"} />
+            <MetricCard icon={CheckCircle2} label="Acessórios" value={`${accessoryOk}/${accessoryEntries.length}`} />
+          </div>
+
+          {/* Exterior photos */}
+          {photos.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <Camera size={12} className="text-primary/60" />
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Fotos Exteriores ({photos.length})</span>
+              </div>
+              <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+                {photos.map((photo) => (
+                  <button
+                    key={photo.id}
+                    onClick={() => setExpandedPhoto(photo.url)}
+                    className="group relative aspect-square rounded-lg overflow-hidden border border-border/30 hover:border-primary/40 transition-all"
+                  >
+                    <img src={photo.url} alt={photo.position} className="w-full h-full object-cover" loading="lazy" />
+                    <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <Image size={16} className="text-foreground" />
                     </div>
+                    <div className="absolute bottom-0 inset-x-0 bg-background/80 backdrop-blur-sm px-1.5 py-0.5">
+                      <span className="text-[8px] text-foreground font-medium">{photo.position}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Damages */}
+          {damages.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <AlertTriangle size={12} className="text-red-500/60" />
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Avarias ({damages.length})</span>
+              </div>
+              <div className="space-y-2">
+                {damages.map((d: any, i: number) => (
+                  <div key={i} className="flex items-start gap-3 rounded-lg bg-muted/20 border border-border/20 p-3">
+                    <span className={`w-2 h-2 rounded-full shrink-0 mt-1 ${d.severity === "heavy" ? "bg-red-500" : d.severity === "medium" ? "bg-amber-500" : "bg-yellow-400"}`} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-medium text-foreground">{d.description}</span>
+                        <Badge variant="outline" className={`text-[9px] px-1.5 py-0 shrink-0 ${
+                          d.severity === "heavy" ? "border-red-500/30 text-red-500" :
+                          d.severity === "medium" ? "border-amber-500/30 text-amber-600" :
+                          "border-yellow-500/30 text-yellow-600"
+                        }`}>
+                          {d.severity === "heavy" ? "Grave" : d.severity === "medium" ? "Média" : "Leve"}
+                        </Badge>
+                      </div>
+                      {d.position && <span className="text-[10px] text-muted-foreground">{d.position}</span>}
+                    </div>
+                    {d.photoUrl && (
+                      <button onClick={() => setExpandedPhoto(d.photoUrl)} className="w-10 h-10 rounded-md overflow-hidden border border-border/30 shrink-0">
+                        <img src={d.photoUrl} alt="" className="w-full h-full object-cover" />
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
-            )}
-          </CardContent>
-        )}
+            </div>
+          )}
+
+          {/* Accessories */}
+          {accessoryEntries.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <CheckCircle2 size={12} className="text-primary/60" />
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Acessórios</span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                {accessoryEntries.map(([key, val]) => (
+                  <div key={key} className={`flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs border ${
+                    val ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-600" : "border-red-500/20 bg-red-500/5 text-red-500"
+                  }`}>
+                    {val ? <Check size={11} /> : <XIcon size={11} />}
+                    <span className="truncate">{key}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Signatures */}
+          {(insp.customer_signature || insp.agent_signature) && (
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <PenTool size={12} className="text-primary/60" />
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Assinaturas</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {insp.customer_signature && (
+                  <div className="rounded-lg border border-border/30 bg-white p-2">
+                    <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1 font-medium">Cliente</p>
+                    <img src={insp.customer_signature} alt="Assinatura do cliente" className="w-full h-16 object-contain" />
+                  </div>
+                )}
+                {insp.agent_signature && (
+                  <div className="rounded-lg border border-border/30 bg-white p-2">
+                    <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1 font-medium">Agente</p>
+                    <img src={insp.agent_signature} alt="Assinatura do agente" className="w-full h-16 object-contain" />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Notes */}
+          {insp.notes && (
+            <div className="rounded-lg bg-muted/30 border border-border/20 p-3">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1">Observações</p>
+              <p className="text-xs text-muted-foreground italic leading-relaxed">{insp.notes}</p>
+            </div>
+          )}
+        </CardContent>
       </Card>
     );
   };
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
+      {/* Photo lightbox */}
+      {expandedPhoto && (
+        <div className="fixed inset-0 z-50 bg-background/90 backdrop-blur-sm flex items-center justify-center p-8" onClick={() => setExpandedPhoto(null)}>
+          <button className="absolute top-4 right-4 w-10 h-10 rounded-full bg-muted flex items-center justify-center text-foreground hover:bg-muted/80">
+            <XIcon size={20} />
+          </button>
+          <img src={expandedPhoto} alt="" className="max-w-full max-h-full rounded-xl shadow-2xl object-contain" />
+        </div>
+      )}
+
       {/* Breadcrumb */}
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <button onClick={() => navigate("/admin/bookings")} className="hover:text-foreground transition-colors">Reservas</button>
@@ -268,17 +387,16 @@ export default function AdminBookingDetail() {
         </div>
       </div>
 
-      {/* Main grid */}
+      {/* Info cards row */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-        {/* Left - Booking info */}
-        <div className="lg:col-span-4 space-y-6">
+        {/* Booking info */}
+        <div className="lg:col-span-4">
           <Card className="bg-card/80 border-border/30">
             <CardContent className="p-5">
               <SectionTitle>Reserva</SectionTitle>
-              <DetailItem label="Retirada" value={`${pickup.toLocaleDateString("pt-BR")}`} />
+              <DetailItem label="Retirada" value={pickup.toLocaleDateString("pt-BR")} />
               <DetailItem label="Local de Retirada" value={booking.pickup_location} />
-              <DetailItem label="Devolução" value={`${returnD.toLocaleDateString("pt-BR")}`} />
+              <DetailItem label="Devolução" value={returnD.toLocaleDateString("pt-BR")} />
               <DetailItem label="Local de Devolução" value={booking.return_location} />
               <DetailItem label="Duração" value={`${days} dia${days > 1 ? "s" : ""}`} />
               <DetailItem label="Valor Total" value={booking.total_price ? `$${booking.total_price.toFixed(2)}` : "—"} highlight />
@@ -295,8 +413,8 @@ export default function AdminBookingDetail() {
           </Card>
         </div>
 
-        {/* Center - Customer + Vehicle */}
-        <div className="lg:col-span-4 space-y-6">
+        {/* Customer */}
+        <div className="lg:col-span-4">
           <Card className="bg-card/80 border-border/30">
             <CardContent className="p-5">
               <SectionTitle>Cliente</SectionTitle>
@@ -319,7 +437,10 @@ export default function AdminBookingDetail() {
               )}
             </CardContent>
           </Card>
+        </div>
 
+        {/* Vehicle */}
+        <div className="lg:col-span-4">
           <Card className="bg-card/80 border-border/30">
             <CardContent className="p-5">
               <SectionTitle>Veículo</SectionTitle>
@@ -339,13 +460,11 @@ export default function AdminBookingDetail() {
             </CardContent>
           </Card>
         </div>
-
-        {/* Right - Inspections */}
-        <div className="lg:col-span-4 space-y-6">
-          <InspectionCard insp={checkin} label="Checkin (Entrega)" type="checkin" />
-          <InspectionCard insp={checkout} label="Checkout (Devolução)" type="checkout" />
-        </div>
       </div>
+
+      {/* Full Inspection sections */}
+      <FullInspectionSection insp={checkin} label="Checkin (Entrega)" type="checkin" />
+      <FullInspectionSection insp={checkout} label="Checkout (Devolução)" type="checkout" />
 
       {/* Comparison bar */}
       {checkin && checkout && (
