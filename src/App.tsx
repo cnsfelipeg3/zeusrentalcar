@@ -29,6 +29,7 @@ import AdminVehicleHistory from "./pages/admin/AdminVehicleHistory.tsx";
 import AdminFleetReport from "./pages/admin/AdminFleetReport.tsx";
 import AdminBookingDetail from "./pages/admin/AdminBookingDetail.tsx";
 import BookingConfirmed from "./pages/BookingConfirmed.tsx";
+import CustomerRegistration from "./pages/CustomerRegistration.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
