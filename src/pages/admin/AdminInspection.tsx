@@ -30,19 +30,139 @@ type ExteriorPhoto = {
 
 type AccessoryCheck = Record<string, boolean>;
 
-const PHOTO_POSITIONS: { name: string; guide: string; emoji: string }[] = [
-  { name: "Frente", guide: "Foto centralizada da frente do veículo, mostrando faróis, grade e placa inteiros. Distância: ~2 metros.", emoji: "🚗" },
-  { name: "Traseira", guide: "Foto centralizada da traseira, mostrando lanternas, placa e para-choque inteiros. Distância: ~2 metros.", emoji: "🔙" },
-  { name: "Lateral Esquerda", guide: "Foto lateral completa do lado do motorista. Posicione-se no meio do carro. Distância: ~3 metros.", emoji: "⬅️" },
-  { name: "Lateral Direita", guide: "Foto lateral completa do lado do passageiro. Posicione-se no meio do carro. Distância: ~3 metros.", emoji: "➡️" },
-  { name: "Painel", guide: "Foto do painel/dashboard de frente, mostrando volante, tela e instrumentos. Tire do banco do passageiro.", emoji: "🎛️" },
-  { name: "Banco Dianteiro", guide: "Foto dos bancos dianteiros mostrando estado do estofamento. Tire da porta traseira aberta.", emoji: "💺" },
-  { name: "Banco Traseiro", guide: "Foto dos bancos traseiros e assoalho. Tire com a porta traseira aberta.", emoji: "🪑" },
-  { name: "Porta-Malas", guide: "Foto do porta-malas aberto, mostrando espaço, tapete e estepe (se visível).", emoji: "📦" },
-  { name: "Roda Dianteira Esq.", guide: "Foto focada na roda dianteira esquerda: pneu, calota/roda e suspensão visível.", emoji: "🛞" },
-  { name: "Roda Dianteira Dir.", guide: "Foto focada na roda dianteira direita: pneu, calota/roda e suspensão visível.", emoji: "🛞" },
-  { name: "Roda Traseira Esq.", guide: "Foto focada na roda traseira esquerda: pneu, calota/roda e suspensão visível.", emoji: "🛞" },
-  { name: "Roda Traseira Dir.", guide: "Foto focada na roda traseira direita: pneu, calota/roda e suspensão visível.", emoji: "🛞" },
+// SVG mini illustrations for each photo position
+const PhotoIllustration = ({ position }: { position: string }) => {
+  const s = 48;
+  const stroke = "hsl(var(--primary))";
+  const fill = "hsl(var(--primary) / 0.08)";
+  const bodyStroke = "hsl(var(--muted-foreground))";
+
+  // Simplified car body for reuse
+  const carBody = (highlight: React.ReactNode) => (
+    <svg viewBox="0 0 48 48" width={s} height={s}>
+      {/* Car body outline */}
+      <path d="M12 32 L12 24 L16 16 L32 16 L36 24 L36 32 Z" fill={fill} stroke={bodyStroke} strokeWidth="1.2"/>
+      {/* Windshield */}
+      <path d="M17 16 L19 20 L29 20 L31 16" fill="none" stroke={bodyStroke} strokeWidth="0.8" opacity="0.6"/>
+      {/* Wheels */}
+      <circle cx="17" cy="32" r="3" fill="hsl(var(--foreground) / 0.15)" stroke={bodyStroke} strokeWidth="1"/>
+      <circle cx="31" cy="32" r="3" fill="hsl(var(--foreground) / 0.15)" stroke={bodyStroke} strokeWidth="1"/>
+      {highlight}
+    </svg>
+  );
+
+  switch (position) {
+    case "Frente":
+      return (
+        <svg viewBox="0 0 48 48" width={s} height={s}>
+          <rect x="10" y="16" width="28" height="20" rx="4" fill={fill} stroke={bodyStroke} strokeWidth="1.2"/>
+          <circle cx="16" cy="22" r="3" fill="hsl(var(--primary) / 0.2)" stroke={stroke} strokeWidth="1.2"/>
+          <circle cx="32" cy="22" r="3" fill="hsl(var(--primary) / 0.2)" stroke={stroke} strokeWidth="1.2"/>
+          <rect x="18" y="28" width="12" height="4" rx="1" fill="hsl(var(--muted))" stroke={bodyStroke} strokeWidth="0.8"/>
+          <path d="M14 14 L34 14" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+          <path d="M8 20 L10 20 M38 20 L40 20" stroke={stroke} strokeWidth="1.2" strokeLinecap="round"/>
+        </svg>
+      );
+    case "Traseira":
+      return (
+        <svg viewBox="0 0 48 48" width={s} height={s}>
+          <rect x="10" y="16" width="28" height="20" rx="4" fill={fill} stroke={bodyStroke} strokeWidth="1.2"/>
+          <rect x="13" cy="18" y="18" width="6" height="4" rx="1" fill="hsl(var(--destructive) / 0.2)" stroke="hsl(var(--destructive) / 0.5)" strokeWidth="1"/>
+          <rect x="29" y="18" width="6" height="4" rx="1" fill="hsl(var(--destructive) / 0.2)" stroke="hsl(var(--destructive) / 0.5)" strokeWidth="1"/>
+          <rect x="18" y="28" width="12" height="4" rx="1" fill="hsl(var(--muted))" stroke={bodyStroke} strokeWidth="0.8"/>
+          <path d="M16 36 L32 36" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+        </svg>
+      );
+    case "Lateral Esquerda":
+      return carBody(
+        <path d="M10 18 L10 34" stroke={stroke} strokeWidth="2.5" strokeLinecap="round" opacity="0.8"/>
+      );
+    case "Lateral Direita":
+      return carBody(
+        <path d="M38 18 L38 34" stroke={stroke} strokeWidth="2.5" strokeLinecap="round" opacity="0.8"/>
+      );
+    case "Painel":
+      return (
+        <svg viewBox="0 0 48 48" width={s} height={s}>
+          <rect x="6" y="14" width="36" height="22" rx="3" fill={fill} stroke={bodyStroke} strokeWidth="1.2"/>
+          <circle cx="16" cy="25" r="5" fill="none" stroke={stroke} strokeWidth="1.2"/>
+          <path d="M16 20 L16 25 L19 23" fill="none" stroke={stroke} strokeWidth="0.8"/>
+          <rect x="25" y="20" width="12" height="8" rx="1.5" fill="hsl(var(--primary) / 0.12)" stroke={stroke} strokeWidth="0.8"/>
+          <circle cx="24" cy="36" r="4" fill="none" stroke={bodyStroke} strokeWidth="1" opacity="0.5"/>
+        </svg>
+      );
+    case "Banco Dianteiro":
+      return (
+        <svg viewBox="0 0 48 48" width={s} height={s}>
+          <rect x="12" y="10" width="10" height="28" rx="3" fill={fill} stroke={bodyStroke} strokeWidth="1.2"/>
+          <rect x="26" y="10" width="10" height="28" rx="3" fill={fill} stroke={bodyStroke} strokeWidth="1.2"/>
+          <path d="M12 22 L22 22 M26 22 L36 22" stroke={stroke} strokeWidth="0.8" opacity="0.5"/>
+        </svg>
+      );
+    case "Banco Traseiro":
+      return (
+        <svg viewBox="0 0 48 48" width={s} height={s}>
+          <rect x="8" y="12" width="32" height="24" rx="4" fill={fill} stroke={bodyStroke} strokeWidth="1.2"/>
+          <path d="M8 24 L40 24" stroke={stroke} strokeWidth="0.8" opacity="0.5"/>
+          <path d="M20 12 L20 36 M28 12 L28 36" stroke={bodyStroke} strokeWidth="0.6" opacity="0.3"/>
+        </svg>
+      );
+    case "Porta-Malas":
+      return (
+        <svg viewBox="0 0 48 48" width={s} height={s}>
+          <rect x="10" y="14" width="28" height="22" rx="3" fill={fill} stroke={bodyStroke} strokeWidth="1.2"/>
+          <path d="M10 20 L38 20" stroke={bodyStroke} strokeWidth="0.8" opacity="0.4"/>
+          <circle cx="24" cy="28" r="4" fill="none" stroke={stroke} strokeWidth="1" strokeDasharray="2 2"/>
+          <path d="M22 28 L26 28 M24 26 L24 30" stroke={stroke} strokeWidth="0.8"/>
+        </svg>
+      );
+    case "Roda Dianteira Esq.":
+    case "Roda Dianteira Dir.":
+    case "Roda Traseira Esq.":
+    case "Roda Traseira Dir.":
+      const isLeft = position.includes("Esq");
+      const isFront = position.includes("Dianteira");
+      return (
+        <svg viewBox="0 0 48 48" width={s} height={s}>
+          {/* Car outline faded */}
+          <path d="M12 32 L12 24 L16 16 L32 16 L36 24 L36 32 Z" fill="hsl(var(--muted) / 0.15)" stroke={bodyStroke} strokeWidth="0.6" opacity="0.4"/>
+          {/* Highlighted wheel */}
+          <circle
+            cx={isLeft ? 17 : 31}
+            cy={isFront ? 24 : 32}
+            r="6"
+            fill="hsl(var(--primary) / 0.15)"
+            stroke={stroke}
+            strokeWidth="1.5"
+          />
+          <circle
+            cx={isLeft ? 17 : 31}
+            cy={isFront ? 24 : 32}
+            r="2"
+            fill="none"
+            stroke={stroke}
+            strokeWidth="0.8"
+          />
+        </svg>
+      );
+    default:
+      return carBody(null);
+  }
+};
+
+const PHOTO_POSITIONS: { name: string; guide: string }[] = [
+  { name: "Frente", guide: "Foto centralizada da frente do veículo, mostrando faróis, grade e placa inteiros. Distância: ~2 metros." },
+  { name: "Traseira", guide: "Foto centralizada da traseira, mostrando lanternas, placa e para-choque inteiros. Distância: ~2 metros." },
+  { name: "Lateral Esquerda", guide: "Foto lateral completa do lado do motorista. Posicione-se no meio do carro. Distância: ~3 metros." },
+  { name: "Lateral Direita", guide: "Foto lateral completa do lado do passageiro. Posicione-se no meio do carro. Distância: ~3 metros." },
+  { name: "Painel", guide: "Foto do painel/dashboard de frente, mostrando volante, tela e instrumentos. Tire do banco do passageiro." },
+  { name: "Banco Dianteiro", guide: "Foto dos bancos dianteiros mostrando estado do estofamento. Tire da porta traseira aberta." },
+  { name: "Banco Traseiro", guide: "Foto dos bancos traseiros e assoalho. Tire com a porta traseira aberta." },
+  { name: "Porta-Malas", guide: "Foto do porta-malas aberto, mostrando espaço, tapete e estepe (se visível)." },
+  { name: "Roda Dianteira Esq.", guide: "Foto focada na roda dianteira esquerda: pneu, calota/roda e suspensão visível." },
+  { name: "Roda Dianteira Dir.", guide: "Foto focada na roda dianteira direita: pneu, calota/roda e suspensão visível." },
+  { name: "Roda Traseira Esq.", guide: "Foto focada na roda traseira esquerda: pneu, calota/roda e suspensão visível." },
+  { name: "Roda Traseira Dir.", guide: "Foto focada na roda traseira direita: pneu, calota/roda e suspensão visível." },
 ];
 
 const FUEL_LEVELS = [
