@@ -60,6 +60,7 @@ const App = () => (
                 <Route path="live" element={<AdminLive />} />
                 <Route path="fleet" element={<AdminFleet />} />
                 <Route path="customers" element={<AdminCustomers />} />
+                <Route path="customers/:customerId" element={<AdminCustomerDetail />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="inspection/:bookingId" element={<AdminInspection />} />
                 <Route path="inspection/compare/:bookingId" element={<AdminInspectionCompare />} />
