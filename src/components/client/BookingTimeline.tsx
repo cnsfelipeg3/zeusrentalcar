@@ -19,6 +19,7 @@ const steps: Step[] = [
 const statusToStep: Record<BookingStatus, number> = {
   pending: 0,
   confirmed: 1,
+  in_progress: 3,
   active: 3,
   completed: 5,
   cancelled: -1,
