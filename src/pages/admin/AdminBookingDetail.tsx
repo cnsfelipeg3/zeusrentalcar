@@ -96,17 +96,16 @@ export default function AdminBookingDetail() {
       if (!b) { setLoading(false); return; }
       setBooking(b);
 
-      const promises: Promise<any>[] = [];
-      if (b.customer_id) promises.push(supabase.from("customers").select("*").eq("id", b.customer_id).single());
-      else promises.push(Promise.resolve({ data: null }));
-      if (b.vehicle_id) promises.push(supabase.from("vehicles").select("*").eq("id", b.vehicle_id).single());
-      else promises.push(Promise.resolve({ data: null }));
-      promises.push(supabase.from("vehicle_inspections").select("*").eq("booking_id", bookingId));
-
-      const [cRes, vRes, iRes] = await Promise.all(promises);
-      setCustomer(cRes.data);
-      setVehicle(vRes.data);
-      setInspections(iRes.data || []);
+      if (b.customer_id) {
+        const { data: c } = await supabase.from("customers").select("*").eq("id", b.customer_id).single();
+        setCustomer(c);
+      }
+      if (b.vehicle_id) {
+        const { data: v } = await supabase.from("vehicles").select("*").eq("id", b.vehicle_id).single();
+        setVehicle(v);
+      }
+      const { data: insp } = await supabase.from("vehicle_inspections").select("*").eq("booking_id", bookingId);
+      setInspections(insp || []);
       setLoading(false);
     };
     load();
