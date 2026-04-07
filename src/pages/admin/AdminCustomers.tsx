@@ -21,6 +21,7 @@ type Customer = {
 const emptyCustomer = {
   full_name: "", email: "", phone: "", document_number: "",
   nationality: "", driver_license: "", notes: "",
+  date_of_birth: "", address: "", zip_code: "",
 };
 
 export default function AdminCustomers() {
