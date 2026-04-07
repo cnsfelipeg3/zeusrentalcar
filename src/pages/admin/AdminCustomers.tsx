@@ -236,22 +236,23 @@ export default function AdminCustomers() {
                   className="hidden"
                 />
                 <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => document.getElementById("cameraInput")?.click()}
-                    className="h-9 px-3 rounded-lg border border-dashed border-border/50 bg-background/50 text-xs text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-2"
+                  <label
+                    htmlFor="cameraInput"
+                    className="h-9 px-3 rounded-lg border border-dashed border-border/50 bg-background/50 text-xs text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-2 cursor-pointer"
                   >
                     <Camera size={13} />
                     Câmera
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => fileRef.current?.click()}
-                    className="flex-1 h-9 px-3 rounded-lg border border-dashed border-border/50 bg-background/50 text-xs text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-2"
-                  >
+                  </label>
+                  <label className="flex-1 h-9 px-3 rounded-lg border border-dashed border-border/50 bg-background/50 text-xs text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-2 cursor-pointer">
                     <Upload size={13} />
                     {licenseFile ? licenseFile.name : (editing as any).driver_license_file_url ? "Arquivo já anexado ✓" : "Anexar arquivo"}
-                  </button>
+                    <input
+                      type="file"
+                      accept="image/*,.pdf"
+                      onChange={(e) => setLicenseFile(e.target.files?.[0] || null)}
+                      className="hidden"
+                    />
+                  </label>
                 </div>
                 {(editing as any).driver_license_file_url && !licenseFile && (
                   <a href={(editing as any).driver_license_file_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline mt-1 inline-block">
