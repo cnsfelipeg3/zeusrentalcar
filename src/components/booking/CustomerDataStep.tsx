@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { User, Mail, Phone, Calendar, Globe, FileText, MapPin, Upload, Camera, Loader2 } from "lucide-react";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 export interface CustomerData {
   full_name: string;
@@ -74,16 +75,24 @@ export default function CustomerDataStep({ data, onChange }: Props) {
               {label}
             </label>
             <div className="relative">
-              <input
-                type={type}
-                value={(data as any)[key]}
-                onChange={(e) => {
-                  update(key, e.target.value);
-                  if (key === "zip_code") lookupCep(e.target.value);
-                }}
-                placeholder={placeholder}
-                className="w-full h-8 px-2.5 rounded-md border border-border/40 bg-background text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/20 focus:border-primary/30 transition-all"
-              />
+              {key === "phone" ? (
+                <PhoneInput
+                  value={(data as any)[key]}
+                  onChange={(val) => update(key, val)}
+                  inputClassName="h-8 px-2.5 text-xs"
+                />
+              ) : (
+                <input
+                  type={type}
+                  value={(data as any)[key]}
+                  onChange={(e) => {
+                    update(key, e.target.value);
+                    if (key === "zip_code") lookupCep(e.target.value);
+                  }}
+                  placeholder={placeholder}
+                  className="w-full h-8 px-2.5 rounded-md border border-border/40 bg-background text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/20 focus:border-primary/30 transition-all"
+                />
+              )}
               {key === "zip_code" && cepLoading && (
                 <Loader2 size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-primary animate-spin" />
               )}

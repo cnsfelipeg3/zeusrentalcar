@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, Plus, Pencil, Trash2, X, FileText, Upload, Camera, Loader2, ExternalLink, Copy, Check } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 type Customer = {
   id: string;
@@ -199,15 +200,23 @@ export default function AdminCustomers() {
                 <div key={field.key}>
                   <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">{field.label}</label>
                   <div className="relative">
-                    <input
-                      type={(field as any).type || "text"}
-                      value={(editing as any)[field.key] ?? ""}
-                      onChange={(e) => {
-                        setEditing({ ...editing, [field.key]: e.target.value });
-                        if (field.key === "zip_code") lookupCep(e.target.value);
-                      }}
-                      className="w-full h-9 px-3 rounded-lg border border-border/40 bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all"
-                    />
+                    {field.key === "phone" ? (
+                      <PhoneInput
+                        value={(editing as any)[field.key] ?? ""}
+                        onChange={(val) => setEditing({ ...editing, [field.key]: val })}
+                        inputClassName="h-9 px-3 text-sm"
+                      />
+                    ) : (
+                      <input
+                        type={(field as any).type || "text"}
+                        value={(editing as any)[field.key] ?? ""}
+                        onChange={(e) => {
+                          setEditing({ ...editing, [field.key]: e.target.value });
+                          if (field.key === "zip_code") lookupCep(e.target.value);
+                        }}
+                        className="w-full h-9 px-3 rounded-lg border border-border/40 bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all"
+                      />
+                    )}
                     {field.key === "zip_code" && cepLoading && (
                       <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-primary animate-spin" />
                     )}
