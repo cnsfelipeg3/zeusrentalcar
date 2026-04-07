@@ -4,7 +4,7 @@ import bmwX5Cover from "@/assets/fleet/covers/bmw-x5-cover.jpg";
 import mustangCover from "@/assets/fleet/covers/mustang-cover.jpg";
 import escaladeCover from "@/assets/fleet/covers/escalade-cover.jpg";
 
-export type BookingStatus = "completed" | "active" | "confirmed" | "pending" | "cancelled";
+export type BookingStatus = "completed" | "active" | "in_progress" | "confirmed" | "pending" | "cancelled";
 
 export interface ExtraCharge {
   description: string;
@@ -167,7 +167,8 @@ export const mockBookings: Booking[] = [
 ];
 
 export const statusConfig: Record<BookingStatus, { label: string; color: string; bgColor: string }> = {
-  active: { label: "Em andamento", color: "#1D9E75", bgColor: "rgba(29,158,117,0.15)" },
+  active: { label: "Ativa", color: "#1D9E75", bgColor: "rgba(29,158,117,0.15)" },
+  in_progress: { label: "Em andamento", color: "#D97706", bgColor: "rgba(217,119,6,0.15)" },
   confirmed: { label: "Confirmada", color: "#378ADD", bgColor: "rgba(55,138,221,0.15)" },
   pending: { label: "Aguardando confirmação", color: "#B08D37", bgColor: "rgba(176,141,55,0.15)" },
   completed: { label: "Concluída", color: "#808080", bgColor: "rgba(128,128,128,0.15)" },
