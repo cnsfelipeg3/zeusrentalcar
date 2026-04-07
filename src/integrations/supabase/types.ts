@@ -172,6 +172,68 @@ export type Database = {
         }
         Relationships: []
       }
+      vehicle_inspections: {
+        Row: {
+          accessories_check: Json | null
+          agent_name: string | null
+          agent_signature: string | null
+          booking_id: string
+          completed_at: string | null
+          created_at: string
+          customer_signature: string | null
+          damages: Json | null
+          exterior_photos: Json | null
+          fuel_level: string | null
+          id: string
+          notes: string | null
+          odometer_reading: number | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          accessories_check?: Json | null
+          agent_name?: string | null
+          agent_signature?: string | null
+          booking_id: string
+          completed_at?: string | null
+          created_at?: string
+          customer_signature?: string | null
+          damages?: Json | null
+          exterior_photos?: Json | null
+          fuel_level?: string | null
+          id?: string
+          notes?: string | null
+          odometer_reading?: number | null
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          accessories_check?: Json | null
+          agent_name?: string | null
+          agent_signature?: string | null
+          booking_id?: string
+          completed_at?: string | null
+          created_at?: string
+          customer_signature?: string | null
+          damages?: Json | null
+          exterior_photos?: Json | null
+          fuel_level?: string | null
+          id?: string
+          notes?: string | null
+          odometer_reading?: number | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_inspections_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vehicles: {
         Row: {
           bags: number

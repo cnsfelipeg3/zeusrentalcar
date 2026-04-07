@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Plus, Eye, Trash2 } from "lucide-react";
+import { Search, Plus, Eye, Trash2, LogIn, LogOut } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 type Booking = {
   id: string;
@@ -32,6 +33,7 @@ const statusConfig: Record<string, { label: string; variant: "default" | "second
 };
 
 export default function AdminBookings() {
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -117,8 +119,9 @@ export default function AdminBookings() {
                     <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Período</th>
                     <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Local</th>
                     <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Valor</th>
-                    <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Status</th>
-                    <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Ações</th>
+                     <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Status</th>
+                     <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Inspeção</th>
+                     <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Ações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -146,15 +149,33 @@ export default function AdminBookings() {
                               <option key={key} value={key}>{val.label}</option>
                             ))}
                           </select>
-                        </td>
-                        <td className="p-4">
-                          <button
-                            onClick={() => deleteBooking(b.id)}
-                            className="text-destructive/60 hover:text-destructive transition-colors"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </td>
+                         </td>
+                         <td className="p-4">
+                           <div className="flex gap-1.5">
+                             <button
+                               onClick={() => navigate(`/admin/inspection/${b.id}?type=checkin`)}
+                               className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-medium"
+                               title="Entrega do Veículo"
+                             >
+                               <LogIn size={12} /> Entrega
+                             </button>
+                             <button
+                               onClick={() => navigate(`/admin/inspection/${b.id}?type=checkout`)}
+                               className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors font-medium"
+                               title="Devolução do Veículo"
+                             >
+                               <LogOut size={12} /> Devolução
+                             </button>
+                           </div>
+                         </td>
+                         <td className="p-4">
+                           <button
+                             onClick={() => deleteBooking(b.id)}
+                             className="text-destructive/60 hover:text-destructive transition-colors"
+                           >
+                             <Trash2 size={14} />
+                           </button>
+                         </td>
                       </tr>
                     );
                   })}
