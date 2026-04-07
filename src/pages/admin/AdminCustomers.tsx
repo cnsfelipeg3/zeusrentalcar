@@ -141,7 +141,7 @@ export default function AdminCustomers() {
                 <div key={field.key}>
                   <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">{field.label}</label>
                   <input
-                    type="text"
+                    type={(field as any).type || "text"}
                     value={(editing as any)[field.key] ?? ""}
                     onChange={(e) => setEditing({ ...editing, [field.key]: e.target.value })}
                     className="w-full h-9 px-3 rounded-lg border border-border/40 bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all"
