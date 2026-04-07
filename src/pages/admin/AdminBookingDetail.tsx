@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   ArrowLeft, User, Mail, Phone, FileText, MapPin, Calendar,
   DollarSign, Car, LogIn, LogOut, GitCompare, Clock, Users,
-  Shield, Fuel, Gauge
+  Shield, Fuel, Gauge, CheckCircle2, AlertTriangle, ChevronRight
 } from "lucide-react";
 
 type Booking = {
@@ -92,23 +92,33 @@ export default function AdminBookingDetail() {
       if (!b) { setLoading(false); return; }
       setBooking(b);
 
-      if (b.customer_id) {
-        const { data: c } = await supabase.from("customers").select("*").eq("id", b.customer_id).single();
-        setCustomer(c);
-      }
-      if (b.vehicle_id) {
-        const { data: v } = await supabase.from("vehicles").select("*").eq("id", b.vehicle_id).single();
-        setVehicle(v);
-      }
-      const { data: insp } = await supabase.from("vehicle_inspections").select("*").eq("booking_id", bookingId);
-      setInspections(insp || []);
+      const promises: Promise<any>[] = [];
+      if (b.customer_id) promises.push(supabase.from("customers").select("*").eq("id", b.customer_id).single());
+      else promises.push(Promise.resolve({ data: null }));
+      if (b.vehicle_id) promises.push(supabase.from("vehicles").select("*").eq("id", b.vehicle_id).single());
+      else promises.push(Promise.resolve({ data: null }));
+      promises.push(supabase.from("vehicle_inspections").select("*").eq("booking_id", bookingId));
+
+      const [cRes, vRes, iRes] = await Promise.all(promises);
+      setCustomer(cRes.data);
+      setVehicle(vRes.data);
+      setInspections(iRes.data || []);
       setLoading(false);
     };
     load();
   }, [bookingId]);
 
-  if (loading) return <div className="flex items-center justify-center py-20 text-muted-foreground">Carregando...</div>;
-  if (!booking) return <div className="flex items-center justify-center py-20 text-muted-foreground">Reserva não encontrada.</div>;
+  if (loading) return (
+    <div className="flex items-center justify-center py-20">
+      <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+    </div>
+  );
+  if (!booking) return (
+    <div className="flex flex-col items-center justify-center py-20 gap-3">
+      <p className="text-muted-foreground">Reserva não encontrada.</p>
+      <button onClick={() => navigate("/admin/bookings")} className="text-sm text-primary hover:underline">Voltar</button>
+    </div>
+  );
 
   const checkin = inspections.find(i => i.type === "checkin");
   const checkout = inspections.find(i => i.type === "checkout");
@@ -117,238 +127,255 @@ export default function AdminBookingDetail() {
   const days = Math.max(1, Math.ceil((returnD.getTime() - pickup.getTime()) / (1000 * 60 * 60 * 24)));
   const sc = statusConfig[booking.status] || statusConfig.pending;
 
-  const InfoRow = ({ icon: Icon, label, value }: { icon: any; label: string; value: string | number | null | undefined }) => (
-    <div className="flex items-start gap-3 py-2.5">
-      <Icon size={15} className="text-primary mt-0.5 shrink-0" />
-      <div>
-        <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">{label}</p>
-        <p className="text-sm text-foreground font-medium">{value || "—"}</p>
-      </div>
+  const SectionTitle = ({ children }: { children: React.ReactNode }) => (
+    <h2 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.1em] mb-4">{children}</h2>
+  );
+
+  const DetailItem = ({ label, value, highlight }: { label: string; value: string | number | null | undefined; highlight?: boolean }) => (
+    <div className="flex items-center justify-between py-2.5 border-b border-border/20 last:border-0">
+      <span className="text-xs text-muted-foreground">{label}</span>
+      <span className={`text-sm font-medium ${highlight ? "text-primary" : "text-foreground"}`}>{value || "—"}</span>
     </div>
   );
 
-  const InspectionSummary = ({ insp, label }: { insp: Inspection | undefined; label: string }) => {
-    if (!insp) return (
-      <div className="rounded-xl border border-border/40 bg-card/50 p-5">
-        <h3 className="text-sm font-semibold text-foreground mb-2">{label}</h3>
-        <p className="text-xs text-muted-foreground">Inspeção ainda não realizada.</p>
-      </div>
-    );
-    const damages = Array.isArray(insp.damages) ? insp.damages : [];
-    const accessories = insp.accessories_check && typeof insp.accessories_check === "object" ? insp.accessories_check as Record<string, boolean> : {};
-    const accessoryCount = Object.values(accessories).filter(Boolean).length;
-    const totalAccessories = Object.keys(accessories).length;
+  const MetricCard = ({ icon: Icon, label, value, color = "text-foreground" }: { icon: any; label: string; value: string | number; color?: string }) => (
+    <div className="flex flex-col items-center justify-center p-4 rounded-xl border border-border/30 bg-card/80 gap-1.5 min-h-[88px]">
+      <Icon size={16} className="text-primary/60" />
+      <span className="text-[10px] text-muted-foreground uppercase tracking-wider text-center leading-tight">{label}</span>
+      <span className={`text-sm font-bold ${color}`}>{value}</span>
+    </div>
+  );
+
+  const InspectionCard = ({ insp, label, type }: { insp: Inspection | undefined; label: string; type: "checkin" | "checkout" }) => {
+    const damages = insp && Array.isArray(insp.damages) ? insp.damages : [];
+    const accessories = insp?.accessories_check && typeof insp.accessories_check === "object" ? insp.accessories_check as Record<string, boolean> : {};
+    const accessoryOk = Object.values(accessories).filter(Boolean).length;
+    const accessoryTotal = Object.keys(accessories).length;
 
     return (
-      <div className="rounded-xl border border-border/40 bg-card/50 p-5 space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-foreground">{label}</h3>
-          {insp.completed_at && (
-            <span className="text-[10px] text-muted-foreground">
-              {new Date(insp.completed_at).toLocaleDateString("pt-BR")} às {new Date(insp.completed_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+      <Card className="bg-card/80 border-border/30 overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-border/20 bg-muted/20">
+          <div className="flex items-center gap-2">
+            {type === "checkin" ? <LogIn size={14} className="text-primary" /> : <LogOut size={14} className="text-primary" />}
+            <h3 className="text-sm font-semibold text-foreground">{label}</h3>
+          </div>
+          {insp?.completed_at ? (
+            <span className="text-[10px] text-muted-foreground font-medium">
+              {new Date(insp.completed_at).toLocaleDateString("pt-BR")} · {new Date(insp.completed_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
             </span>
+          ) : (
+            <span className="text-[10px] text-muted-foreground/50 italic">Não realizada</span>
           )}
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="rounded-lg bg-muted/50 p-3 text-center">
-            <Gauge size={16} className="mx-auto text-primary mb-1" />
-            <p className="text-xs text-muted-foreground">Odômetro</p>
-            <p className="text-sm font-bold text-foreground">{insp.odometer_reading?.toLocaleString() || "—"} km</p>
-          </div>
-          <div className="rounded-lg bg-muted/50 p-3 text-center">
-            <Fuel size={16} className="mx-auto text-primary mb-1" />
-            <p className="text-xs text-muted-foreground">Combustível</p>
-            <p className="text-sm font-bold text-foreground">{insp.fuel_level || "—"}</p>
-          </div>
-          <div className="rounded-lg bg-muted/50 p-3 text-center">
-            <Shield size={16} className="mx-auto text-primary mb-1" />
-            <p className="text-xs text-muted-foreground">Avarias</p>
-            <p className={`text-sm font-bold ${damages.length > 0 ? "text-red-500" : "text-emerald-500"}`}>{damages.length}</p>
-          </div>
-          <div className="rounded-lg bg-muted/50 p-3 text-center">
-            <FileText size={16} className="mx-auto text-primary mb-1" />
-            <p className="text-xs text-muted-foreground">Acessórios</p>
-            <p className="text-sm font-bold text-foreground">{accessoryCount}/{totalAccessories}</p>
-          </div>
-        </div>
-        {insp.agent_name && (
-          <p className="text-[11px] text-muted-foreground">Agente: <span className="font-medium text-foreground">{insp.agent_name}</span></p>
-        )}
-        {insp.notes && (
-          <p className="text-xs text-muted-foreground bg-muted/30 rounded-lg p-3 italic">{insp.notes}</p>
-        )}
-        {damages.length > 0 && (
-          <div className="space-y-1.5">
-            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Avarias registradas:</p>
-            {damages.map((d: any, i: number) => (
-              <div key={i} className="flex items-center gap-2 text-xs">
-                <span className={`w-2 h-2 rounded-full shrink-0 ${d.severity === "medium" ? "bg-amber-500" : d.severity === "heavy" ? "bg-red-500" : "bg-yellow-400"}`} />
-                <span className="text-foreground">{d.description}</span>
-                <span className="text-muted-foreground/60">({d.position})</span>
+
+        {!insp ? (
+          <CardContent className="p-5 flex flex-col items-center justify-center py-8 gap-2">
+            <div className="w-10 h-10 rounded-full bg-muted/50 flex items-center justify-center">
+              <FileText size={18} className="text-muted-foreground/40" />
+            </div>
+            <p className="text-xs text-muted-foreground">Inspeção pendente</p>
+            <button
+              onClick={() => navigate(`/admin/inspection/${booking.id}?type=${type}`)}
+              className="text-xs text-primary hover:underline font-medium mt-1"
+            >
+              Realizar inspeção →
+            </button>
+          </CardContent>
+        ) : (
+          <CardContent className="p-5 space-y-4">
+            <div className="grid grid-cols-4 gap-2">
+              <MetricCard icon={Gauge} label="Odômetro" value={insp.odometer_reading ? `${insp.odometer_reading.toLocaleString()} km` : "—"} />
+              <MetricCard icon={Fuel} label="Combustível" value={insp.fuel_level || "—"} />
+              <MetricCard icon={AlertTriangle} label="Avarias" value={damages.length} color={damages.length > 0 ? "text-red-500" : "text-emerald-500"} />
+              <MetricCard icon={CheckCircle2} label="Acessórios" value={`${accessoryOk}/${accessoryTotal}`} />
+            </div>
+
+            {insp.agent_name && (
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <User size={12} className="text-primary/50" />
+                Agente: <span className="font-medium text-foreground">{insp.agent_name}</span>
               </div>
-            ))}
-          </div>
+            )}
+
+            {insp.notes && (
+              <div className="rounded-lg bg-muted/30 border border-border/20 p-3">
+                <p className="text-xs text-muted-foreground italic leading-relaxed">{insp.notes}</p>
+              </div>
+            )}
+
+            {damages.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Avarias</p>
+                {damages.map((d: any, i: number) => (
+                  <div key={i} className="flex items-start gap-2.5 text-xs pl-1">
+                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-1.5 ${d.severity === "medium" ? "bg-amber-500" : d.severity === "heavy" ? "bg-red-500" : "bg-yellow-400"}`} />
+                    <div>
+                      <span className="text-foreground">{d.description}</span>
+                      <span className="text-muted-foreground/50 ml-1.5">({d.position})</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
         )}
-      </div>
+      </Card>
     );
   };
 
   return (
-    <div className="space-y-6 max-w-5xl">
-      <button
-        onClick={() => navigate("/admin/bookings")}
-        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-      >
-        <ArrowLeft size={16} /> Voltar para reservas
-      </button>
+    <div className="space-y-6 max-w-6xl mx-auto">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <button onClick={() => navigate("/admin/bookings")} className="hover:text-foreground transition-colors">Reservas</button>
+        <ChevronRight size={12} />
+        <span className="text-foreground font-medium">{booking.customer_name}</span>
+      </div>
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">{booking.customer_name}</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Reserva criada em {new Date(booking.created_at).toLocaleDateString("pt-BR")}
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Badge className={`${sc.color} border text-xs px-3 py-1`}>{sc.label}</Badge>
-          <div className="flex gap-1.5">
-            <button
-              onClick={() => navigate(`/admin/inspection/${booking.id}?type=checkin`)}
-              className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-medium"
-            >
-              <LogIn size={12} /> Entrega
-            </button>
-            <button
-              onClick={() => navigate(`/admin/inspection/${booking.id}?type=checkout`)}
-              className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors font-medium"
-            >
-              <LogOut size={12} /> Devolução
-            </button>
-            <button
-              onClick={() => navigate(`/admin/inspection/compare/${booking.id}`)}
-              className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md bg-muted text-muted-foreground hover:text-foreground transition-colors font-medium"
-            >
-              <GitCompare size={12} /> Comparar
-            </button>
+      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-foreground tracking-tight">{booking.customer_name}</h1>
+            <Badge className={`${sc.color} border text-[10px] px-2.5 py-0.5 font-semibold`}>{sc.label}</Badge>
           </div>
+          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <span>{pickup.toLocaleDateString("pt-BR")} → {returnD.toLocaleDateString("pt-BR")}</span>
+            <span className="text-border">|</span>
+            <span>{days} dia{days > 1 ? "s" : ""}</span>
+            <span className="text-border">|</span>
+            <span className="font-semibold text-foreground">{booking.total_price ? `$${booking.total_price.toFixed(2)}` : "—"}</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => navigate(`/admin/inspection/${booking.id}?type=checkin`)}
+            className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-medium border border-primary/20"
+          >
+            <LogIn size={13} /> Entrega
+          </button>
+          <button
+            onClick={() => navigate(`/admin/inspection/${booking.id}?type=checkout`)}
+            className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-muted text-foreground hover:bg-muted/80 transition-colors font-medium border border-border/40"
+          >
+            <LogOut size={13} /> Devolução
+          </button>
+          <button
+            onClick={() => navigate(`/admin/inspection/compare/${booking.id}`)}
+            className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-muted text-muted-foreground hover:text-foreground transition-colors font-medium border border-border/40"
+          >
+            <GitCompare size={13} /> Comparar
+          </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left column - Booking + Customer */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Booking details */}
-          <Card className="bg-card/50 border-border/40">
-            <CardContent className="p-6">
-              <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-4">Detalhes da Reserva</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
-                <InfoRow icon={Calendar} label="Retirada" value={`${pickup.toLocaleDateString("pt-BR")} — ${booking.pickup_location || "Não informado"}`} />
-                <InfoRow icon={Calendar} label="Devolução" value={`${returnD.toLocaleDateString("pt-BR")} — ${booking.return_location || "Não informado"}`} />
-                <InfoRow icon={Clock} label="Duração" value={`${days} dia${days > 1 ? "s" : ""}`} />
-                <InfoRow icon={DollarSign} label="Valor Total" value={booking.total_price ? `$${booking.total_price.toFixed(2)}` : "—"} />
-                <InfoRow icon={Users} label="Condutor Adicional" value={booking.extra_driver ? "Sim" : "Não"} />
-                <InfoRow icon={User} label="Idade do Condutor" value={booking.driver_age ? `${booking.driver_age} anos` : "—"} />
-              </div>
+      {/* Main grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        {/* Left - Booking info */}
+        <div className="lg:col-span-4 space-y-6">
+          <Card className="bg-card/80 border-border/30">
+            <CardContent className="p-5">
+              <SectionTitle>Reserva</SectionTitle>
+              <DetailItem label="Retirada" value={`${pickup.toLocaleDateString("pt-BR")}`} />
+              <DetailItem label="Local de Retirada" value={booking.pickup_location} />
+              <DetailItem label="Devolução" value={`${returnD.toLocaleDateString("pt-BR")}`} />
+              <DetailItem label="Local de Devolução" value={booking.return_location} />
+              <DetailItem label="Duração" value={`${days} dia${days > 1 ? "s" : ""}`} />
+              <DetailItem label="Valor Total" value={booking.total_price ? `$${booking.total_price.toFixed(2)}` : "—"} highlight />
+              <DetailItem label="Condutor Adicional" value={booking.extra_driver ? "Sim" : "Não"} />
+              <DetailItem label="Idade do Condutor" value={booking.driver_age ? `${booking.driver_age} anos` : "—"} />
+              <DetailItem label="Criada em" value={new Date(booking.created_at).toLocaleDateString("pt-BR")} />
               {booking.notes && (
-                <div className="mt-4 pt-4 border-t border-border/30">
-                  <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium mb-1">Observações</p>
-                  <p className="text-sm text-muted-foreground italic">{booking.notes}</p>
+                <div className="mt-3 pt-3 border-t border-border/20">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1">Observações</p>
+                  <p className="text-xs text-muted-foreground italic leading-relaxed">{booking.notes}</p>
                 </div>
               )}
             </CardContent>
           </Card>
-
-          {/* Inspections */}
-          <div className="space-y-4">
-            <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">Inspeções</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <InspectionSummary insp={checkin} label="Checkin (Entrega)" />
-              <InspectionSummary insp={checkout} label="Checkout (Devolução)" />
-            </div>
-            {checkin && checkout && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="rounded-lg border border-border/30 bg-card/50 p-3 text-center">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">KM Rodados</p>
-                  <p className="text-lg font-bold text-foreground">
-                    {checkin.odometer_reading && checkout.odometer_reading
-                      ? (checkout.odometer_reading - checkin.odometer_reading).toLocaleString()
-                      : "—"}
-                  </p>
-                </div>
-                <div className="rounded-lg border border-border/30 bg-card/50 p-3 text-center">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Combustível Entrega</p>
-                  <p className="text-lg font-bold text-foreground">{checkin.fuel_level || "—"}</p>
-                </div>
-                <div className="rounded-lg border border-border/30 bg-card/50 p-3 text-center">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Combustível Devolução</p>
-                  <p className="text-lg font-bold text-foreground">{checkout.fuel_level || "—"}</p>
-                </div>
-                <div className="rounded-lg border border-border/30 bg-card/50 p-3 text-center">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Novas Avarias</p>
-                  <p className={`text-lg font-bold ${
-                    (Array.isArray(checkout.damages) ? checkout.damages.length : 0) > (Array.isArray(checkin.damages) ? checkin.damages.length : 0)
-                      ? "text-red-500" : "text-emerald-500"
-                  }`}>
-                    {Math.max(0, (Array.isArray(checkout.damages) ? checkout.damages.length : 0) - (Array.isArray(checkin.damages) ? checkin.damages.length : 0))}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
         </div>
 
-        {/* Right column - Customer + Vehicle */}
-        <div className="space-y-6">
-          {/* Customer */}
-          <Card className="bg-card/50 border-border/40">
-            <CardContent className="p-6">
-              <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-4">Cliente</h2>
+        {/* Center - Customer + Vehicle */}
+        <div className="lg:col-span-4 space-y-6">
+          <Card className="bg-card/80 border-border/30">
+            <CardContent className="p-5">
+              <SectionTitle>Cliente</SectionTitle>
               {customer ? (
-                <div className="space-y-1">
-                  <InfoRow icon={User} label="Nome" value={customer.full_name} />
-                  <InfoRow icon={Mail} label="E-mail" value={customer.email} />
-                  <InfoRow icon={Phone} label="Telefone" value={customer.phone} />
-                  <InfoRow icon={FileText} label="Documento (CPF)" value={customer.document_number} />
-                  <InfoRow icon={FileText} label="CNH" value={customer.driver_license} />
-                  <InfoRow icon={MapPin} label="Nacionalidade" value={customer.nationality} />
+                <>
+                  <DetailItem label="Nome" value={customer.full_name} />
+                  <DetailItem label="E-mail" value={customer.email} />
+                  <DetailItem label="Telefone" value={customer.phone} />
+                  <DetailItem label="CPF" value={customer.document_number} />
+                  <DetailItem label="CNH" value={customer.driver_license} />
+                  <DetailItem label="Nacionalidade" value={customer.nationality} />
                   {customer.notes && (
-                    <div className="mt-3 pt-3 border-t border-border/30">
-                      <p className="text-xs text-muted-foreground italic">{customer.notes}</p>
+                    <div className="mt-3 pt-3 border-t border-border/20">
+                      <p className="text-xs text-muted-foreground italic leading-relaxed">{customer.notes}</p>
                     </div>
                   )}
-                </div>
+                </>
               ) : (
-                <p className="text-sm text-muted-foreground">Cliente não vinculado.</p>
+                <p className="text-xs text-muted-foreground py-4 text-center">Cliente não vinculado</p>
               )}
             </CardContent>
           </Card>
 
-          {/* Vehicle */}
-          <Card className="bg-card/50 border-border/40">
-            <CardContent className="p-6">
-              <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-4">Veículo</h2>
+          <Card className="bg-card/80 border-border/30">
+            <CardContent className="p-5">
+              <SectionTitle>Veículo</SectionTitle>
               {vehicle ? (
-                <div className="space-y-1">
-                  <InfoRow icon={Car} label="Modelo" value={`${vehicle.name}${vehicle.year ? ` ${vehicle.year}` : ""}`} />
-                  <InfoRow icon={FileText} label="Categoria" value={vehicle.category} />
-                  <InfoRow icon={DollarSign} label="Diária" value={`$${vehicle.daily_price_usd.toFixed(2)}`} />
-                  <InfoRow icon={Users} label="Passageiros" value={vehicle.passengers} />
-                  <InfoRow icon={FileText} label="Transmissão" value={vehicle.transmission} />
-                  <InfoRow icon={Fuel} label="Combustível" value={vehicle.fuel} />
-                  {vehicle.image_url && (
-                    <div className="mt-3 pt-3 border-t border-border/30">
-                      <img src={vehicle.image_url} alt={vehicle.name} className="w-full rounded-lg object-cover" />
-                    </div>
-                  )}
-                </div>
+                <>
+                  <DetailItem label="Modelo" value={`${vehicle.name}${vehicle.year ? ` (${vehicle.year})` : ""}`} />
+                  <DetailItem label="Categoria" value={vehicle.category} />
+                  <DetailItem label="Diária" value={`$${vehicle.daily_price_usd.toFixed(2)}`} highlight />
+                  <DetailItem label="Passageiros" value={vehicle.passengers} />
+                  <DetailItem label="Malas" value={vehicle.bags} />
+                  <DetailItem label="Transmissão" value={vehicle.transmission} />
+                  <DetailItem label="Combustível" value={vehicle.fuel} />
+                </>
               ) : (
-                <p className="text-sm text-muted-foreground">Veículo não vinculado.</p>
+                <p className="text-xs text-muted-foreground py-4 text-center">Veículo não vinculado</p>
               )}
             </CardContent>
           </Card>
+        </div>
+
+        {/* Right - Inspections */}
+        <div className="lg:col-span-4 space-y-6">
+          <InspectionCard insp={checkin} label="Checkin (Entrega)" type="checkin" />
+          <InspectionCard insp={checkout} label="Checkout (Devolução)" type="checkout" />
         </div>
       </div>
+
+      {/* Comparison bar */}
+      {checkin && checkout && (
+        <Card className="bg-card/80 border-border/30">
+          <CardContent className="p-5">
+            <SectionTitle>Comparativo Entrega × Devolução</SectionTitle>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <MetricCard
+                icon={Gauge}
+                label="KM Rodados"
+                value={checkin.odometer_reading && checkout.odometer_reading
+                  ? `${(checkout.odometer_reading - checkin.odometer_reading).toLocaleString()} km`
+                  : "—"}
+              />
+              <MetricCard icon={Fuel} label="Combustível Entrega" value={checkin.fuel_level || "—"} />
+              <MetricCard icon={Fuel} label="Combustível Devolução" value={checkout.fuel_level || "—"} />
+              <MetricCard
+                icon={AlertTriangle}
+                label="Novas Avarias"
+                value={Math.max(0, (Array.isArray(checkout.damages) ? checkout.damages.length : 0) - (Array.isArray(checkin.damages) ? checkin.damages.length : 0))}
+                color={
+                  (Array.isArray(checkout.damages) ? checkout.damages.length : 0) > (Array.isArray(checkin.damages) ? checkin.damages.length : 0)
+                    ? "text-red-500" : "text-emerald-500"
+                }
+              />
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
