@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,9 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import {
-  Camera, Check, ChevronLeft, Fuel, Gauge, Car, ClipboardCheck,
-  PenTool, Save, Loader2, X, Plus, Trash2, AlertTriangle, CheckCircle2,
-  Download, GitCompare
+  Camera, Check, ChevronLeft, Fuel, Gauge, ClipboardCheck,
+  PenTool, Save, Loader2, X, Trash2, AlertTriangle, CheckCircle2,
+  Download, GitCompare, Info, Eye
 } from "lucide-react";
 import { generateInspectionPDF } from "@/utils/inspectionPdf";
 
@@ -30,10 +30,19 @@ type ExteriorPhoto = {
 
 type AccessoryCheck = Record<string, boolean>;
 
-const PHOTO_POSITIONS = [
-  "Frente", "Traseira", "Lateral Esquerda", "Lateral Direita",
-  "Painel", "Banco Dianteiro", "Banco Traseiro", "Porta-Malas",
-  "Roda Dianteira Esq.", "Roda Dianteira Dir.", "Roda Traseira Esq.", "Roda Traseira Dir."
+const PHOTO_POSITIONS: { name: string; guide: string; emoji: string }[] = [
+  { name: "Frente", guide: "Foto centralizada da frente do veículo, mostrando faróis, grade e placa inteiros. Distância: ~2 metros.", emoji: "🚗" },
+  { name: "Traseira", guide: "Foto centralizada da traseira, mostrando lanternas, placa e para-choque inteiros. Distância: ~2 metros.", emoji: "🔙" },
+  { name: "Lateral Esquerda", guide: "Foto lateral completa do lado do motorista. Posicione-se no meio do carro. Distância: ~3 metros.", emoji: "⬅️" },
+  { name: "Lateral Direita", guide: "Foto lateral completa do lado do passageiro. Posicione-se no meio do carro. Distância: ~3 metros.", emoji: "➡️" },
+  { name: "Painel", guide: "Foto do painel/dashboard de frente, mostrando volante, tela e instrumentos. Tire do banco do passageiro.", emoji: "🎛️" },
+  { name: "Banco Dianteiro", guide: "Foto dos bancos dianteiros mostrando estado do estofamento. Tire da porta traseira aberta.", emoji: "💺" },
+  { name: "Banco Traseiro", guide: "Foto dos bancos traseiros e assoalho. Tire com a porta traseira aberta.", emoji: "🪑" },
+  { name: "Porta-Malas", guide: "Foto do porta-malas aberto, mostrando espaço, tapete e estepe (se visível).", emoji: "📦" },
+  { name: "Roda Dianteira Esq.", guide: "Foto focada na roda dianteira esquerda: pneu, calota/roda e suspensão visível.", emoji: "🛞" },
+  { name: "Roda Dianteira Dir.", guide: "Foto focada na roda dianteira direita: pneu, calota/roda e suspensão visível.", emoji: "🛞" },
+  { name: "Roda Traseira Esq.", guide: "Foto focada na roda traseira esquerda: pneu, calota/roda e suspensão visível.", emoji: "🛞" },
+  { name: "Roda Traseira Dir.", guide: "Foto focada na roda traseira direita: pneu, calota/roda e suspensão visível.", emoji: "🛞" },
 ];
 
 const FUEL_LEVELS = [
@@ -64,16 +73,84 @@ const DEFAULT_ACCESSORIES: Record<string, string> = {
 };
 
 const CAR_ZONES = [
-  { id: "front-left", label: "Diant. Esq.", x: 15, y: 20 },
-  { id: "front-center", label: "Frente", x: 50, y: 8 },
-  { id: "front-right", label: "Diant. Dir.", x: 85, y: 20 },
-  { id: "left-side", label: "Lat. Esq.", x: 8, y: 50 },
-  { id: "roof", label: "Teto", x: 50, y: 45 },
-  { id: "right-side", label: "Lat. Dir.", x: 92, y: 50 },
-  { id: "rear-left", label: "Tras. Esq.", x: 15, y: 80 },
-  { id: "rear-center", label: "Traseira", x: 50, y: 92 },
-  { id: "rear-right", label: "Tras. Dir.", x: 85, y: 80 },
+  { id: "hood", label: "Capô", x: 50, y: 6 },
+  { id: "front-bumper", label: "Para-choque Diant.", x: 50, y: 14 },
+  { id: "windshield", label: "Para-brisa", x: 50, y: 24 },
+  { id: "front-left-fender", label: "Para-lama Diant. Esq.", x: 12, y: 18 },
+  { id: "front-right-fender", label: "Para-lama Diant. Dir.", x: 88, y: 18 },
+  { id: "front-left-door", label: "Porta Diant. Esq.", x: 10, y: 36 },
+  { id: "front-right-door", label: "Porta Diant. Dir.", x: 90, y: 36 },
+  { id: "rear-left-door", label: "Porta Tras. Esq.", x: 10, y: 56 },
+  { id: "rear-right-door", label: "Porta Tras. Dir.", x: 90, y: 56 },
+  { id: "roof", label: "Teto", x: 50, y: 44 },
+  { id: "left-mirror", label: "Retrovisor Esq.", x: 18, y: 28 },
+  { id: "right-mirror", label: "Retrovisor Dir.", x: 82, y: 28 },
+  { id: "rear-left-fender", label: "Para-lama Tras. Esq.", x: 12, y: 72 },
+  { id: "rear-right-fender", label: "Para-lama Tras. Dir.", x: 88, y: 72 },
+  { id: "trunk", label: "Porta-Malas", x: 50, y: 82 },
+  { id: "rear-bumper", label: "Para-choque Tras.", x: 50, y: 92 },
+  { id: "rear-window", label: "Vidro Traseiro", x: 50, y: 72 },
 ];
+
+// Realistic top-down car SVG
+const CarDiagramSVG = () => (
+  <svg viewBox="0 0 300 500" className="absolute inset-0 w-full h-full" style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.06))" }}>
+    {/* Body outline */}
+    <path
+      d="M150 15 C100 15 72 30 65 55 L58 90 C52 110 48 130 48 155 L45 200 L45 300 L48 345 C48 370 52 390 58 410 L65 445 C72 470 100 485 150 485 C200 485 228 470 235 445 L242 410 C248 390 252 370 252 345 L255 300 L255 200 L252 155 C252 130 248 110 242 90 L235 55 C228 30 200 15 150 15Z"
+      fill="hsl(var(--muted) / 0.3)"
+      stroke="hsl(var(--border))"
+      strokeWidth="2.5"
+    />
+    {/* Hood lines */}
+    <path d="M90 55 L210 55" fill="none" stroke="hsl(var(--border))" strokeWidth="1" opacity="0.5" />
+    <path d="M85 75 L215 75" fill="none" stroke="hsl(var(--border))" strokeWidth="1" opacity="0.5" />
+    {/* Windshield */}
+    <path
+      d="M82 100 L218 100 L205 145 L95 145Z"
+      fill="hsl(var(--primary) / 0.05)"
+      stroke="hsl(var(--primary) / 0.3)"
+      strokeWidth="1.5"
+    />
+    {/* Roof */}
+    <rect x="88" y="155" width="124" height="120" rx="8" fill="none" stroke="hsl(var(--border))" strokeWidth="1" opacity="0.4" />
+    {/* Rear window */}
+    <path
+      d="M95 355 L205 355 L218 400 L82 400Z"
+      fill="hsl(var(--primary) / 0.05)"
+      stroke="hsl(var(--primary) / 0.3)"
+      strokeWidth="1.5"
+    />
+    {/* Trunk lines */}
+    <path d="M85 425 L215 425" fill="none" stroke="hsl(var(--border))" strokeWidth="1" opacity="0.5" />
+    {/* Front headlights */}
+    <ellipse cx="80" cy="42" rx="18" ry="10" fill="hsl(var(--primary) / 0.1)" stroke="hsl(var(--primary) / 0.3)" strokeWidth="1" />
+    <ellipse cx="220" cy="42" rx="18" ry="10" fill="hsl(var(--primary) / 0.1)" stroke="hsl(var(--primary) / 0.3)" strokeWidth="1" />
+    {/* Rear taillights */}
+    <ellipse cx="80" cy="458" rx="18" ry="10" fill="hsl(var(--destructive) / 0.1)" stroke="hsl(var(--destructive) / 0.3)" strokeWidth="1" />
+    <ellipse cx="220" cy="458" rx="18" ry="10" fill="hsl(var(--destructive) / 0.1)" stroke="hsl(var(--destructive) / 0.3)" strokeWidth="1" />
+    {/* Wheels */}
+    <rect x="30" y="95" width="28" height="55" rx="6" fill="hsl(var(--foreground) / 0.08)" stroke="hsl(var(--foreground) / 0.2)" strokeWidth="1.5" />
+    <rect x="242" y="95" width="28" height="55" rx="6" fill="hsl(var(--foreground) / 0.08)" stroke="hsl(var(--foreground) / 0.2)" strokeWidth="1.5" />
+    <rect x="30" y="345" width="28" height="55" rx="6" fill="hsl(var(--foreground) / 0.08)" stroke="hsl(var(--foreground) / 0.2)" strokeWidth="1.5" />
+    <rect x="242" y="345" width="28" height="55" rx="6" fill="hsl(var(--foreground) / 0.08)" stroke="hsl(var(--foreground) / 0.2)" strokeWidth="1.5" />
+    {/* Side mirrors */}
+    <ellipse cx="40" cy="130" rx="10" ry="7" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1" />
+    <ellipse cx="260" cy="130" rx="10" ry="7" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1" />
+    {/* Door handles */}
+    <rect x="60" y="185" width="12" height="4" rx="2" fill="hsl(var(--foreground) / 0.15)" />
+    <rect x="228" y="185" width="12" height="4" rx="2" fill="hsl(var(--foreground) / 0.15)" />
+    <rect x="60" y="275" width="12" height="4" rx="2" fill="hsl(var(--foreground) / 0.15)" />
+    <rect x="228" y="275" width="12" height="4" rx="2" fill="hsl(var(--foreground) / 0.15)" />
+    {/* Door lines */}
+    <path d="M65 160 L65 310" fill="none" stroke="hsl(var(--border))" strokeWidth="1" opacity="0.3" />
+    <path d="M235 160 L235 310" fill="none" stroke="hsl(var(--border))" strokeWidth="1" opacity="0.3" />
+    <path d="M65 235 L80 235" fill="none" stroke="hsl(var(--border))" strokeWidth="1" opacity="0.3" />
+    <path d="M235 235 L220 235" fill="none" stroke="hsl(var(--border))" strokeWidth="1" opacity="0.3" />
+    {/* Center label */}
+    <text x="150" y="220" textAnchor="middle" fontSize="11" fill="hsl(var(--muted-foreground))" opacity="0.4" fontWeight="bold">VISTA SUPERIOR</text>
+  </svg>
+);
 
 export default function AdminInspection() {
   const { bookingId } = useParams();
@@ -100,6 +177,11 @@ export default function AdminInspection() {
   const [agentName, setAgentName] = useState("");
   const [customerSignature, setCustomerSignature] = useState("");
   const [agentSignature, setAgentSignature] = useState("");
+  const [odometerPhoto, setOdometerPhoto] = useState("");
+  const [fuelPhoto, setFuelPhoto] = useState("");
+
+  // Guide panel
+  const [activeGuide, setActiveGuide] = useState<string | null>(null);
 
   // Signature canvas refs
   const customerCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -115,6 +197,10 @@ export default function AdminInspection() {
   // Damage photo
   const damageFileRef = useRef<HTMLInputElement>(null);
   const [damagePhotoTarget, setDamagePhotoTarget] = useState<string>("");
+
+  // Odometer/fuel photo refs
+  const odometerPhotoRef = useRef<HTMLInputElement>(null);
+  const fuelPhotoRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadData();
@@ -148,9 +234,26 @@ export default function AdminInspection() {
       setAgentName(inspectionRes.data.agent_name || "");
       setCustomerSignature(inspectionRes.data.customer_signature || "");
       setAgentSignature(inspectionRes.data.agent_signature || "");
+      // Load extra photos from exterior_photos array
+      const extPhotos = (inspectionRes.data.exterior_photos as any[]) || [];
+      setOdometerPhoto(extPhotos.find((p: any) => p.position === "__odometer")?.url || "");
+      setFuelPhoto(extPhotos.find((p: any) => p.position === "__fuel")?.url || "");
     }
 
     setLoading(false);
+  };
+
+  // Generic upload helper
+  const uploadPhoto = async (file: File, tag: string): Promise<string | null> => {
+    const ext = file.name.split(".").pop();
+    const path = `${bookingId}/${type}/${Date.now()}-${tag}.${ext}`;
+    const { error } = await supabase.storage.from("inspections").upload(path, file);
+    if (error) {
+      toast({ title: "Erro ao enviar foto", description: error.message, variant: "destructive" });
+      return null;
+    }
+    const { data: urlData } = supabase.storage.from("inspections").getPublicUrl(path);
+    return urlData.publicUrl;
   };
 
   // -- Photo capture
@@ -163,23 +266,38 @@ export default function AdminInspection() {
     const file = e.target.files?.[0];
     if (!file || !capturePosition) return;
     setUploading(true);
-
-    const ext = file.name.split(".").pop();
-    const path = `${bookingId}/${type}/${Date.now()}-${capturePosition.replace(/\s/g, "_")}.${ext}`;
-
-    const { error } = await supabase.storage.from("inspections").upload(path, file);
-    if (error) {
-      toast({ title: "Erro ao enviar foto", description: error.message, variant: "destructive" });
-      setUploading(false);
-      return;
+    const url = await uploadPhoto(file, capturePosition.replace(/\s/g, "_"));
+    if (url) {
+      setPhotos((prev) => {
+        const filtered = prev.filter((p) => p.position !== capturePosition);
+        return [...filtered, { id: crypto.randomUUID(), position: capturePosition, url }];
+      });
     }
-
-    const { data: urlData } = supabase.storage.from("inspections").getPublicUrl(path);
-
-    setPhotos((prev) => [...prev, { id: crypto.randomUUID(), position: capturePosition, url: urlData.publicUrl }]);
     setCapturePosition("");
     setUploading(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  // Odometer photo
+  const handleOdometerPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const url = await uploadPhoto(file, "odometro");
+    if (url) setOdometerPhoto(url);
+    setUploading(false);
+    if (odometerPhotoRef.current) odometerPhotoRef.current.value = "";
+  };
+
+  // Fuel photo
+  const handleFuelPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const url = await uploadPhoto(file, "tanque_combustivel");
+    if (url) setFuelPhoto(url);
+    setUploading(false);
+    if (fuelPhotoRef.current) fuelPhotoRef.current.value = "";
   };
 
   // -- Damage photo
@@ -192,21 +310,12 @@ export default function AdminInspection() {
     const file = e.target.files?.[0];
     if (!file || !damagePhotoTarget) return;
     setUploading(true);
-
-    const ext = file.name.split(".").pop();
-    const path = `${bookingId}/${type}/damage-${Date.now()}.${ext}`;
-
-    const { error } = await supabase.storage.from("inspections").upload(path, file);
-    if (error) {
-      toast({ title: "Erro ao enviar foto", variant: "destructive" });
-      setUploading(false);
-      return;
+    const url = await uploadPhoto(file, `damage-${damagePhotoTarget.substring(0, 8)}`);
+    if (url) {
+      setDamages((prev) =>
+        prev.map((d) => (d.id === damagePhotoTarget ? { ...d, photoUrl: url } : d))
+      );
     }
-
-    const { data: urlData } = supabase.storage.from("inspections").getPublicUrl(path);
-    setDamages((prev) =>
-      prev.map((d) => (d.id === damagePhotoTarget ? { ...d, photoUrl: urlData.publicUrl } : d))
-    );
     setDamagePhotoTarget("");
     setUploading(false);
     if (damageFileRef.current) damageFileRef.current.value = "";
@@ -233,7 +342,6 @@ export default function AdminInspection() {
     setDrawing(true);
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    const rect = canvas.getBoundingClientRect();
     ctx.beginPath();
   };
 
@@ -282,12 +390,19 @@ export default function AdminInspection() {
   const handleSave = async (finalize = false) => {
     setSaving(true);
 
+    // Merge odometer/fuel photos into exterior_photos
+    const allPhotos = [
+      ...photos.filter((p) => !p.position.startsWith("__")),
+      ...(odometerPhoto ? [{ id: "odometer-photo", position: "__odometer", url: odometerPhoto }] : []),
+      ...(fuelPhoto ? [{ id: "fuel-photo", position: "__fuel", url: fuelPhoto }] : []),
+    ];
+
     const payload = {
       booking_id: bookingId!,
       type,
       odometer_reading: odometer ? parseInt(odometer) : null,
       fuel_level: fuelLevel,
-      exterior_photos: photos,
+      exterior_photos: allPhotos,
       damages,
       accessories_check: accessories,
       notes,
@@ -336,10 +451,12 @@ export default function AdminInspection() {
   const isCompleted = !!existingInspection?.completed_at;
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
-      {/* Hidden file inputs */}
+    <div className="space-y-6 max-w-5xl mx-auto">
+      {/* Hidden file inputs — capture="environment" opens rear camera on mobile */}
       <input ref={fileInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileCapture} />
       <input ref={damageFileRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleDamageFile} />
+      <input ref={odometerPhotoRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleOdometerPhoto} />
+      <input ref={fuelPhotoRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFuelPhoto} />
 
       {/* Header */}
       <div className="flex items-center gap-4">
@@ -412,123 +529,272 @@ export default function AdminInspection() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div>
-              <label className="text-sm font-medium text-foreground mb-2 block">Leitura do Odômetro (km)</label>
-              <Input
-                type="number"
-                value={odometer}
-                onChange={(e) => setOdometer(e.target.value)}
-                placeholder="Ex: 45230"
-                className="max-w-xs"
-                disabled={isCompleted}
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-foreground mb-3 block">Nível de Combustível</label>
+            {/* Odometer */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <Fuel size={20} className="text-muted-foreground" />
-                  <div className="flex-1 h-8 bg-muted/50 rounded-full overflow-hidden relative">
-                    <div
-                      className="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-emerald-500 rounded-full transition-all duration-500"
-                      style={{ width: `${FUEL_LEVELS.find((f) => f.value === fuelLevel)?.pct || 0}%` }}
-                    />
-                  </div>
-                  <span className="text-sm font-medium text-foreground min-w-[50px] text-right">
-                    {FUEL_LEVELS.find((f) => f.value === fuelLevel)?.label}
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {FUEL_LEVELS.map((f) => (
+                <label className="text-sm font-medium text-foreground block">Leitura do Odômetro (km)</label>
+                <Input
+                  type="number"
+                  value={odometer}
+                  onChange={(e) => setOdometer(e.target.value)}
+                  placeholder="Ex: 45230"
+                  disabled={isCompleted}
+                />
+                <div>
+                  <label className="text-xs text-muted-foreground mb-2 block flex items-center gap-1">
+                    <Camera size={12} /> Foto do Odômetro
+                  </label>
+                  {odometerPhoto ? (
+                    <div className="relative group">
+                      <img src={odometerPhoto} alt="Odômetro" className="w-full aspect-[16/9] object-cover rounded-lg border border-border/40" />
+                      {!isCompleted && (
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
+                          <Button size="sm" variant="secondary" onClick={() => odometerPhotoRef.current?.click()} className="h-7 text-xs">
+                            <Camera size={12} /> Refazer
+                          </Button>
+                          <Button size="sm" variant="destructive" onClick={() => setOdometerPhoto("")} className="h-7 text-xs">
+                            <Trash2 size={12} />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
                     <button
-                      key={f.value}
-                      onClick={() => !isCompleted && setFuelLevel(f.value)}
-                      disabled={isCompleted}
-                      className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
-                        fuelLevel === f.value
-                          ? "bg-primary/10 text-primary border-primary/30"
-                          : "border-border/40 text-muted-foreground hover:text-foreground"
-                      }`}
+                      onClick={() => !isCompleted && odometerPhotoRef.current?.click()}
+                      disabled={isCompleted || uploading}
+                      className="w-full aspect-[16/9] rounded-lg border-2 border-dashed border-border/60 flex flex-col items-center justify-center gap-2 text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors"
                     >
-                      {f.label}
+                      <Camera size={24} />
+                      <span className="text-xs font-medium">Tirar foto do odômetro</span>
+                      <span className="text-[10px] text-muted-foreground/70">Focalize o painel mostrando a km claramente</span>
                     </button>
-                  ))}
+                  )}
+                </div>
+              </div>
+
+              {/* Fuel */}
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-foreground block">Nível de Combustível</label>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <Fuel size={20} className="text-muted-foreground" />
+                    <div className="flex-1 h-8 bg-muted/50 rounded-full overflow-hidden relative">
+                      <div
+                        className="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-emerald-500 rounded-full transition-all duration-500"
+                        style={{ width: `${FUEL_LEVELS.find((f) => f.value === fuelLevel)?.pct || 0}%` }}
+                      />
+                    </div>
+                    <span className="text-sm font-medium text-foreground min-w-[50px] text-right">
+                      {FUEL_LEVELS.find((f) => f.value === fuelLevel)?.label}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {FUEL_LEVELS.map((f) => (
+                      <button
+                        key={f.value}
+                        onClick={() => !isCompleted && setFuelLevel(f.value)}
+                        disabled={isCompleted}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                          fuelLevel === f.value
+                            ? "bg-primary/10 text-primary border-primary/30"
+                            : "border-border/40 text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs text-muted-foreground mb-2 block flex items-center gap-1">
+                    <Camera size={12} /> Foto do Tanque de Combustível
+                  </label>
+                  {fuelPhoto ? (
+                    <div className="relative group">
+                      <img src={fuelPhoto} alt="Combustível" className="w-full aspect-[16/9] object-cover rounded-lg border border-border/40" />
+                      {!isCompleted && (
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
+                          <Button size="sm" variant="secondary" onClick={() => fuelPhotoRef.current?.click()} className="h-7 text-xs">
+                            <Camera size={12} /> Refazer
+                          </Button>
+                          <Button size="sm" variant="destructive" onClick={() => setFuelPhoto("")} className="h-7 text-xs">
+                            <Trash2 size={12} />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => !isCompleted && fuelPhotoRef.current?.click()}
+                      disabled={isCompleted || uploading}
+                      className="w-full aspect-[16/9] rounded-lg border-2 border-dashed border-border/60 flex flex-col items-center justify-center gap-2 text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors"
+                    >
+                      <Camera size={24} />
+                      <span className="text-xs font-medium">Tirar foto do indicador de combustível</span>
+                      <span className="text-[10px] text-muted-foreground/70">Focalize o painel mostrando o nível do tanque</span>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
+
+            {uploading && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Loader2 size={14} className="animate-spin" /> Enviando foto...
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
 
       {/* Step 1: Exterior Photos */}
       {step === 1 && (
-        <Card className="border-border/40">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Camera size={20} className="text-primary" /> Fotos do Veículo
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {PHOTO_POSITIONS.map((pos) => {
-                const photo = photos.find((p) => p.position === pos);
-                return (
-                  <div key={pos} className="relative group">
-                    {photo ? (
-                      <div className="relative aspect-[4/3] rounded-lg overflow-hidden border border-border/40">
-                        <img src={photo.url} alt={pos} className="w-full h-full object-cover" />
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                          {!isCompleted && (
-                            <>
-                              <Button
-                                size="sm"
-                                variant="secondary"
-                                onClick={() => capturePhoto(pos)}
-                                className="h-7 text-xs"
-                              >
-                                <Camera size={12} /> Refazer
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => setPhotos((prev) => prev.filter((p) => p.position !== pos))}
-                                className="h-7 text-xs"
-                              >
-                                <Trash2 size={12} />
-                              </Button>
-                            </>
-                          )}
-                        </div>
-                        <span className="absolute bottom-1 left-1 bg-black/70 text-white text-[10px] px-2 py-0.5 rounded">
-                          {pos}
-                        </span>
-                        <CheckCircle2 size={16} className="absolute top-1 right-1 text-emerald-400" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Photo grid */}
+          <div className="lg:col-span-2">
+            <Card className="border-border/40">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Camera size={20} className="text-primary" /> Fotos do Veículo
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {PHOTO_POSITIONS.map((pos) => {
+                    const photo = photos.find((p) => p.position === pos.name);
+                    return (
+                      <div key={pos.name} className="relative group">
+                        {photo ? (
+                          <div className="relative aspect-[4/3] rounded-lg overflow-hidden border border-border/40">
+                            <img src={photo.url} alt={pos.name} className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                              {!isCompleted && (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    variant="secondary"
+                                    onClick={() => capturePhoto(pos.name)}
+                                    className="h-7 text-xs"
+                                  >
+                                    <Camera size={12} /> Refazer
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    onClick={() => setPhotos((prev) => prev.filter((p) => p.position !== pos.name))}
+                                    className="h-7 text-xs"
+                                  >
+                                    <Trash2 size={12} />
+                                  </Button>
+                                </>
+                              )}
+                            </div>
+                            <span className="absolute bottom-1 left-1 bg-black/70 text-white text-[10px] px-2 py-0.5 rounded">
+                              {pos.name}
+                            </span>
+                            <CheckCircle2 size={16} className="absolute top-1 right-1 text-emerald-400" />
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => { !isCompleted && capturePhoto(pos.name); setActiveGuide(pos.name); }}
+                            disabled={isCompleted || uploading}
+                            className="aspect-[4/3] rounded-lg border-2 border-dashed border-border/60 flex flex-col items-center justify-center gap-1.5 text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors w-full"
+                          >
+                            <span className="text-lg">{pos.emoji}</span>
+                            <Camera size={18} />
+                            <span className="text-[10px] font-medium leading-tight text-center px-1">{pos.name}</span>
+                          </button>
+                        )}
+                        {/* Guide tooltip on hover */}
+                        <button
+                          onClick={() => setActiveGuide(activeGuide === pos.name ? null : pos.name)}
+                          className="absolute top-1 left-1 w-5 h-5 rounded-full bg-background/80 border border-border/50 flex items-center justify-center text-muted-foreground hover:text-primary transition-colors z-10"
+                          title="Ver instrução"
+                        >
+                          <Info size={10} />
+                        </button>
                       </div>
-                    ) : (
-                      <button
-                        onClick={() => !isCompleted && capturePhoto(pos)}
-                        disabled={isCompleted || uploading}
-                        className="aspect-[4/3] rounded-lg border-2 border-dashed border-border/60 flex flex-col items-center justify-center gap-1 text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors w-full"
-                      >
-                        <Camera size={20} />
-                        <span className="text-[10px] font-medium">{pos}</span>
-                      </button>
-                    )}
+                    );
+                  })}
+                </div>
+                {uploading && (
+                  <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
+                    <Loader2 size={14} className="animate-spin" /> Enviando foto...
                   </div>
-                );
-              })}
-            </div>
-            {uploading && (
-              <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
-                <Loader2 size={14} className="animate-spin" /> Enviando foto...
-              </div>
-            )}
-            <p className="text-xs text-muted-foreground mt-4">
-              {photos.length}/{PHOTO_POSITIONS.length} fotos capturadas
-            </p>
-          </CardContent>
-        </Card>
+                )}
+                <p className="text-xs text-muted-foreground mt-4">
+                  {photos.filter((p) => !p.position.startsWith("__")).length}/{PHOTO_POSITIONS.length} fotos capturadas
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Guide panel */}
+          <div className="lg:col-span-1">
+            <Card className="border-border/40 sticky top-20">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Eye size={16} className="text-primary" /> Guia de Fotografia
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {activeGuide ? (
+                  <>
+                    <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">{PHOTO_POSITIONS.find((p) => p.name === activeGuide)?.emoji}</span>
+                        <h4 className="font-semibold text-foreground text-sm">{activeGuide}</h4>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        {PHOTO_POSITIONS.find((p) => p.name === activeGuide)?.guide}
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Dicas gerais</p>
+                      <ul className="text-xs text-muted-foreground space-y-1.5">
+                        <li className="flex items-start gap-1.5"><Check size={12} className="text-emerald-500 mt-0.5 shrink-0" /> Boa iluminação (evite sombras fortes)</li>
+                        <li className="flex items-start gap-1.5"><Check size={12} className="text-emerald-500 mt-0.5 shrink-0" /> Foto nítida, sem tremidas</li>
+                        <li className="flex items-start gap-1.5"><Check size={12} className="text-emerald-500 mt-0.5 shrink-0" /> Enquadre toda a área indicada</li>
+                        <li className="flex items-start gap-1.5"><Check size={12} className="text-emerald-500 mt-0.5 shrink-0" /> Mantenha o celular na horizontal</li>
+                      </ul>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-6 space-y-2">
+                    <Info size={24} className="mx-auto text-muted-foreground/40" />
+                    <p className="text-xs text-muted-foreground">
+                      Clique no <Info size={10} className="inline" /> de qualquer foto para ver as instruções de como tirar a foto corretamente.
+                    </p>
+                  </div>
+                )}
+
+                {/* Quick overview of all positions */}
+                <div className="border-t border-border/30 pt-3">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-2">Sequência recomendada</p>
+                  <div className="space-y-1">
+                    {PHOTO_POSITIONS.map((pos, i) => {
+                      const done = photos.some((p) => p.position === pos.name);
+                      return (
+                        <button
+                          key={pos.name}
+                          onClick={() => setActiveGuide(pos.name)}
+                          className={`w-full flex items-center gap-2 px-2 py-1 rounded text-[11px] text-left transition-colors ${
+                            activeGuide === pos.name ? "bg-primary/10 text-primary" : "hover:bg-muted/50"
+                          }`}
+                        >
+                          <span className="w-4 text-center">{done ? <CheckCircle2 size={12} className="text-emerald-500" /> : <span className="text-muted-foreground">{i + 1}</span>}</span>
+                          <span className="text-xs">{pos.emoji}</span>
+                          <span className={done ? "text-muted-foreground line-through" : "text-foreground"}>{pos.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       )}
 
       {/* Step 2: Damages */}
@@ -540,49 +806,41 @@ export default function AdminInspection() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Car diagram */}
-            <div className="relative bg-muted/30 rounded-xl p-6 border border-border/30">
-              <p className="text-xs text-muted-foreground mb-3 text-center">Clique na zona para adicionar uma avaria</p>
-              <div className="relative mx-auto" style={{ width: "280px", height: "360px" }}>
-                {/* Car outline SVG */}
-                <svg viewBox="0 0 280 360" className="absolute inset-0 w-full h-full">
-                  <path
-                    d="M140 20 C80 20 50 60 45 100 L40 140 C35 160 35 200 40 220 L45 260 C50 300 80 340 140 340 C200 340 230 300 235 260 L240 220 C245 200 245 160 240 140 L235 100 C230 60 200 20 140 20Z"
-                    fill="none"
-                    stroke="hsl(var(--border))"
-                    strokeWidth="2"
-                  />
-                  {/* Windshield */}
-                  <path d="M85 90 L195 90 L185 130 L95 130Z" fill="none" stroke="hsl(var(--border))" strokeWidth="1.5" />
-                  {/* Rear window */}
-                  <path d="M95 230 L185 230 L195 270 L85 270Z" fill="none" stroke="hsl(var(--border))" strokeWidth="1.5" />
-                  {/* Wheels */}
-                  <ellipse cx="55" cy="110" rx="18" ry="25" fill="none" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" />
-                  <ellipse cx="225" cy="110" rx="18" ry="25" fill="none" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" />
-                  <ellipse cx="55" cy="250" rx="18" ry="25" fill="none" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" />
-                  <ellipse cx="225" cy="250" rx="18" ry="25" fill="none" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" />
-                </svg>
-
-                {/* Clickable zones */}
+            {/* Realistic car diagram */}
+            <div className="relative bg-muted/20 rounded-xl p-4 border border-border/30">
+              <p className="text-xs text-muted-foreground mb-2 text-center">Clique na zona do veículo para registrar uma avaria</p>
+              <div className="relative mx-auto" style={{ width: "300px", height: "500px" }}>
+                <CarDiagramSVG />
+                {/* Clickable damage zones */}
                 {CAR_ZONES.map((zone) => {
-                  const hasDamage = damages.some((d) => d.position === zone.label);
+                  const zoneDamages = damages.filter((d) => d.position === zone.label);
+                  const hasDamage = zoneDamages.length > 0;
                   return (
                     <button
                       key={zone.id}
                       onClick={() => !isCompleted && addDamage(zone.label)}
                       disabled={isCompleted}
-                      className={`absolute w-10 h-10 -ml-5 -mt-5 rounded-full flex items-center justify-center text-[9px] font-bold transition-all ${
+                      className={`absolute flex items-center justify-center rounded-full transition-all z-10 ${
                         hasDamage
-                          ? "bg-destructive/20 text-destructive border-2 border-destructive/50 animate-pulse"
-                          : "bg-primary/10 text-primary/60 border border-primary/20 hover:bg-primary/20 hover:scale-110"
+                          ? "w-8 h-8 -ml-4 -mt-4 bg-destructive/25 text-destructive border-2 border-destructive/60 shadow-lg shadow-destructive/20"
+                          : "w-6 h-6 -ml-3 -mt-3 bg-primary/10 text-primary/50 border border-primary/20 hover:bg-primary/25 hover:scale-125 hover:text-primary"
                       }`}
                       style={{ left: `${zone.x}%`, top: `${zone.y}%` }}
                       title={zone.label}
                     >
-                      {hasDamage ? "!" : "+"}
+                      {hasDamage ? (
+                        <span className="text-[10px] font-bold">{zoneDamages.length}</span>
+                      ) : (
+                        <span className="text-[10px]">+</span>
+                      )}
                     </button>
                   );
                 })}
+              </div>
+              {/* Zone legend */}
+              <div className="mt-3 flex items-center justify-center gap-4 text-[10px] text-muted-foreground">
+                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-primary/10 border border-primary/20 inline-block" /> Sem avaria</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-destructive/25 border-2 border-destructive/60 inline-block" /> Com avaria</span>
               </div>
             </div>
 
