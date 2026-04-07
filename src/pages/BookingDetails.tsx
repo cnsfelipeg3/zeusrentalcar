@@ -894,6 +894,11 @@ const BookingDetails = () => {
                     <p className="text-xs font-bold text-foreground">{currentPlan.name}</p>
                   </div>
 
+                  {/* Customer Data */}
+                  <div className="mt-4">
+                    <CustomerDataStep data={customerData} onChange={setCustomerData} />
+                  </div>
+
                   {/* Payment CTA */}
                   <button
                     onClick={handleCheckout}
