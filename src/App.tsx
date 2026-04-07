@@ -29,6 +29,7 @@ import AdminVehicleHistory from "./pages/admin/AdminVehicleHistory.tsx";
 import AdminFleetReport from "./pages/admin/AdminFleetReport.tsx";
 import AdminBookingDetail from "./pages/admin/AdminBookingDetail.tsx";
 import BookingConfirmed from "./pages/BookingConfirmed.tsx";
+import CustomerRegistration from "./pages/CustomerRegistration.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -54,6 +55,7 @@ const App = () => (
               <Route path="/buscar" element={<SearchResults />} />
               <Route path="/reserva/:vehicleName" element={<BookingDetails />} />
               <Route path="/reserva/confirmada" element={<BookingConfirmed />} />
+              <Route path="/cadastro" element={<CustomerRegistration />} />
               <Route path="/login" element={<Login />} />
               <Route path="/minha-conta" element={<MyAccount />} />
               <Route path="/minha-conta/reserva/:bookingId" element={<BookingDetailClient />} />

@@ -91,9 +91,12 @@ export type Database = {
       }
       customers: {
         Row: {
+          address: string | null
           created_at: string
+          date_of_birth: string | null
           document_number: string | null
           driver_license: string | null
+          driver_license_file_url: string | null
           email: string | null
           full_name: string
           id: string
@@ -101,11 +104,15 @@ export type Database = {
           notes: string | null
           phone: string | null
           updated_at: string
+          zip_code: string | null
         }
         Insert: {
+          address?: string | null
           created_at?: string
+          date_of_birth?: string | null
           document_number?: string | null
           driver_license?: string | null
+          driver_license_file_url?: string | null
           email?: string | null
           full_name: string
           id?: string
@@ -113,11 +120,15 @@ export type Database = {
           notes?: string | null
           phone?: string | null
           updated_at?: string
+          zip_code?: string | null
         }
         Update: {
+          address?: string | null
           created_at?: string
+          date_of_birth?: string | null
           document_number?: string | null
           driver_license?: string | null
+          driver_license_file_url?: string | null
           email?: string | null
           full_name?: string
           id?: string
@@ -125,6 +136,7 @@ export type Database = {
           notes?: string | null
           phone?: string | null
           updated_at?: string
+          zip_code?: string | null
         }
         Relationships: []
       }

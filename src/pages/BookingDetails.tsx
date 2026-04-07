@@ -18,6 +18,7 @@ import { getCoverImage } from "@/data/vehicleImages";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import PlanSelector from "@/components/booking/PlanSelector";
+import CustomerDataStep, { type CustomerData } from "@/components/booking/CustomerDataStep";
 import { PLANS, type PlanId } from "@/data/rentalPlans";
 
 interface VehicleInfo {
@@ -123,6 +124,11 @@ const BookingDetails = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [showUpgradeSuggestion, setShowUpgradeSuggestion] = useState(false);
+  const [customerData, setCustomerData] = useState<CustomerData>({
+    full_name: "", email: "", phone: "", date_of_birth: "",
+    nationality: "", document_number: "", address: "", zip_code: "",
+    licenseFile: null,
+  });
 
   // Reset add-ons when plan changes (they might now be included)
   useEffect(() => {
@@ -207,10 +213,63 @@ const BookingDetails = () => {
   }, [dailyPrice, days, currentPlan, addonInsurance, addonChildSeat, addonChildSeatQty, addonTollTag, isDifferentCity, hasPremiumInsurance]);
 
   const handleCheckout = async () => {
+    // Validate customer data
+    if (!customerData.full_name.trim()) {
+      return toast({ title: "Preencha seu nome completo", variant: "destructive" });
+    }
+    if (!customerData.email.trim()) {
+      return toast({ title: "Preencha seu e-mail", variant: "destructive" });
+    }
+    if (!customerData.phone.trim()) {
+      return toast({ title: "Preencha seu telefone", variant: "destructive" });
+    }
+
     setIsProcessing(true);
     setCheckoutError(null);
 
     try {
+      // Upload license file if provided
+      let driverLicenseUrl: string | null = null;
+      if (customerData.licenseFile) {
+        const ext = customerData.licenseFile.name.split(".").pop();
+        const path = `licenses/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+        const { error: uploadError } = await supabase.storage.from("inspections").upload(path, customerData.licenseFile);
+        if (!uploadError) {
+          const { data: urlData } = supabase.storage.from("inspections").getPublicUrl(path);
+          driverLicenseUrl = urlData.publicUrl;
+        }
+      }
+
+      // Create or link customer
+      const email = customerData.email.trim().toLowerCase();
+      const { data: existing } = await supabase
+        .from("customers").select("id").eq("email", email).maybeSingle();
+
+      let customerId: string;
+      const customerPayload = {
+        full_name: customerData.full_name.trim(),
+        phone: customerData.phone.trim(),
+        document_number: customerData.document_number.trim() || null,
+        nationality: customerData.nationality.trim() || null,
+        date_of_birth: customerData.date_of_birth || null,
+        address: customerData.address.trim() || null,
+        zip_code: customerData.zip_code.trim() || null,
+        ...(driverLicenseUrl ? { driver_license_file_url: driverLicenseUrl } : {}),
+      };
+
+      if (existing) {
+        customerId = existing.id;
+        // Update existing - ignore errors (anon may not have update perms)
+        await supabase.from("customers").update(customerPayload).eq("id", customerId);
+      } else {
+        const { data: newCust } = await supabase.from("customers").insert({
+          ...customerPayload,
+          email,
+        }).select("id").single();
+        customerId = newCust?.id || "";
+      }
+
+      // Proceed to checkout
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: {
           vehicleName: decodedName,
@@ -230,6 +289,8 @@ const BookingDetails = () => {
           extraDriver: hasExtraDriver,
           isDifferentCity,
           selectedPlan: selectedPlanId,
+          customerEmail: email,
+          customerId,
           pricing: {
             subtotalRental: pricing.subtotalRental,
             planExtra: pricing.planExtra,
@@ -831,6 +892,11 @@ const BookingDetails = () => {
                   <div className="mt-3 p-2 rounded-lg bg-muted/20 border border-border/20 text-center">
                     <p className="text-[10px] text-muted-foreground">Plano selecionado</p>
                     <p className="text-xs font-bold text-foreground">{currentPlan.name}</p>
+                  </div>
+
+                  {/* Customer Data */}
+                  <div className="mt-4">
+                    <CustomerDataStep data={customerData} onChange={setCustomerData} />
                   </div>
 
                   {/* Payment CTA */}

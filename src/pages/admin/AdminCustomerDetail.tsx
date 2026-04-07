@@ -200,10 +200,21 @@ export default function AdminCustomerDetail() {
               <DetailItem label="Nome completo" value={customer.full_name} />
               <DetailItem label="E-mail" value={customer.email} />
               <DetailItem label="Telefone" value={customer.phone} />
+              <DetailItem label="Data de Nascimento" value={(customer as any).date_of_birth ? new Date((customer as any).date_of_birth).toLocaleDateString("pt-BR") : null} />
               <DetailItem label="CPF" value={customer.document_number} />
               <DetailItem label="CNH" value={customer.driver_license} />
               <DetailItem label="Nacionalidade" value={customer.nationality} />
+              <DetailItem label="Endereço" value={(customer as any).address} />
+              <DetailItem label="CEP / Zip" value={(customer as any).zip_code} />
               <DetailItem label="Cadastro" value={new Date(customer.created_at).toLocaleDateString("pt-BR")} />
+              {(customer as any).driver_license_file_url && (
+                <div className="mt-3 pt-3 border-t border-border/20">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1">CNH Anexada</p>
+                  <a href={(customer as any).driver_license_file_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">
+                    Ver documento →
+                  </a>
+                </div>
+              )}
               {customer.notes && (
                 <div className="mt-3 pt-3 border-t border-border/20">
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1">Observações</p>

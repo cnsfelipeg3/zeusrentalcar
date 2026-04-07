@@ -21,6 +21,7 @@ type Customer = {
 const emptyCustomer = {
   full_name: "", email: "", phone: "", document_number: "",
   nationality: "", driver_license: "", notes: "",
+  date_of_birth: "", address: "", zip_code: "",
 };
 
 export default function AdminCustomers() {
@@ -64,6 +65,9 @@ export default function AdminCustomers() {
       nationality: editing.nationality || null,
       driver_license: editing.driver_license || null,
       notes: editing.notes || null,
+      date_of_birth: (editing as any).date_of_birth || null,
+      address: (editing as any).address || null,
+      zip_code: (editing as any).zip_code || null,
     };
 
     if (isNew) {
@@ -88,8 +92,11 @@ export default function AdminCustomers() {
     { label: "Nome completo", key: "full_name" },
     { label: "E-mail", key: "email" },
     { label: "Telefone", key: "phone" },
+    { label: "Data de Nascimento", key: "date_of_birth", type: "date" },
     { label: "Documento (CPF)", key: "document_number" },
     { label: "Nacionalidade", key: "nationality" },
+    { label: "Endereço", key: "address" },
+    { label: "CEP / Zip Code", key: "zip_code" },
     { label: "CNH / Driver License", key: "driver_license" },
   ];
 
@@ -134,7 +141,7 @@ export default function AdminCustomers() {
                 <div key={field.key}>
                   <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">{field.label}</label>
                   <input
-                    type="text"
+                    type={(field as any).type || "text"}
                     value={(editing as any)[field.key] ?? ""}
                     onChange={(e) => setEditing({ ...editing, [field.key]: e.target.value })}
                     className="w-full h-9 px-3 rounded-lg border border-border/40 bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all"
