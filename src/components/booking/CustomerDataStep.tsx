@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { User, Mail, Phone, Calendar, Globe, FileText, MapPin, Upload } from "lucide-react";
+import { User, Mail, Phone, Calendar, Globe, FileText, MapPin, Upload, Loader2 } from "lucide-react";
 
 export interface CustomerData {
   full_name: string;
@@ -25,15 +25,31 @@ const fields = [
   { key: "date_of_birth", label: "Data de Nascimento", icon: Calendar, type: "date", placeholder: "" },
   { key: "nationality", label: "Nacionalidade", icon: Globe, type: "text", placeholder: "Brasileira" },
   { key: "document_number", label: "CPF (se brasileiro)", icon: FileText, type: "text", placeholder: "000.000.000-00" },
-  { key: "address", label: "Endereço Completo", icon: MapPin, type: "text", placeholder: "Rua, número, bairro, cidade" },
   { key: "zip_code", label: "CEP / Zip Code", icon: MapPin, type: "text", placeholder: "00000-000" },
+  { key: "address", label: "Endereço Completo", icon: MapPin, type: "text", placeholder: "Rua, número, bairro, cidade" },
 ];
 
 export default function CustomerDataStep({ data, onChange }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
+  const [cepLoading, setCepLoading] = useState(false);
 
   const update = (key: string, value: string) => {
     onChange({ ...data, [key]: value });
+  };
+
+  const lookupCep = async (cep: string) => {
+    const clean = cep.replace(/\D/g, "");
+    if (clean.length !== 8) return;
+    setCepLoading(true);
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
+      const result = await res.json();
+      if (!result.erro) {
+        const addr = [result.logradouro, result.bairro, result.localidade, result.uf].filter(Boolean).join(", ");
+        onChange({ ...data, zip_code: cep, address: addr });
+      }
+    } catch {}
+    setCepLoading(false);
   };
 
   return (
@@ -53,13 +69,21 @@ export default function CustomerDataStep({ data, onChange }: Props) {
               <Icon size={9} className="text-primary/50" />
               {label}
             </label>
-            <input
-              type={type}
-              value={(data as any)[key]}
-              onChange={(e) => update(key, e.target.value)}
-              placeholder={placeholder}
-              className="w-full h-8 px-2.5 rounded-md border border-border/40 bg-background text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/20 focus:border-primary/30 transition-all"
-            />
+            <div className="relative">
+              <input
+                type={type}
+                value={(data as any)[key]}
+                onChange={(e) => {
+                  update(key, e.target.value);
+                  if (key === "zip_code") lookupCep(e.target.value);
+                }}
+                placeholder={placeholder}
+                className="w-full h-8 px-2.5 rounded-md border border-border/40 bg-background text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/20 focus:border-primary/30 transition-all"
+              />
+              {key === "zip_code" && cepLoading && (
+                <Loader2 size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-primary animate-spin" />
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -74,6 +98,7 @@ export default function CustomerDataStep({ data, onChange }: Props) {
           ref={fileRef}
           type="file"
           accept="image/*,.pdf"
+          capture="environment"
           onChange={(e) => {
             const file = e.target.files?.[0] || null;
             onChange({ ...data, licenseFile: file });
@@ -86,7 +111,7 @@ export default function CustomerDataStep({ data, onChange }: Props) {
           className="w-full h-8 px-2.5 rounded-md border border-dashed border-border/50 bg-background/50 text-[11px] text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-1.5"
         >
           <Upload size={11} />
-          {data.licenseFile ? data.licenseFile.name : "Clique para anexar"}
+          {data.licenseFile ? data.licenseFile.name : "Tirar foto ou anexar arquivo"}
         </button>
       </div>
     </div>

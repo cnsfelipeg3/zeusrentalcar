@@ -12,9 +12,25 @@ const CustomerRegistration = () => {
   const [licenseFile, setLicenseFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [cepLoading, setCepLoading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const update = (key: string, value: string) => setForm(prev => ({ ...prev, [key]: value }));
+
+  const lookupCep = async (cep: string) => {
+    const clean = cep.replace(/\D/g, "");
+    if (clean.length !== 8) return;
+    setCepLoading(true);
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
+      const data = await res.json();
+      if (!data.erro) {
+        const addr = [data.logradouro, data.bairro, data.localidade, data.uf].filter(Boolean).join(", ");
+        setForm(prev => ({ ...prev, address: addr }));
+      }
+    } catch {}
+    setCepLoading(false);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -27,42 +43,29 @@ const CustomerRegistration = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.full_name.trim()) {
-      return toast({ title: "Nome é obrigatório", variant: "destructive" });
-    }
-    if (!form.email.trim()) {
-      return toast({ title: "E-mail é obrigatório", variant: "destructive" });
-    }
-    if (!form.phone.trim()) {
-      return toast({ title: "Telefone é obrigatório", variant: "destructive" });
-    }
+    if (!form.full_name.trim()) return toast({ title: "Nome é obrigatório", variant: "destructive" });
+    if (!form.email.trim()) return toast({ title: "E-mail é obrigatório", variant: "destructive" });
+    if (!form.phone.trim()) return toast({ title: "Telefone é obrigatório", variant: "destructive" });
 
     setSubmitting(true);
 
     try {
       let driverLicenseUrl: string | null = null;
 
-      // Upload license file if provided
       if (licenseFile) {
         const ext = licenseFile.name.split(".").pop();
         const path = `licenses/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-        const { error: uploadError } = await supabase.storage
-          .from("inspections")
-          .upload(path, licenseFile);
+        const { error: uploadError } = await supabase.storage.from("inspections").upload(path, licenseFile);
         if (uploadError) throw uploadError;
         const { data: urlData } = supabase.storage.from("inspections").getPublicUrl(path);
         driverLicenseUrl = urlData.publicUrl;
       }
 
-      // Check if customer already exists by email
+      const email = form.email.trim().toLowerCase();
       const { data: existing } = await supabase
-        .from("customers")
-        .select("id")
-        .eq("email", form.email.trim().toLowerCase())
-        .maybeSingle();
+        .from("customers").select("id").eq("email", email).maybeSingle();
 
       if (existing) {
-        // Update existing customer
         await supabase.from("customers").update({
           full_name: form.full_name.trim(),
           phone: form.phone.trim(),
@@ -74,10 +77,9 @@ const CustomerRegistration = () => {
           ...(driverLicenseUrl ? { driver_license_file_url: driverLicenseUrl } : {}),
         }).eq("id", existing.id);
       } else {
-        // Insert new customer
         await supabase.from("customers").insert({
           full_name: form.full_name.trim(),
-          email: form.email.trim().toLowerCase(),
+          email,
           phone: form.phone.trim(),
           document_number: form.document_number.trim() || null,
           nationality: form.nationality.trim() || null,
@@ -121,13 +123,12 @@ const CustomerRegistration = () => {
     { key: "date_of_birth", label: "Data de Nascimento", icon: Calendar, type: "date", placeholder: "" },
     { key: "nationality", label: "Nacionalidade", icon: Globe, type: "text", placeholder: "Brasileira" },
     { key: "document_number", label: "CPF (se brasileiro)", icon: FileText, type: "text", placeholder: "000.000.000-00" },
-    { key: "address", label: "Endereço Completo", icon: MapPin, type: "text", placeholder: "Rua, número, bairro, cidade, estado" },
     { key: "zip_code", label: "CEP / Zip Code", icon: MapPin, type: "text", placeholder: "00000-000" },
+    { key: "address", label: "Endereço Completo", icon: MapPin, type: "text", placeholder: "Rua, número, bairro, cidade, estado" },
   ];
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <div className="border-b border-border/40 bg-card/50">
         <div className="container mx-auto px-4 py-6 flex items-center justify-center">
           <img src={zeusLogo} alt="Zeus Rental Car" className="h-14" />
@@ -149,13 +150,21 @@ const CustomerRegistration = () => {
                 <Icon size={11} className="text-primary/60" />
                 {label}
               </label>
-              <input
-                type={type}
-                value={(form as any)[key]}
-                onChange={(e) => update(key, e.target.value)}
-                placeholder={placeholder}
-                className="w-full h-10 px-3 rounded-lg border border-border/40 bg-card text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all"
-              />
+              <div className="relative">
+                <input
+                  type={type}
+                  value={(form as any)[key]}
+                  onChange={(e) => {
+                    update(key, e.target.value);
+                    if (key === "zip_code") lookupCep(e.target.value);
+                  }}
+                  placeholder={placeholder}
+                  className="w-full h-10 px-3 rounded-lg border border-border/40 bg-card text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all"
+                />
+                {key === "zip_code" && cepLoading && (
+                  <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-primary animate-spin" />
+                )}
+              </div>
             </div>
           ))}
 
@@ -169,6 +178,7 @@ const CustomerRegistration = () => {
               ref={fileRef}
               type="file"
               accept="image/*,.pdf"
+              capture="environment"
               onChange={handleFileChange}
               className="hidden"
             />
@@ -178,7 +188,7 @@ const CustomerRegistration = () => {
               className="w-full h-10 px-3 rounded-lg border border-dashed border-border/60 bg-card/50 text-sm text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-2"
             >
               <Upload size={14} />
-              {licenseFile ? licenseFile.name : "Clique para anexar arquivo"}
+              {licenseFile ? licenseFile.name : "Tirar foto ou anexar arquivo"}
             </button>
           </div>
 

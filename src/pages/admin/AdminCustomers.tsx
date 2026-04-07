@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, Plus, Pencil, Trash2, X, FileText } from "lucide-react";
+import { Search, Plus, Pencil, Trash2, X, FileText, Upload, Camera, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 type Customer = {
@@ -31,6 +31,24 @@ export default function AdminCustomers() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<Customer> | null>(null);
   const [isNew, setIsNew] = useState(false);
+  const [licenseFile, setLicenseFile] = useState<File | null>(null);
+  const [cepLoading, setCepLoading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const lookupCep = async (cep: string) => {
+    const clean = cep.replace(/\D/g, "");
+    if (clean.length !== 8) return;
+    setCepLoading(true);
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
+      const data = await res.json();
+      if (!data.erro && editing) {
+        const addr = [data.logradouro, data.bairro, data.localidade, data.uf].filter(Boolean).join(", ");
+        setEditing(prev => prev ? { ...prev, address: addr } : prev);
+      }
+    } catch {}
+    setCepLoading(false);
+  };
 
   const load = async () => {
     setLoading(true);
@@ -57,6 +75,19 @@ export default function AdminCustomers() {
   const save = async () => {
     if (!editing?.full_name) return toast({ title: "Nome obrigatório", variant: "destructive" });
 
+    let driverLicenseFileUrl = (editing as any).driver_license_file_url || null;
+
+    // Upload file if new one selected
+    if (licenseFile) {
+      const ext = licenseFile.name.split(".").pop();
+      const path = `licenses/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error: uploadErr } = await supabase.storage.from("inspections").upload(path, licenseFile);
+      if (!uploadErr) {
+        const { data: urlData } = supabase.storage.from("inspections").getPublicUrl(path);
+        driverLicenseFileUrl = urlData.publicUrl;
+      }
+    }
+
     const payload = {
       full_name: editing.full_name,
       email: editing.email || null,
@@ -68,6 +99,7 @@ export default function AdminCustomers() {
       date_of_birth: (editing as any).date_of_birth || null,
       address: (editing as any).address || null,
       zip_code: (editing as any).zip_code || null,
+      driver_license_file_url: driverLicenseFileUrl,
     };
 
     if (isNew) {
@@ -78,6 +110,7 @@ export default function AdminCustomers() {
       toast({ title: "Cliente atualizado" });
     }
     setEditing(null);
+    setLicenseFile(null);
     load();
   };
 
@@ -140,14 +173,52 @@ export default function AdminCustomers() {
               {fields.map((field) => (
                 <div key={field.key}>
                   <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">{field.label}</label>
-                  <input
-                    type={(field as any).type || "text"}
-                    value={(editing as any)[field.key] ?? ""}
-                    onChange={(e) => setEditing({ ...editing, [field.key]: e.target.value })}
-                    className="w-full h-9 px-3 rounded-lg border border-border/40 bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all"
-                  />
+                  <div className="relative">
+                    <input
+                      type={(field as any).type || "text"}
+                      value={(editing as any)[field.key] ?? ""}
+                      onChange={(e) => {
+                        setEditing({ ...editing, [field.key]: e.target.value });
+                        if (field.key === "zip_code") lookupCep(e.target.value);
+                      }}
+                      className="w-full h-9 px-3 rounded-lg border border-border/40 bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all"
+                    />
+                    {field.key === "zip_code" && cepLoading && (
+                      <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-primary animate-spin" />
+                    )}
+                  </div>
                 </div>
               ))}
+
+              {/* License file upload */}
+              <div>
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+                  Habilitação (CNH) — Foto ou PDF
+                </label>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*,.pdf"
+                  capture="environment"
+                  onChange={(e) => setLicenseFile(e.target.files?.[0] || null)}
+                  className="hidden"
+                />
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    className="flex-1 h-9 px-3 rounded-lg border border-dashed border-border/50 bg-background/50 text-xs text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-2"
+                  >
+                    <Upload size={13} />
+                    {licenseFile ? licenseFile.name : (editing as any).driver_license_file_url ? "Arquivo já anexado ✓" : "Anexar arquivo"}
+                  </button>
+                </div>
+                {(editing as any).driver_license_file_url && !licenseFile && (
+                  <a href={(editing as any).driver_license_file_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline mt-1 inline-block">
+                    Ver documento atual →
+                  </a>
+                )}
+              </div>
 
               <div>
                 <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Observações</label>
