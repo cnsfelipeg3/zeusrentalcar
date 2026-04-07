@@ -179,7 +179,7 @@ export default function AdminBookings() {
                             <span className="text-[11px] text-muted-foreground font-medium min-w-[32px] text-right">{progress}%</span>
                           </div>
                         </td>
-                        <td className="p-4">
+                        <td className="p-4" onClick={(e) => e.stopPropagation()}>
                           <div className="flex gap-1.5">
                             <button
                               onClick={() => navigate(`/admin/inspection/${b.id}?type=checkin`)}
@@ -204,7 +204,7 @@ export default function AdminBookings() {
                             </button>
                           </div>
                         </td>
-                        <td className="p-4">
+                        <td className="p-4" onClick={(e) => e.stopPropagation()}>
                           <button
                             onClick={() => deleteBooking(b.id)}
                             className="text-destructive/60 hover:text-destructive transition-colors"
