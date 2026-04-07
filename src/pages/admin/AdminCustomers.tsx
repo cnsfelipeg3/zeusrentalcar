@@ -75,6 +75,19 @@ export default function AdminCustomers() {
   const save = async () => {
     if (!editing?.full_name) return toast({ title: "Nome obrigatório", variant: "destructive" });
 
+    let driverLicenseFileUrl = (editing as any).driver_license_file_url || null;
+
+    // Upload file if new one selected
+    if (licenseFile) {
+      const ext = licenseFile.name.split(".").pop();
+      const path = `licenses/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error: uploadErr } = await supabase.storage.from("inspections").upload(path, licenseFile);
+      if (!uploadErr) {
+        const { data: urlData } = supabase.storage.from("inspections").getPublicUrl(path);
+        driverLicenseFileUrl = urlData.publicUrl;
+      }
+    }
+
     const payload = {
       full_name: editing.full_name,
       email: editing.email || null,
@@ -86,6 +99,7 @@ export default function AdminCustomers() {
       date_of_birth: (editing as any).date_of_birth || null,
       address: (editing as any).address || null,
       zip_code: (editing as any).zip_code || null,
+      driver_license_file_url: driverLicenseFileUrl,
     };
 
     if (isNew) {
@@ -96,6 +110,7 @@ export default function AdminCustomers() {
       toast({ title: "Cliente atualizado" });
     }
     setEditing(null);
+    setLicenseFile(null);
     load();
   };
 
