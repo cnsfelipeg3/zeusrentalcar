@@ -166,6 +166,13 @@ export default function AdminBookings() {
                              >
                                <LogOut size={12} /> Devolução
                              </button>
+                             <button
+                               onClick={() => navigate(`/admin/inspection/compare/${b.id}`)}
+                               className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md bg-muted text-muted-foreground hover:text-foreground transition-colors font-medium"
+                               title="Comparar Inspeções"
+                             >
+                               <GitCompare size={12} />
+                             </button>
                            </div>
                          </td>
                          <td className="p-4">
