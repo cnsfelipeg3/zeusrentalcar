@@ -293,7 +293,7 @@ const BookingDetails = () => {
         customer_email: email,
         customer_phone: customerData.phone.trim(),
         customer_id: customerId || null,
-        vehicle_id: vehicle?.id || null,
+        vehicle_id: null,
         pickup_date: pickupDate ? format(pickupDate, "yyyy-MM-dd") : "",
         return_date: returnDate ? format(returnDate, "yyyy-MM-dd") : "",
         pickup_location: pickupLocation || null,
