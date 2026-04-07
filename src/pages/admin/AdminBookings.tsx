@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Search, Plus, Eye, Trash2, LogIn, LogOut, GitCompare } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Search, Trash2, LogIn, LogOut, GitCompare } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { Progress } from "@/components/ui/progress";
 
 type Booking = {
   id: string;
@@ -28,9 +28,21 @@ const statusConfig: Record<string, { label: string; variant: "default" | "second
   pending: { label: "Pendente", variant: "outline" },
   confirmed: { label: "Confirmada", variant: "default" },
   active: { label: "Ativa", variant: "secondary" },
+  in_progress: { label: "Em andamento", variant: "secondary" },
   completed: { label: "Concluída", variant: "outline" },
   cancelled: { label: "Cancelada", variant: "destructive" },
 };
+
+function getBookingProgress(pickupDate: string, returnDate: string, status: string): number {
+  if (status === "completed") return 100;
+  if (status === "pending" || status === "confirmed" || status === "cancelled") return 0;
+  const now = new Date().getTime();
+  const start = new Date(pickupDate).getTime();
+  const end = new Date(returnDate).getTime();
+  if (now <= start) return 0;
+  if (now >= end) return 100;
+  return Math.round(((now - start) / (end - start)) * 100);
+}
 
 export default function AdminBookings() {
   const navigate = useNavigate();
@@ -87,8 +99,8 @@ export default function AdminBookings() {
             className="w-full h-9 pl-9 pr-3 rounded-lg border border-border/60 bg-background text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>
-        <div className="flex gap-2">
-          {["all", "pending", "confirmed", "active", "completed", "cancelled"].map((s) => (
+        <div className="flex gap-2 flex-wrap">
+          {["all", "pending", "confirmed", "active", "in_progress", "completed", "cancelled"].map((s) => (
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
@@ -119,14 +131,15 @@ export default function AdminBookings() {
                     <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Período</th>
                     <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Local</th>
                     <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Valor</th>
-                     <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Status</th>
-                     <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Inspeção</th>
-                     <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Ações</th>
+                    <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Status</th>
+                    <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium min-w-[140px]">Progresso</th>
+                    <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Inspeção</th>
+                    <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Ações</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filtered.map((b) => {
-                    const sc = statusConfig[b.status] || { label: b.status, variant: "outline" as const };
+                    const progress = getBookingProgress(b.pickup_date, b.return_date, b.status);
                     return (
                       <tr key={b.id} className="border-b border-border/20 hover:bg-muted/20 transition-colors">
                         <td className="p-4">
@@ -149,40 +162,46 @@ export default function AdminBookings() {
                               <option key={key} value={key}>{val.label}</option>
                             ))}
                           </select>
-                         </td>
-                         <td className="p-4">
-                           <div className="flex gap-1.5">
-                             <button
-                               onClick={() => navigate(`/admin/inspection/${b.id}?type=checkin`)}
-                               className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-medium"
-                               title="Entrega do Veículo"
-                             >
-                               <LogIn size={12} /> Entrega
-                             </button>
-                             <button
-                               onClick={() => navigate(`/admin/inspection/${b.id}?type=checkout`)}
-                               className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors font-medium"
-                               title="Devolução do Veículo"
-                             >
-                               <LogOut size={12} /> Devolução
-                             </button>
-                             <button
-                               onClick={() => navigate(`/admin/inspection/compare/${b.id}`)}
-                               className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md bg-muted text-muted-foreground hover:text-foreground transition-colors font-medium"
-                               title="Comparar Inspeções"
-                             >
-                               <GitCompare size={12} />
-                             </button>
-                           </div>
-                         </td>
-                         <td className="p-4">
-                           <button
-                             onClick={() => deleteBooking(b.id)}
-                             className="text-destructive/60 hover:text-destructive transition-colors"
-                           >
-                             <Trash2 size={14} />
-                           </button>
-                         </td>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-2">
+                            <Progress value={progress} className="h-2 flex-1" />
+                            <span className="text-[11px] text-muted-foreground font-medium min-w-[32px] text-right">{progress}%</span>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex gap-1.5">
+                            <button
+                              onClick={() => navigate(`/admin/inspection/${b.id}?type=checkin`)}
+                              className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-medium"
+                              title="Entrega do Veículo"
+                            >
+                              <LogIn size={12} /> Entrega
+                            </button>
+                            <button
+                              onClick={() => navigate(`/admin/inspection/${b.id}?type=checkout`)}
+                              className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors font-medium"
+                              title="Devolução do Veículo"
+                            >
+                              <LogOut size={12} /> Devolução
+                            </button>
+                            <button
+                              onClick={() => navigate(`/admin/inspection/compare/${b.id}`)}
+                              className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md bg-muted text-muted-foreground hover:text-foreground transition-colors font-medium"
+                              title="Comparar Inspeções"
+                            >
+                              <GitCompare size={12} />
+                            </button>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <button
+                            onClick={() => deleteBooking(b.id)}
+                            className="text-destructive/60 hover:text-destructive transition-colors"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </td>
                       </tr>
                     );
                   })}
