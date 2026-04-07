@@ -124,6 +124,11 @@ const BookingDetails = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [showUpgradeSuggestion, setShowUpgradeSuggestion] = useState(false);
+  const [customerData, setCustomerData] = useState<CustomerData>({
+    full_name: "", email: "", phone: "", date_of_birth: "",
+    nationality: "", document_number: "", address: "", zip_code: "",
+    licenseFile: null,
+  });
 
   // Reset add-ons when plan changes (they might now be included)
   useEffect(() => {
