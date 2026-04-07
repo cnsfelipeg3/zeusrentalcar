@@ -197,22 +197,25 @@ const CustomerRegistration = () => {
               className="hidden"
             />
             <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => document.getElementById("cameraInputReg")?.click()}
-                className="h-10 px-3 rounded-lg border border-dashed border-border/60 bg-card/50 text-sm text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-2"
+              <label
+                htmlFor="cameraInputReg"
+                className="h-10 px-3 rounded-lg border border-dashed border-border/60 bg-card/50 text-sm text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-2 cursor-pointer"
               >
                 <Camera size={14} />
                 Câmera
-              </button>
-              <button
-                type="button"
-                onClick={() => fileRef.current?.click()}
-                className="flex-1 h-10 px-3 rounded-lg border border-dashed border-border/60 bg-card/50 text-sm text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-2"
+              </label>
+              <label
+                className="flex-1 h-10 px-3 rounded-lg border border-dashed border-border/60 bg-card/50 text-sm text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-2 cursor-pointer"
               >
                 <Upload size={14} />
                 {licenseFile ? licenseFile.name : "Anexar arquivo"}
-              </button>
+                <input
+                  type="file"
+                  accept="image/*,.pdf"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+              </label>
             </div>
           </div>
 
