@@ -142,7 +142,7 @@ export default function AdminBookings() {
                   {filtered.map((b) => {
                     const progress = getBookingProgress(b.pickup_date, b.return_date, b.status);
                     return (
-                      <tr key={b.id} className="border-b border-border/20 hover:bg-muted/20 transition-colors">
+                      <tr key={b.id} className="border-b border-border/20 hover:bg-muted/20 transition-colors cursor-pointer" onClick={() => navigate(`/admin/bookings/${b.id}`)}>
                         <td className="p-4">
                           <p className="text-foreground font-medium">{b.customer_name}</p>
                           <p className="text-xs text-muted-foreground">{b.customer_email}</p>
@@ -153,7 +153,7 @@ export default function AdminBookings() {
                         </td>
                         <td className="p-4 text-muted-foreground text-xs">{b.pickup_location || "—"}</td>
                         <td className="p-4 text-foreground font-medium">${b.total_price?.toFixed(2) || "—"}</td>
-                        <td className="p-4">
+                        <td className="p-4" onClick={(e) => e.stopPropagation()}>
                           <select
                             value={b.status}
                             onChange={(e) => updateStatus(b.id, e.target.value)}
@@ -179,7 +179,7 @@ export default function AdminBookings() {
                             <span className="text-[11px] text-muted-foreground font-medium min-w-[32px] text-right">{progress}%</span>
                           </div>
                         </td>
-                        <td className="p-4">
+                        <td className="p-4" onClick={(e) => e.stopPropagation()}>
                           <div className="flex gap-1.5">
                             <button
                               onClick={() => navigate(`/admin/inspection/${b.id}?type=checkin`)}
@@ -204,7 +204,7 @@ export default function AdminBookings() {
                             </button>
                           </div>
                         </td>
-                        <td className="p-4">
+                        <td className="p-4" onClick={(e) => e.stopPropagation()}>
                           <button
                             onClick={() => deleteBooking(b.id)}
                             className="text-destructive/60 hover:text-destructive transition-colors"

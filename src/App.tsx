@@ -26,6 +26,7 @@ import AdminInspection from "./pages/admin/AdminInspection.tsx";
 import AdminInspectionCompare from "./pages/admin/AdminInspectionCompare.tsx";
 import AdminVehicleHistory from "./pages/admin/AdminVehicleHistory.tsx";
 import AdminFleetReport from "./pages/admin/AdminFleetReport.tsx";
+import AdminBookingDetail from "./pages/admin/AdminBookingDetail.tsx";
 import BookingConfirmed from "./pages/BookingConfirmed.tsx";
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const App = () => (
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="bookings" element={<AdminBookings />} />
+                <Route path="bookings/:bookingId" element={<AdminBookingDetail />} />
                 <Route path="live" element={<AdminLive />} />
                 <Route path="fleet" element={<AdminFleet />} />
                 <Route path="customers" element={<AdminCustomers />} />
