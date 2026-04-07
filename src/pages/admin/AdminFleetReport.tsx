@@ -9,7 +9,7 @@ import {
 } from "recharts";
 import {
   Loader2, TrendingUp, DollarSign, AlertTriangle, Car, CalendarDays,
-  ChevronLeft, ChevronRight, Percent
+  ChevronLeft, ChevronRight, Percent, Shield, Baby, Radio, Users, Sparkles
 } from "lucide-react";
 import { format, startOfMonth, endOfMonth, subMonths, addMonths, parseISO, differenceInDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
