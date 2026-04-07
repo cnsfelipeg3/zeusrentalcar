@@ -529,10 +529,10 @@ export default function AdminInspection() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Odometer */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-3">
-                <label className="text-sm font-medium text-foreground block">Leitura do Odômetro (km)</label>
+              {/* Odometer column */}
+              <div className="flex flex-col gap-4">
+                <label className="text-sm font-medium text-foreground">Leitura do Odômetro (km)</label>
                 <Input
                   type="number"
                   value={odometer}
@@ -540,13 +540,13 @@ export default function AdminInspection() {
                   placeholder="Ex: 45230"
                   disabled={isCompleted}
                 />
-                <div>
-                  <label className="text-xs text-muted-foreground mb-2 block flex items-center gap-1">
+                <div className="flex-1 flex flex-col">
+                  <label className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
                     <Camera size={12} /> Foto do Odômetro
                   </label>
                   {odometerPhoto ? (
-                    <div className="relative group">
-                      <img src={odometerPhoto} alt="Odômetro" className="w-full aspect-[16/9] object-cover rounded-lg border border-border/40" />
+                    <div className="relative group flex-1">
+                      <img src={odometerPhoto} alt="Odômetro" className="w-full h-full min-h-[180px] object-cover rounded-lg border border-border/40" />
                       {!isCompleted && (
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
                           <Button size="sm" variant="secondary" onClick={() => odometerPhotoRef.current?.click()} className="h-7 text-xs">
@@ -562,7 +562,7 @@ export default function AdminInspection() {
                     <button
                       onClick={() => !isCompleted && odometerPhotoRef.current?.click()}
                       disabled={isCompleted || uploading}
-                      className="w-full aspect-[16/9] rounded-lg border-2 border-dashed border-border/60 flex flex-col items-center justify-center gap-2 text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors"
+                      className="flex-1 min-h-[180px] rounded-lg border-2 border-dashed border-border/60 flex flex-col items-center justify-center gap-2 text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors"
                     >
                       <Camera size={24} />
                       <span className="text-xs font-medium">Tirar foto do odômetro</span>
@@ -572,47 +572,44 @@ export default function AdminInspection() {
                 </div>
               </div>
 
-              {/* Fuel */}
-              <div className="space-y-3">
-                <label className="text-sm font-medium text-foreground block">Nível de Combustível</label>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <Fuel size={20} className="text-muted-foreground" />
-                    <div className="flex-1 h-8 bg-muted/50 rounded-full overflow-hidden relative">
-                      <div
-                        className="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-emerald-500 rounded-full transition-all duration-500"
-                        style={{ width: `${FUEL_LEVELS.find((f) => f.value === fuelLevel)?.pct || 0}%` }}
-                      />
-                    </div>
-                    <span className="text-sm font-medium text-foreground min-w-[50px] text-right">
-                      {FUEL_LEVELS.find((f) => f.value === fuelLevel)?.label}
-                    </span>
+              {/* Fuel column */}
+              <div className="flex flex-col gap-4">
+                <label className="text-sm font-medium text-foreground">Nível de Combustível</label>
+                <div className="flex items-center gap-3">
+                  <Fuel size={20} className="text-muted-foreground shrink-0" />
+                  <div className="flex-1 h-9 bg-muted/50 rounded-full overflow-hidden relative">
+                    <div
+                      className="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-emerald-500 rounded-full transition-all duration-500"
+                      style={{ width: `${FUEL_LEVELS.find((f) => f.value === fuelLevel)?.pct || 0}%` }}
+                    />
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {FUEL_LEVELS.map((f) => (
-                      <button
-                        key={f.value}
-                        onClick={() => !isCompleted && setFuelLevel(f.value)}
-                        disabled={isCompleted}
-                        className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
-                          fuelLevel === f.value
-                            ? "bg-primary/10 text-primary border-primary/30"
-                            : "border-border/40 text-muted-foreground hover:text-foreground"
-                        }`}
-                      >
-                        {f.label}
-                      </button>
-                    ))}
-                  </div>
+                  <span className="text-sm font-medium text-foreground min-w-[50px] text-right">
+                    {FUEL_LEVELS.find((f) => f.value === fuelLevel)?.label}
+                  </span>
                 </div>
-
-                <div>
-                  <label className="text-xs text-muted-foreground mb-2 block flex items-center gap-1">
+                <div className="flex flex-wrap gap-2">
+                  {FUEL_LEVELS.map((f) => (
+                    <button
+                      key={f.value}
+                      onClick={() => !isCompleted && setFuelLevel(f.value)}
+                      disabled={isCompleted}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                        fuelLevel === f.value
+                          ? "bg-primary/10 text-primary border-primary/30"
+                          : "border-border/40 text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex-1 flex flex-col">
+                  <label className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
                     <Camera size={12} /> Foto do Tanque de Combustível
                   </label>
                   {fuelPhoto ? (
-                    <div className="relative group">
-                      <img src={fuelPhoto} alt="Combustível" className="w-full aspect-[16/9] object-cover rounded-lg border border-border/40" />
+                    <div className="relative group flex-1">
+                      <img src={fuelPhoto} alt="Combustível" className="w-full h-full min-h-[180px] object-cover rounded-lg border border-border/40" />
                       {!isCompleted && (
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
                           <Button size="sm" variant="secondary" onClick={() => fuelPhotoRef.current?.click()} className="h-7 text-xs">
@@ -628,7 +625,7 @@ export default function AdminInspection() {
                     <button
                       onClick={() => !isCompleted && fuelPhotoRef.current?.click()}
                       disabled={isCompleted || uploading}
-                      className="w-full aspect-[16/9] rounded-lg border-2 border-dashed border-border/60 flex flex-col items-center justify-center gap-2 text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors"
+                      className="flex-1 min-h-[180px] rounded-lg border-2 border-dashed border-border/60 flex flex-col items-center justify-center gap-2 text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors"
                     >
                       <Camera size={24} />
                       <span className="text-xs font-medium">Tirar foto do indicador de combustível</span>
