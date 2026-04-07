@@ -65,6 +65,9 @@ export default function AdminCustomers() {
       nationality: editing.nationality || null,
       driver_license: editing.driver_license || null,
       notes: editing.notes || null,
+      date_of_birth: (editing as any).date_of_birth || null,
+      address: (editing as any).address || null,
+      zip_code: (editing as any).zip_code || null,
     };
 
     if (isNew) {
