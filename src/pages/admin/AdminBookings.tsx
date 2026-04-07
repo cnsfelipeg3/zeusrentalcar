@@ -11,6 +11,7 @@ type Booking = {
   customer_name: string;
   customer_email: string | null;
   customer_phone: string | null;
+  customer_id: string | null;
   pickup_date: string;
   return_date: string;
   pickup_location: string | null;
