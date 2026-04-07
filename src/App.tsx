@@ -24,7 +24,6 @@ import AdminSettings from "./pages/admin/AdminSettings.tsx";
 import AdminLive from "./pages/admin/AdminLive.tsx";
 import AdminInspection from "./pages/admin/AdminInspection.tsx";
 import BookingConfirmed from "./pages/BookingConfirmed.tsx";
-import BookingConfirmed from "./pages/BookingConfirmed.tsx";
 
 const queryClient = new QueryClient();
 
