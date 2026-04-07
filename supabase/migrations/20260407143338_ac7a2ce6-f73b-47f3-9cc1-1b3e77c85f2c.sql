@@ -1,0 +1,1 @@
+ALTER TABLE public.bookings ADD COLUMN plan_id text DEFAULT 'essencial', ADD COLUMN addons jsonb DEFAULT '{}'::jsonb;

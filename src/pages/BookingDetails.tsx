@@ -271,6 +271,44 @@ const BookingDetails = () => {
         customerId = newCust?.id || "";
       }
 
+      // Build addons object for tracking
+      const addonsData = {
+        plan_extra: pricing.planExtra,
+        insurance_total: pricing.addonInsuranceTotal,
+        extra_driver_total: 0,
+        child_seat_total: pricing.addonChildSeatTotal,
+        child_seat_qty: addonChildSeatQty,
+        toll_tag_total: pricing.addonTollTagTotal,
+        return_fee: isDifferentCity ? currentPlan.returnFee : 0,
+        discount_amount: pricing.discountAmount,
+        premium_insurance: hasPremiumInsurance,
+        child_seat: hasChildSeat,
+        toll_tag: hasTollTag,
+        extra_driver: hasExtraDriver,
+      };
+
+      // Create booking record
+      const bookingPayload = {
+        customer_name: customerData.full_name.trim(),
+        customer_email: email,
+        customer_phone: customerData.phone.trim(),
+        customer_id: customerId || null,
+        vehicle_id: null,
+        pickup_date: pickupDate ? format(pickupDate, "yyyy-MM-dd") : "",
+        return_date: returnDate ? format(returnDate, "yyyy-MM-dd") : "",
+        pickup_location: pickupLocation || null,
+        return_location: returnLocation || null,
+        total_price: pricing.total,
+        status: "pending",
+        plan_id: selectedPlanId,
+        addons: addonsData,
+        extra_driver: hasExtraDriver,
+        notes: `Plano: ${currentPlan.name}`,
+      };
+
+      // Insert booking (ignore errors for anon)
+      await supabase.from("bookings").insert(bookingPayload as any);
+
       // Proceed to checkout
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: {

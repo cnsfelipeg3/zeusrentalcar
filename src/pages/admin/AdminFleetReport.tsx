@@ -9,7 +9,7 @@ import {
 } from "recharts";
 import {
   Loader2, TrendingUp, DollarSign, AlertTriangle, Car, CalendarDays,
-  ChevronLeft, ChevronRight, Percent
+  ChevronLeft, ChevronRight, Percent, Shield, Baby, Radio, Users, Sparkles
 } from "lucide-react";
 import { format, startOfMonth, endOfMonth, subMonths, addMonths, parseISO, differenceInDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -138,6 +138,45 @@ export default function AdminFleetReport() {
     .map(([name, value]) => ({ name, value }));
 
   const damageRanking = [...report].filter((r) => r.damageCount > 0).sort((a, b) => b.damageCount - a.damageCount).slice(0, 10);
+
+  // Addon revenue calculations
+  const addonTotals = bookings.reduce(
+    (acc, b: any) => {
+      const addons = b.addons || {};
+      acc.planExtra += Number(addons.plan_extra) || 0;
+      acc.insurance += Number(addons.insurance_total) || 0;
+      acc.childSeat += Number(addons.child_seat_total) || 0;
+      acc.tollTag += Number(addons.toll_tag_total) || 0;
+      acc.extraDriver += Number(addons.extra_driver_total) || 0;
+      acc.returnFee += Number(addons.return_fee) || 0;
+      return acc;
+    },
+    { planExtra: 0, insurance: 0, childSeat: 0, tollTag: 0, extraDriver: 0, returnFee: 0 }
+  );
+
+  const addonChartData = [
+    { name: "Upgrade de Plano", value: addonTotals.planExtra, icon: "✨" },
+    { name: "Seguro Premium", value: addonTotals.insurance, icon: "🛡" },
+    { name: "Cadeirinha Infantil", value: addonTotals.childSeat, icon: "👶" },
+    { name: "TAG Pedágio", value: addonTotals.tollTag, icon: "📡" },
+    { name: "Condutor Extra", value: addonTotals.extraDriver, icon: "👥" },
+    { name: "Taxa One-Way", value: addonTotals.returnFee, icon: "🔄" },
+  ].filter((d) => d.value > 0);
+
+  const totalAddonRevenue = addonChartData.reduce((s, d) => s + d.value, 0);
+
+  // Plan distribution
+  const planCounts = bookings.reduce((acc, b: any) => {
+    const plan = b.plan_id || "essencial";
+    acc[plan] = (acc[plan] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const planDistributionData = [
+    { name: "Zeus Essencial", value: planCounts["essencial"] || 0 },
+    { name: "Zeus Conforto", value: planCounts["conforto"] || 0 },
+    { name: "Zeus Premium", value: planCounts["premium"] || 0 },
+  ].filter((d) => d.value > 0);
 
   if (loading) {
     return (
@@ -358,6 +397,119 @@ export default function AdminFleetReport() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Charts Row 3 — Addon Revenue */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Addon Revenue Breakdown */}
+        <Card className="border-border/40">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Sparkles size={16} className="text-primary" /> Receita de Opcionais
+              {totalAddonRevenue > 0 && (
+                <Badge variant="outline" className="ml-auto text-xs font-bold">${totalAddonRevenue.toLocaleString()}</Badge>
+              )}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {addonChartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={addonChartData.length * 50 + 40}>
+                <BarChart data={addonChartData} layout="vertical" margin={{ left: 10, right: 30, top: 5, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.3)" />
+                  <XAxis type="number" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v) => `$${v}`} />
+                  <YAxis type="category" dataKey="name" width={160} tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} interval={0} />
+                  <Tooltip
+                    formatter={(v: number) => [`$${v.toLocaleString()}`, "Receita"]}
+                    contentStyle={{ backgroundColor: "hsl(var(--background))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
+                  />
+                  <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={24}>
+                    {addonChartData.map((_, i) => (
+                      <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="text-center py-10 text-sm text-muted-foreground">
+                <Sparkles size={24} className="mx-auto mb-2 opacity-30" />
+                Nenhuma receita de opcionais registrada neste mês
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Plan Distribution */}
+        <Card className="border-border/40">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Shield size={16} className="text-primary" /> Distribuição de Planos
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {planDistributionData.length > 0 ? (
+              <>
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie
+                      data={planDistributionData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={55}
+                      outerRadius={95}
+                      paddingAngle={3}
+                      dataKey="value"
+                      label={({ name, percent }) => `${name.replace("Zeus ", "")} ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {planDistributionData.map((_, i) => (
+                        <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(v: number) => [`${v} reserva${v > 1 ? "s" : ""}`, "Qtd."]}
+                      contentStyle={{ backgroundColor: "hsl(var(--background))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="grid grid-cols-3 gap-2 mt-3">
+                  {planDistributionData.map((p, i) => (
+                    <div key={p.name} className="text-center p-2 rounded-lg bg-muted/30 border border-border/20">
+                      <div className="w-3 h-3 rounded-full mx-auto mb-1" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
+                      <p className="text-[10px] text-muted-foreground">{p.name.replace("Zeus ", "")}</p>
+                      <p className="text-sm font-bold text-foreground">{p.value}</p>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-10 text-sm text-muted-foreground">
+                <Shield size={24} className="mx-auto mb-2 opacity-30" />
+                Sem dados de planos neste mês
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Addon KPI Cards */}
+      {totalAddonRevenue > 0 && (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          {[
+            { label: "Upgrade Plano", value: addonTotals.planExtra, icon: Sparkles },
+            { label: "Seguro Premium", value: addonTotals.insurance, icon: Shield },
+            { label: "Cadeirinha", value: addonTotals.childSeat, icon: Baby },
+            { label: "TAG Pedágio", value: addonTotals.tollTag, icon: Radio },
+            { label: "Condutor Extra", value: addonTotals.extraDriver, icon: Users },
+            { label: "Taxa One-Way", value: addonTotals.returnFee, icon: Car },
+          ].map(({ label, value, icon: Icon }) => (
+            <Card key={label} className="border-border/40">
+              <CardContent className="p-3 text-center">
+                <Icon size={16} className="text-primary mx-auto mb-1" />
+                <p className="text-[9px] text-muted-foreground uppercase tracking-wider">{label}</p>
+                <p className="text-base font-bold text-foreground">${value.toLocaleString()}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {/* Full vehicle table */}
       <Card className="border-border/40">
