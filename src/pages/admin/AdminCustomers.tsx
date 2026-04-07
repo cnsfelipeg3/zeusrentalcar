@@ -88,8 +88,11 @@ export default function AdminCustomers() {
     { label: "Nome completo", key: "full_name" },
     { label: "E-mail", key: "email" },
     { label: "Telefone", key: "phone" },
+    { label: "Data de Nascimento", key: "date_of_birth", type: "date" },
     { label: "Documento (CPF)", key: "document_number" },
     { label: "Nacionalidade", key: "nationality" },
+    { label: "Endereço", key: "address" },
+    { label: "CEP / Zip Code", key: "zip_code" },
     { label: "CNH / Driver License", key: "driver_license" },
   ];
 
