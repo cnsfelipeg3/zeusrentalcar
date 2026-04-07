@@ -153,7 +153,7 @@ export default function AdminBookings() {
                         </td>
                         <td className="p-4 text-muted-foreground text-xs">{b.pickup_location || "—"}</td>
                         <td className="p-4 text-foreground font-medium">${b.total_price?.toFixed(2) || "—"}</td>
-                        <td className="p-4">
+                        <td className="p-4" onClick={(e) => e.stopPropagation()}>
                           <select
                             value={b.status}
                             onChange={(e) => updateStatus(b.id, e.target.value)}
