@@ -818,7 +818,7 @@ export default function AdminInspection() {
                             disabled={isCompleted || uploading}
                             className="aspect-[4/3] rounded-lg border-2 border-dashed border-border/60 flex flex-col items-center justify-center gap-1.5 text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors w-full"
                           >
-                            <span className="text-lg">{pos.emoji}</span>
+                            <PhotoIllustration position={pos.name} />
                             <Camera size={18} />
                             <span className="text-[10px] font-medium leading-tight text-center px-1">{pos.name}</span>
                           </button>
@@ -860,7 +860,7 @@ export default function AdminInspection() {
                   <>
                     <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 space-y-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-lg">{PHOTO_POSITIONS.find((p) => p.name === activeGuide)?.emoji}</span>
+                        <PhotoIllustration position={activeGuide} />
                         <h4 className="font-semibold text-foreground text-sm">{activeGuide}</h4>
                       </div>
                       <p className="text-xs text-muted-foreground leading-relaxed">
@@ -901,7 +901,7 @@ export default function AdminInspection() {
                           }`}
                         >
                           <span className="w-4 text-center">{done ? <CheckCircle2 size={12} className="text-emerald-500" /> : <span className="text-muted-foreground">{i + 1}</span>}</span>
-                          <span className="text-xs">{pos.emoji}</span>
+                          <span className="w-5 shrink-0"><PhotoIllustration position={pos.name} /></span>
                           <span className={done ? "text-muted-foreground line-through" : "text-foreground"}>{pos.name}</span>
                         </button>
                       );
