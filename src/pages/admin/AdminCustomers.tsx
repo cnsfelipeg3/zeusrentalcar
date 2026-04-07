@@ -190,7 +190,7 @@ export default function AdminCustomers() {
                 </thead>
                 <tbody>
                   {filtered.map((c) => (
-                    <tr key={c.id} className="border-b border-border/10 hover:bg-muted/20 transition-colors group">
+                    <tr key={c.id} onClick={() => navigate(`/admin/customers/${c.id}`)} className="border-b border-border/10 hover:bg-muted/20 transition-colors group cursor-pointer">
                       <td className="px-5 py-3.5 text-foreground font-medium text-[13px]">{c.full_name}</td>
                       <td className="px-5 py-3.5">
                         <p className="text-muted-foreground text-xs">{c.email || "—"}</p>
