@@ -26,7 +26,7 @@ const MyAccount = () => {
 
   if (!isLoggedIn || !user) return null;
 
-  const activeBooking = mockBookings.find((b) => b.status === "active");
+  const activeBooking = mockBookings.find((b) => b.status === "active" || b.status === "in_progress");
   const completedCount = mockBookings.filter((b) => b.status === "completed").length;
   const nextFuture = mockBookings
     .filter((b) => b.status === "confirmed" || b.status === "pending")
@@ -36,7 +36,7 @@ const MyAccount = () => {
     tab === "all"
       ? mockBookings
       : tab === "active"
-        ? mockBookings.filter((b) => b.status === "active")
+        ? mockBookings.filter((b) => b.status === "active" || b.status === "in_progress")
         : tab === "future"
           ? mockBookings.filter((b) => b.status === "confirmed" || b.status === "pending")
           : mockBookings.filter((b) => b.status === "completed");
