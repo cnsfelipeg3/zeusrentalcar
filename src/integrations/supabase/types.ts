@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       bookings: {
         Row: {
+          addons: Json | null
           created_at: string
           customer_email: string | null
           customer_id: string | null
@@ -27,6 +28,7 @@ export type Database = {
           notes: string | null
           pickup_date: string
           pickup_location: string | null
+          plan_id: string | null
           return_date: string
           return_location: string | null
           status: string
@@ -35,6 +37,7 @@ export type Database = {
           vehicle_id: string | null
         }
         Insert: {
+          addons?: Json | null
           created_at?: string
           customer_email?: string | null
           customer_id?: string | null
@@ -46,6 +49,7 @@ export type Database = {
           notes?: string | null
           pickup_date: string
           pickup_location?: string | null
+          plan_id?: string | null
           return_date: string
           return_location?: string | null
           status?: string
@@ -54,6 +58,7 @@ export type Database = {
           vehicle_id?: string | null
         }
         Update: {
+          addons?: Json | null
           created_at?: string
           customer_email?: string | null
           customer_id?: string | null
@@ -65,6 +70,7 @@ export type Database = {
           notes?: string | null
           pickup_date?: string
           pickup_location?: string | null
+          plan_id?: string | null
           return_date?: string
           return_location?: string | null
           status?: string
