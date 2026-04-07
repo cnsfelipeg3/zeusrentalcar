@@ -20,6 +20,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import AdminBookings from "./pages/admin/AdminBookings.tsx";
 import AdminFleet from "./pages/admin/AdminFleet.tsx";
 import AdminCustomers from "./pages/admin/AdminCustomers.tsx";
+import AdminCustomerDetail from "./pages/admin/AdminCustomerDetail.tsx";
 import AdminSettings from "./pages/admin/AdminSettings.tsx";
 import AdminLive from "./pages/admin/AdminLive.tsx";
 import AdminInspection from "./pages/admin/AdminInspection.tsx";
