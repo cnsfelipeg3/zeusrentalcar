@@ -55,6 +55,7 @@ const App = () => (
               <Route path="/buscar" element={<SearchResults />} />
               <Route path="/reserva/:vehicleName" element={<BookingDetails />} />
               <Route path="/reserva/confirmada" element={<BookingConfirmed />} />
+              <Route path="/cadastro" element={<CustomerRegistration />} />
               <Route path="/login" element={<Login />} />
               <Route path="/minha-conta" element={<MyAccount />} />
               <Route path="/minha-conta/reserva/:bookingId" element={<BookingDetailClient />} />
