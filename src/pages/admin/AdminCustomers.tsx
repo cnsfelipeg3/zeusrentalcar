@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, Plus, Pencil, Trash2, X } from "lucide-react";
+import { Search, Plus, Pencil, Trash2, X, FileText } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 type Customer = {
@@ -14,6 +14,7 @@ type Customer = {
   driver_license: string | null;
   notes: string | null;
   created_at: string;
+  booking_count?: number;
 };
 
 const emptyCustomer = {
@@ -30,8 +31,15 @@ export default function AdminCustomers() {
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase.from("customers").select("*").order("full_name");
-    setCustomers(data || []);
+    const { data: customersData } = await supabase.from("customers").select("*").order("full_name");
+    const { data: bookingsData } = await supabase.from("bookings").select("customer_id");
+    
+    const countMap: Record<string, number> = {};
+    (bookingsData || []).forEach((b: any) => {
+      if (b.customer_id) countMap[b.customer_id] = (countMap[b.customer_id] || 0) + 1;
+    });
+    
+    setCustomers((customersData || []).map(c => ({ ...c, booking_count: countMap[c.id] || 0 })));
     setLoading(false);
   };
 
@@ -164,7 +172,9 @@ export default function AdminCustomers() {
                     <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Nome</th>
                     <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Contato</th>
                     <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Documento</th>
+                    <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">CNH</th>
                     <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Nacionalidade</th>
+                    <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Reservas</th>
                     <th className="p-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Ações</th>
                   </tr>
                 </thead>
@@ -176,8 +186,18 @@ export default function AdminCustomers() {
                         <p className="text-muted-foreground">{c.email || "—"}</p>
                         <p className="text-xs text-muted-foreground/70">{c.phone || ""}</p>
                       </td>
-                      <td className="p-4 text-muted-foreground">{c.document_number || "—"}</td>
+                      <td className="p-4 text-muted-foreground text-xs font-mono">{c.document_number || "—"}</td>
+                      <td className="p-4 text-muted-foreground text-xs">{c.driver_license || "—"}</td>
                       <td className="p-4 text-muted-foreground">{c.nationality || "—"}</td>
+                      <td className="p-4">
+                        {c.booking_count ? (
+                          <span className="inline-flex items-center gap-1 text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                            <FileText size={10} /> {c.booking_count}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-muted-foreground/50">0</span>
+                        )}
+                      </td>
                       <td className="p-4 flex gap-2">
                         <button
                           onClick={() => { setEditing(c); setIsNew(false); }}
