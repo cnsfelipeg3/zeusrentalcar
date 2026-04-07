@@ -1,0 +1,410 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend, LineChart, Line, Area, AreaChart
+} from "recharts";
+import {
+  Loader2, TrendingUp, DollarSign, AlertTriangle, Car, CalendarDays,
+  ChevronLeft, ChevronRight, Percent
+} from "lucide-react";
+import { format, startOfMonth, endOfMonth, subMonths, addMonths, parseISO, differenceInDays } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
+type VehicleReport = {
+  id: string;
+  name: string;
+  category: string;
+  image_url: string | null;
+  totalBookings: number;
+  totalRevenue: number;
+  totalDays: number;
+  occupancyPct: number;
+  damageCount: number;
+};
+
+const CHART_COLORS = [
+  "hsl(var(--primary))",
+  "hsl(var(--chart-2, 160 60% 45%))",
+  "hsl(var(--chart-3, 30 80% 55%))",
+  "hsl(var(--chart-4, 280 65% 60%))",
+  "hsl(var(--chart-5, 340 75% 55%))",
+  "hsl(200 70% 50%)",
+  "hsl(120 50% 45%)",
+  "hsl(45 90% 50%)",
+];
+
+export default function AdminFleetReport() {
+  const [loading, setLoading] = useState(true);
+  const [month, setMonth] = useState(startOfMonth(new Date()));
+  const [vehicles, setVehicles] = useState<any[]>([]);
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [inspections, setInspections] = useState<any[]>([]);
+  const [report, setReport] = useState<VehicleReport[]>([]);
+
+  const monthStart = startOfMonth(month);
+  const monthEnd = endOfMonth(month);
+  const daysInMonth = differenceInDays(monthEnd, monthStart) + 1;
+
+  useEffect(() => {
+    loadData();
+  }, [month]);
+
+  const loadData = async () => {
+    setLoading(true);
+    const startStr = format(monthStart, "yyyy-MM-dd");
+    const endStr = format(monthEnd, "yyyy-MM-dd");
+
+    const [vRes, bRes, iRes] = await Promise.all([
+      supabase.from("vehicles").select("*"),
+      supabase.from("bookings").select("*")
+        .gte("pickup_date", startStr)
+        .lte("pickup_date", endStr),
+      supabase.from("vehicle_inspections").select("*")
+        .gte("created_at", `${startStr}T00:00:00`)
+        .lte("created_at", `${endStr}T23:59:59`),
+    ]);
+
+    const vehs = vRes.data || [];
+    const bks = bRes.data || [];
+    const insps = iRes.data || [];
+
+    setVehicles(vehs);
+    setBookings(bks);
+    setInspections(insps);
+
+    // Build per-vehicle report
+    const rpt: VehicleReport[] = vehs.map((v) => {
+      const vBookings = bks.filter((b: any) => b.vehicle_id === v.id);
+      const totalRevenue = vBookings.reduce((s: number, b: any) => s + (Number(b.total_price) || 0), 0);
+      const totalDays = vBookings.reduce((s: number, b: any) => {
+        const d = differenceInDays(parseISO(b.return_date), parseISO(b.pickup_date));
+        return s + Math.max(d, 1);
+      }, 0);
+      const vInsps = insps.filter((i: any) => {
+        const bk = bks.find((b: any) => b.id === i.booking_id);
+        return bk?.vehicle_id === v.id;
+      });
+      const damageCount = vInsps.reduce((s: number, i: any) => {
+        const dmgs = Array.isArray(i.damages) ? i.damages : [];
+        return s + dmgs.length;
+      }, 0);
+
+      return {
+        id: v.id,
+        name: v.name,
+        category: v.category,
+        image_url: v.image_url,
+        totalBookings: vBookings.length,
+        totalRevenue,
+        totalDays,
+        occupancyPct: Math.min(100, Math.round((totalDays / daysInMonth) * 100)),
+        damageCount,
+      };
+    });
+
+    rpt.sort((a, b) => b.totalRevenue - a.totalRevenue);
+    setReport(rpt);
+    setLoading(false);
+  };
+
+  // Aggregated metrics
+  const totalRevenue = report.reduce((s, r) => s + r.totalRevenue, 0);
+  const totalBookings = bookings.length;
+  const avgOccupancy = report.length ? Math.round(report.reduce((s, r) => s + r.occupancyPct, 0) / report.length) : 0;
+  const totalDamages = report.reduce((s, r) => s + r.damageCount, 0);
+
+  // Chart data
+  const revenueChartData = report
+    .filter((r) => r.totalRevenue > 0)
+    .slice(0, 10)
+    .map((r) => ({ name: r.name.length > 15 ? r.name.substring(0, 15) + "…" : r.name, revenue: r.totalRevenue }));
+
+  const occupancyChartData = report
+    .filter((r) => r.totalBookings > 0)
+    .slice(0, 10)
+    .map((r) => ({ name: r.name.length > 15 ? r.name.substring(0, 15) + "…" : r.name, occupancy: r.occupancyPct }));
+
+  const categoryData = Object.entries(
+    report.reduce((acc, r) => {
+      acc[r.category] = (acc[r.category] || 0) + r.totalRevenue;
+      return acc;
+    }, {} as Record<string, number>)
+  )
+    .filter(([_, v]) => v > 0)
+    .map(([name, value]) => ({ name, value }));
+
+  const damageRanking = [...report].filter((r) => r.damageCount > 0).sort((a, b) => b.damageCount - a.damageCount).slice(0, 10);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Relatório Mensal de Frota</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Análise de desempenho, utilização e avarias
+          </p>
+        </div>
+        <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setMonth(subMonths(month, 1))}>
+            <ChevronLeft size={16} />
+          </Button>
+          <span className="text-sm font-medium text-foreground px-3 min-w-[140px] text-center capitalize">
+            {format(month, "MMMM yyyy", { locale: ptBR })}
+          </span>
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setMonth(addMonths(month, 1))}>
+            <ChevronRight size={16} />
+          </Button>
+        </div>
+      </div>
+
+      {/* KPI Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card className="border-border/40">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <DollarSign size={18} className="text-primary" />
+              </div>
+              <div>
+                <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Receita Total</p>
+                <p className="text-xl font-bold text-foreground">${totalRevenue.toLocaleString()}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-border/40">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <CalendarDays size={18} className="text-primary" />
+              </div>
+              <div>
+                <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Reservas</p>
+                <p className="text-xl font-bold text-foreground">{totalBookings}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-border/40">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Percent size={18} className="text-primary" />
+              </div>
+              <div>
+                <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Ocupação Média</p>
+                <p className="text-xl font-bold text-foreground">{avgOccupancy}%</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-border/40">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-destructive/10">
+                <AlertTriangle size={18} className="text-destructive" />
+              </div>
+              <div>
+                <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Avarias</p>
+                <p className="text-xl font-bold text-foreground">{totalDamages}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Charts Row 1 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Revenue per vehicle */}
+        <Card className="border-border/40">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <TrendingUp size={16} className="text-primary" /> Receita por Veículo (Top 10)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {revenueChartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={revenueChartData} layout="vertical" margin={{ left: 0, right: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.3)" />
+                  <XAxis type="number" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v) => `$${v}`} />
+                  <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
+                  <Tooltip
+                    formatter={(v: number) => [`$${v.toLocaleString()}`, "Receita"]}
+                    contentStyle={{ backgroundColor: "hsl(var(--background))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
+                  />
+                  <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-10">Sem dados de receita neste mês</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Occupancy per vehicle */}
+        <Card className="border-border/40">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Car size={16} className="text-primary" /> Taxa de Ocupação (Top 10)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {occupancyChartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={occupancyChartData} layout="vertical" margin={{ left: 0, right: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.3)" />
+                  <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v) => `${v}%`} />
+                  <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
+                  <Tooltip
+                    formatter={(v: number) => [`${v}%`, "Ocupação"]}
+                    contentStyle={{ backgroundColor: "hsl(var(--background))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
+                  />
+                  <Bar dataKey="occupancy" fill="hsl(var(--chart-2, 160 60% 45%))" radius={[0, 4, 4, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-10">Sem dados de ocupação neste mês</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Charts Row 2 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Revenue by category */}
+        <Card className="border-border/40">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <DollarSign size={16} className="text-primary" /> Receita por Categoria
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {categoryData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={280}>
+                <PieChart>
+                  <Pie
+                    data={categoryData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={3}
+                    dataKey="value"
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {categoryData.map((_, i) => (
+                      <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(v: number) => [`$${v.toLocaleString()}`, "Receita"]}
+                    contentStyle={{ backgroundColor: "hsl(var(--background))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-10">Sem dados neste mês</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Damage ranking */}
+        <Card className="border-border/40">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <AlertTriangle size={16} className="text-destructive" /> Ranking de Avarias
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {damageRanking.length > 0 ? (
+              <div className="space-y-2">
+                {damageRanking.map((r, i) => (
+                  <div key={r.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/30 border border-border/20">
+                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                      i === 0 ? "bg-destructive/20 text-destructive" : i < 3 ? "bg-muted text-foreground" : "bg-muted/50 text-muted-foreground"
+                    }`}>
+                      {i + 1}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">{r.name}</p>
+                      <p className="text-[10px] text-muted-foreground">{r.category}</p>
+                    </div>
+                    <Badge variant="outline" className="border-destructive/30 text-destructive text-xs">
+                      {r.damageCount} avaria{r.damageCount > 1 ? "s" : ""}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-10 text-sm text-muted-foreground">
+                <AlertTriangle size={24} className="mx-auto mb-2 opacity-30" />
+                Nenhuma avaria registrada neste mês
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Full vehicle table */}
+      <Card className="border-border/40">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm">Desempenho Completo da Frota</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-border/40 text-muted-foreground">
+                  <th className="text-left py-2 pr-4">Veículo</th>
+                  <th className="text-left py-2 pr-4">Categoria</th>
+                  <th className="text-right py-2 pr-4">Reservas</th>
+                  <th className="text-right py-2 pr-4">Dias Locados</th>
+                  <th className="text-right py-2 pr-4">Ocupação</th>
+                  <th className="text-right py-2 pr-4">Receita</th>
+                  <th className="text-right py-2">Avarias</th>
+                </tr>
+              </thead>
+              <tbody>
+                {report.map((r) => (
+                  <tr key={r.id} className="border-b border-border/20 hover:bg-muted/20 transition-colors">
+                    <td className="py-2 pr-4 font-medium text-foreground">{r.name}</td>
+                    <td className="py-2 pr-4 text-muted-foreground">{r.category}</td>
+                    <td className="py-2 pr-4 text-right text-foreground">{r.totalBookings}</td>
+                    <td className="py-2 pr-4 text-right text-foreground">{r.totalDays}</td>
+                    <td className="py-2 pr-4 text-right">
+                      <span className={r.occupancyPct >= 70 ? "text-emerald-600 font-medium" : r.occupancyPct >= 40 ? "text-foreground" : "text-muted-foreground"}>
+                        {r.occupancyPct}%
+                      </span>
+                    </td>
+                    <td className="py-2 pr-4 text-right font-medium text-foreground">${r.totalRevenue.toLocaleString()}</td>
+                    <td className="py-2 text-right">
+                      {r.damageCount > 0 ? (
+                        <Badge variant="outline" className="border-destructive/30 text-destructive text-[10px]">{r.damageCount}</Badge>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

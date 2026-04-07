@@ -25,6 +25,7 @@ import AdminLive from "./pages/admin/AdminLive.tsx";
 import AdminInspection from "./pages/admin/AdminInspection.tsx";
 import AdminInspectionCompare from "./pages/admin/AdminInspectionCompare.tsx";
 import AdminVehicleHistory from "./pages/admin/AdminVehicleHistory.tsx";
+import AdminFleetReport from "./pages/admin/AdminFleetReport.tsx";
 import BookingConfirmed from "./pages/BookingConfirmed.tsx";
 
 const queryClient = new QueryClient();
@@ -60,6 +61,7 @@ const App = () => (
                 <Route path="inspection/:bookingId" element={<AdminInspection />} />
                 <Route path="inspection/compare/:bookingId" element={<AdminInspectionCompare />} />
                 <Route path="vehicle-history/:vehicleId" element={<AdminVehicleHistory />} />
+                <Route path="report" element={<AdminFleetReport />} />
               </Route>
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
