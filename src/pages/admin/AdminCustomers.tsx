@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, Plus, Pencil, Trash2, X, FileText, Upload, Camera, Loader2 } from "lucide-react";
+import { Search, Plus, Pencil, Trash2, X, FileText, Upload, Camera, Loader2, ExternalLink, Copy, Check } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 type Customer = {
@@ -143,12 +143,34 @@ export default function AdminCustomers() {
           <h1 className="text-2xl font-bold text-foreground tracking-tight">Clientes</h1>
           <p className="text-sm text-muted-foreground mt-1">{customers.length} clientes cadastrados</p>
         </div>
-        <button
-          onClick={() => { setEditing({ ...emptyCustomer }); setIsNew(true); }}
-          className="gold-gradient text-primary-foreground px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider flex items-center gap-2 hover:opacity-90 transition-opacity"
-        >
-          <Plus size={14} /> Adicionar
-        </button>
+        <div className="flex items-center gap-2">
+          <div className="relative group">
+            <button
+              onClick={() => window.open("/cadastro", "_blank")}
+              className="border border-border/40 bg-card text-foreground px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider flex items-center gap-2 hover:bg-muted/50 transition-colors"
+            >
+              <FileText size={14} /> Formulário de Cadastro
+              <ExternalLink size={12} className="text-muted-foreground" />
+            </button>
+            <button
+              onClick={() => {
+                const url = `${window.location.origin}/cadastro`;
+                navigator.clipboard.writeText(url);
+                toast({ title: "Link copiado!", description: url });
+              }}
+              className="absolute -right-2 -top-2 w-6 h-6 rounded-full bg-muted border border-border/40 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-background transition-colors opacity-0 group-hover:opacity-100"
+              title="Copiar link"
+            >
+              <Copy size={10} />
+            </button>
+          </div>
+          <button
+            onClick={() => { setEditing({ ...emptyCustomer }); setIsNew(true); }}
+            className="gold-gradient text-primary-foreground px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider flex items-center gap-2 hover:opacity-90 transition-opacity"
+          >
+            <Plus size={14} /> Adicionar
+          </button>
+        </div>
       </div>
 
       <div className="relative">
