@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Check, Upload, Camera, Loader2, User, Mail, Phone, FileText, MapPin, Calendar, Globe } from "lucide-react";
+import { PhoneInput } from "@/components/ui/phone-input";
 import zeusLogo from "@/assets/zeus-logo-hd.png";
 
 const CustomerRegistration = () => {
@@ -158,16 +159,24 @@ const CustomerRegistration = () => {
                 {label}
               </label>
               <div className="relative">
-                <input
-                  type={type}
-                  value={(form as any)[key]}
-                  onChange={(e) => {
-                    update(key, e.target.value);
-                    if (key === "zip_code") lookupCep(e.target.value);
-                  }}
-                  placeholder={placeholder}
-                  className="w-full h-10 px-3 rounded-lg border border-border/40 bg-card text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all"
-                />
+                {key === "phone" ? (
+                  <PhoneInput
+                    value={(form as any)[key]}
+                    onChange={(val) => update(key, val)}
+                    inputClassName="h-10 px-3 text-sm"
+                  />
+                ) : (
+                  <input
+                    type={type}
+                    value={(form as any)[key]}
+                    onChange={(e) => {
+                      update(key, e.target.value);
+                      if (key === "zip_code") lookupCep(e.target.value);
+                    }}
+                    placeholder={placeholder}
+                    className="w-full h-10 px-3 rounded-lg border border-border/40 bg-card text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all"
+                  />
+                )}
                 {key === "zip_code" && cepLoading && (
                   <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-primary animate-spin" />
                 )}
