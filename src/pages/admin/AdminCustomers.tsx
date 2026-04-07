@@ -202,11 +202,26 @@ export default function AdminCustomers() {
                   ref={fileRef}
                   type="file"
                   accept="image/*,.pdf"
+                  onChange={(e) => setLicenseFile(e.target.files?.[0] || null)}
+                  className="hidden"
+                />
+                <input
+                  id="cameraInput"
+                  type="file"
+                  accept="image/*"
                   capture="environment"
                   onChange={(e) => setLicenseFile(e.target.files?.[0] || null)}
                   className="hidden"
                 />
                 <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => document.getElementById("cameraInput")?.click()}
+                    className="h-9 px-3 rounded-lg border border-dashed border-border/50 bg-background/50 text-xs text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-2"
+                  >
+                    <Camera size={13} />
+                    Câmera
+                  </button>
                   <button
                     type="button"
                     onClick={() => fileRef.current?.click()}
