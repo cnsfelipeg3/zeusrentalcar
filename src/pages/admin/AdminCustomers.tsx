@@ -173,14 +173,52 @@ export default function AdminCustomers() {
               {fields.map((field) => (
                 <div key={field.key}>
                   <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">{field.label}</label>
-                  <input
-                    type={(field as any).type || "text"}
-                    value={(editing as any)[field.key] ?? ""}
-                    onChange={(e) => setEditing({ ...editing, [field.key]: e.target.value })}
-                    className="w-full h-9 px-3 rounded-lg border border-border/40 bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all"
-                  />
+                  <div className="relative">
+                    <input
+                      type={(field as any).type || "text"}
+                      value={(editing as any)[field.key] ?? ""}
+                      onChange={(e) => {
+                        setEditing({ ...editing, [field.key]: e.target.value });
+                        if (field.key === "zip_code") lookupCep(e.target.value);
+                      }}
+                      className="w-full h-9 px-3 rounded-lg border border-border/40 bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all"
+                    />
+                    {field.key === "zip_code" && cepLoading && (
+                      <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-primary animate-spin" />
+                    )}
+                  </div>
                 </div>
               ))}
+
+              {/* License file upload */}
+              <div>
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+                  Habilitação (CNH) — Foto ou PDF
+                </label>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*,.pdf"
+                  capture="environment"
+                  onChange={(e) => setLicenseFile(e.target.files?.[0] || null)}
+                  className="hidden"
+                />
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    className="flex-1 h-9 px-3 rounded-lg border border-dashed border-border/50 bg-background/50 text-xs text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all flex items-center gap-2"
+                  >
+                    <Upload size={13} />
+                    {licenseFile ? licenseFile.name : (editing as any).driver_license_file_url ? "Arquivo já anexado ✓" : "Anexar arquivo"}
+                  </button>
+                </div>
+                {(editing as any).driver_license_file_url && !licenseFile && (
+                  <a href={(editing as any).driver_license_file_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline mt-1 inline-block">
+                    Ver documento atual →
+                  </a>
+                )}
+              </div>
 
               <div>
                 <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Observações</label>
