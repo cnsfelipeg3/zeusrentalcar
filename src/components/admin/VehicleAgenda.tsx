@@ -140,19 +140,27 @@ export default function VehicleAgenda({ bookings }: { bookings: Booking[] }) {
 
               const bgClass =
                 type === "rented"
-                  ? "bg-amber-500/20 border-amber-500/40"
+                  ? "bg-amber-500/20"
                   : type === "reserved"
-                    ? "bg-red-500/15 border-red-500/30"
+                    ? "bg-red-500/15"
                     : type === "past"
-                      ? "bg-muted/50 border-border/30"
-                      : "bg-background border-border/20 hover:border-primary/30";
+                      ? "bg-muted/50"
+                      : "bg-background hover:bg-muted/30";
+
+              const borderClass = today_
+                ? "border-2 border-primary"
+                : type === "rented"
+                  ? "border border-amber-500/40"
+                  : type === "reserved"
+                    ? "border border-red-500/30"
+                    : type === "past"
+                      ? "border border-border/30"
+                      : "border border-border/20";
 
               return (
                 <div
                   key={day}
-                  className={`aspect-square p-1 sm:p-1.5 rounded-lg border-2 transition-colors relative group ${bgClass} ${
-                    today_ ? "border-primary shadow-[0_0_0_1px_hsl(var(--primary)/0.3)]" : ""
-                  }`}
+                  className={`aspect-square p-1 sm:p-1.5 rounded-lg transition-colors relative group ${bgClass} ${borderClass}`}
                 >
                   <span
                     className={`text-[10px] sm:text-xs font-medium ${
