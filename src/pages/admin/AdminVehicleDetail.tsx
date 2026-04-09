@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,6 +14,7 @@ import {
   Trash2, Activity, Heart, AlertCircle, Ban
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import VehicleAgenda from "@/components/admin/VehicleAgenda";
 
 // ─── Types ────────────────────────────────────────────────────────────
 type Vehicle = {
@@ -358,8 +359,9 @@ export default function AdminVehicleDetail() {
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="health" className="w-full">
+      <Tabs defaultValue="agenda" className="w-full">
         <TabsList className="bg-muted/50 flex-wrap h-auto gap-1 p-1">
+          <TabsTrigger value="agenda">Agenda</TabsTrigger>
           <TabsTrigger value="health">Saúde</TabsTrigger>
           <TabsTrigger value="expenses">Gastos</TabsTrigger>
           <TabsTrigger value="incidents">Ocorrências</TabsTrigger>
@@ -367,6 +369,11 @@ export default function AdminVehicleDetail() {
           <TabsTrigger value="history">Locações</TabsTrigger>
           <TabsTrigger value="details">Ficha Técnica</TabsTrigger>
         </TabsList>
+
+        {/* ── Agenda Tab ── */}
+        <TabsContent value="agenda" className="mt-4">
+          <VehicleAgenda bookings={bookings} />
+        </TabsContent>
 
         {/* ── Health Tab ── */}
         <TabsContent value="health" className="mt-4 space-y-4">
