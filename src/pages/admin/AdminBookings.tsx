@@ -850,6 +850,53 @@ export default function AdminBookings() {
                   </div>
                 </div>
               )}
+
+              {/* Date Range */}
+              <div>
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Período de Retirada</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button className={cn(
+                        "h-8 px-2.5 rounded-md border text-[10px] flex items-center gap-1.5 transition-colors w-full",
+                        filters.dateFrom ? "border-primary/30 text-primary" : "border-border/30 text-muted-foreground"
+                      )}>
+                        <CalendarIcon size={11} />
+                        {filters.dateFrom ? format(filters.dateFrom, "dd/MM/yy") : "De"}
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={filters.dateFrom}
+                        onSelect={(d) => setFilters({ ...filters, dateFrom: d })}
+                        className={cn("p-3 pointer-events-auto")}
+                        locale={ptBR}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button className={cn(
+                        "h-8 px-2.5 rounded-md border text-[10px] flex items-center gap-1.5 transition-colors w-full",
+                        filters.dateTo ? "border-primary/30 text-primary" : "border-border/30 text-muted-foreground"
+                      )}>
+                        <CalendarIcon size={11} />
+                        {filters.dateTo ? format(filters.dateTo, "dd/MM/yy") : "Até"}
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="end">
+                      <Calendar
+                        mode="single"
+                        selected={filters.dateTo}
+                        onSelect={(d) => setFilters({ ...filters, dateTo: d })}
+                        className={cn("p-3 pointer-events-auto")}
+                        locale={ptBR}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
             </div>
           </PopoverContent>
         </Popover>
