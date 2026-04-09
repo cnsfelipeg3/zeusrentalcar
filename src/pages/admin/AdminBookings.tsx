@@ -125,40 +125,47 @@ function CalendarView({ bookings, navigate }: { bookings: (Booking & { vehicle_n
           <div className="grid grid-cols-7">
             {cells.map((day, i) => {
               const dayBookings = day ? (bookingsByDay[day] || []) : [];
-              const showMax = 3;
+              const showMax = 2;
 
               return (
                 <div
                   key={i}
-                  className={`min-h-[100px] border-b border-r border-border/15 p-1.5 transition-colors ${
+                  className={`min-h-[110px] border-b border-r border-border/15 p-1.5 transition-colors ${
                     day ? "bg-card/50 hover:bg-muted/30" : "bg-muted/10"
                   } ${i % 7 === 0 ? "border-l-0" : ""}`}
                 >
                   {day && (
                     <>
-                      <div className={`text-xs font-medium mb-1 w-6 h-6 flex items-center justify-center rounded-full ${
+                      <div className={`text-xs font-medium mb-1.5 w-6 h-6 flex items-center justify-center rounded-full ${
                         isToday(day) ? "bg-primary text-primary-foreground" : "text-muted-foreground"
                       }`}>
                         {day}
                       </div>
-                      <div className="space-y-0.5">
+                      <div className="space-y-1">
                         {dayBookings.slice(0, showMax).map((b) => {
                           const sc = statusConfig[b.status] || statusConfig.pending;
                           const isPickup = new Date(b.pickup_date).getDate() === day && new Date(b.pickup_date).getMonth() === month;
                           const isReturn = new Date(b.return_date).getDate() === day && new Date(b.return_date).getMonth() === month;
+                          const vehicleShort = b.vehicle_name ? b.vehicle_name.split(" ").slice(0, 2).join(" ") : "";
+                          const customerFirst = b.customer_name.split(" ")[0];
                           return (
                             <div
                               key={b.id}
                               onClick={() => navigate(`/admin/bookings/${b.id}`)}
-                              className={`text-[9px] leading-tight px-1.5 py-1 rounded cursor-pointer truncate font-medium transition-colors hover:opacity-80 ${sc.calBg} ${sc.calText}`}
-                              title={`${b.customer_name} — ${sc.label}${isPickup ? " (Retirada)" : ""}${isReturn ? " (Devolução)" : ""}`}
+                              className={`text-[9px] leading-tight px-1.5 py-1 rounded-md cursor-pointer transition-all hover:scale-[1.02] hover:shadow-sm border ${sc.calBg} ${sc.calText} border-transparent hover:border-current/20`}
+                              title={`${b.vehicle_name || "—"} • ${b.customer_name} — ${sc.label}${isPickup ? " (Retirada)" : ""}${isReturn ? " (Devolução)" : ""}`}
                             >
-                              {isPickup && "→ "}{isReturn && "← "}{b.customer_name.split(" ")[0]}
+                              <div className="font-bold truncate">
+                                {isPickup && <span className="opacity-60">→ </span>}
+                                {isReturn && <span className="opacity-60">← </span>}
+                                {vehicleShort || "—"}
+                              </div>
+                              <div className="opacity-70 truncate">{customerFirst}</div>
                             </div>
                           );
                         })}
                         {dayBookings.length > showMax && (
-                          <div className="text-[9px] text-muted-foreground font-medium px-1.5">
+                          <div className="text-[9px] text-muted-foreground font-medium px-1.5 cursor-default">
                             +{dayBookings.length - showMax} mais
                           </div>
                         )}
