@@ -9,6 +9,8 @@ type Booking = {
   customer_name: string;
   pickup_date: string;
   return_date: string;
+  pickup_time: string | null;
+  return_time: string | null;
   pickup_location: string | null;
   return_location: string | null;
   total_price: number | null;
