@@ -716,27 +716,45 @@ export default function AdminBookings() {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">Reservas</h1>
-          <p className="text-sm text-muted-foreground mt-1">{bookings.length} reservas • {filtered.length} exibidas</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">Reservas</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">{bookings.length} reservas • {filtered.length} exibidas</p>
         </div>
-        {/* View toggle */}
-        <div className="flex items-center bg-muted/50 rounded-lg p-0.5 border border-border/30">
-          {viewModes.map(({ key, label, icon: Icon }) => (
-            <button
-              key={key}
-              onClick={() => setViewMode(key)}
-              className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md font-medium transition-all ${
-                viewMode === key
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Icon size={14} /> {label}
-            </button>
-          ))}
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Export */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="flex items-center gap-1.5 h-8 sm:h-9 px-3 rounded-lg border border-border/40 bg-card/50 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-border/60 transition-all">
+                <Download size={13} /> <span className="hidden sm:inline">Exportar</span>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[180px] p-1.5" align="end">
+              <button onClick={exportCSV} className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-md text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                <FileSpreadsheet size={14} /> Exportar CSV
+              </button>
+              <button onClick={exportPDF} className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-md text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                <FileText size={14} /> Exportar PDF
+              </button>
+            </PopoverContent>
+          </Popover>
+          {/* View toggle */}
+          <div className="flex items-center bg-muted/50 rounded-lg p-0.5 border border-border/30">
+            {viewModes.map(({ key, label, icon: Icon }) => (
+              <button
+                key={key}
+                onClick={() => setViewMode(key)}
+                className={`flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs px-2 sm:px-3 py-1.5 rounded-md font-medium transition-all ${
+                  viewMode === key
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Icon size={13} /> <span className="hidden sm:inline">{label}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
