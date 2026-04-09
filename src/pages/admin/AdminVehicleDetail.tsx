@@ -360,6 +360,7 @@ export default function AdminVehicleDetail() {
       {/* Tabs */}
       <Tabs defaultValue="health" className="w-full">
         <TabsList className="bg-muted/50 flex-wrap h-auto gap-1 p-1">
+          <TabsTrigger value="agenda">Agenda</TabsTrigger>
           <TabsTrigger value="health">Saúde</TabsTrigger>
           <TabsTrigger value="expenses">Gastos</TabsTrigger>
           <TabsTrigger value="incidents">Ocorrências</TabsTrigger>
