@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,57 +7,61 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ChevronLeft, Loader2, Car, DollarSign, Gauge, Calendar,
-  Users, Fuel, AlertTriangle, CheckCircle2, Clock,
+  Users, AlertTriangle, CheckCircle2, Clock,
   BarChart3, MapPin, FileText, Settings, Pencil, X,
-  TrendingUp, Hash, Palette, StickyNote, CalendarDays
+  Hash, Palette, StickyNote, CalendarDays,
+  Plus, Wrench, Shield, CircleAlert, TrendingDown, TrendingUp,
+  Trash2, Activity, Heart, AlertCircle, Ban
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
+// ─── Types ────────────────────────────────────────────────────────────
 type Vehicle = {
-  id: string;
-  name: string;
-  category: string;
-  daily_price_usd: number;
-  image_url: string | null;
-  passengers: number;
-  bags: number;
-  transmission: string;
-  fuel: string;
-  year: number | null;
-  status: string;
-  features: string[] | null;
-  purchase_price: number | null;
-  initial_odometer: number | null;
-  current_odometer: number | null;
-  acquired_date: string | null;
-  license_plate: string | null;
-  vin: string | null;
-  color: string | null;
-  notes: string | null;
+  id: string; name: string; category: string; daily_price_usd: number;
+  image_url: string | null; passengers: number; bags: number;
+  transmission: string; fuel: string; year: number | null; status: string;
+  features: string[] | null; purchase_price: number | null;
+  initial_odometer: number | null; current_odometer: number | null;
+  acquired_date: string | null; license_plate: string | null;
+  vin: string | null; color: string | null; notes: string | null;
+  created_at: string; engine_type: string | null; engine_size: string | null;
+  doors: number | null; insurance_policy: string | null;
+  insurance_expiry: string | null; registration_expiry: string | null;
+  last_service_date: string | null; next_service_km: number | null;
+  tire_condition: string | null; brake_condition: string | null;
+  battery_condition: string | null; body_condition: string | null;
+};
+
+type Expense = {
+  id: string; vehicle_id: string; type: string; amount: number;
+  expense_date: string; description: string | null; supplier: string | null;
+  is_recurring: boolean | null; created_at: string;
+};
+
+type Incident = {
+  id: string; vehicle_id: string; booking_id: string | null;
+  type: string; severity: string; status: string; title: string;
+  description: string | null; incident_date: string;
+  estimated_cost: number | null; actual_cost: number | null;
+  resolution_notes: string | null; resolved_at: string | null;
   created_at: string;
 };
 
 type BookingWithInspections = {
-  id: string;
-  customer_name: string;
-  customer_email: string | null;
-  pickup_date: string;
-  return_date: string;
-  pickup_location: string | null;
-  return_location: string | null;
-  total_price: number | null;
-  status: string;
-  created_at: string;
-  checkin?: any;
-  checkout?: any;
+  id: string; customer_name: string; customer_email: string | null;
+  pickup_date: string; return_date: string; pickup_location: string | null;
+  return_location: string | null; total_price: number | null;
+  status: string; created_at: string; checkin?: any; checkout?: any;
 };
 
-const statusConfig: Record<string, { label: string; color: string; dot: string }> = {
-  pending: { label: "Pendente", color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/30", dot: "bg-yellow-500" },
-  confirmed: { label: "Confirmada", color: "bg-blue-500/10 text-blue-500 border-blue-500/30", dot: "bg-blue-500" },
-  active: { label: "Ativa", color: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30", dot: "bg-emerald-500" },
-  completed: { label: "Concluída", color: "bg-muted text-muted-foreground border-border", dot: "bg-muted-foreground" },
-  cancelled: { label: "Cancelada", color: "bg-destructive/10 text-destructive border-destructive/30", dot: "bg-destructive" },
+// ─── Config Maps ──────────────────────────────────────────────────────
+const statusConfig: Record<string, { label: string; color: string }> = {
+  pending: { label: "Pendente", color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/30" },
+  confirmed: { label: "Confirmada", color: "bg-blue-500/10 text-blue-500 border-blue-500/30" },
+  active: { label: "Ativa", color: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30" },
+  in_progress: { label: "Em andamento", color: "bg-amber-500/10 text-amber-600 border-amber-500/30" },
+  completed: { label: "Concluída", color: "bg-muted text-muted-foreground border-border" },
+  cancelled: { label: "Cancelada", color: "bg-destructive/10 text-destructive border-destructive/30" },
 };
 
 const vehicleStatusConfig: Record<string, { label: string; color: string }> = {
@@ -67,41 +71,81 @@ const vehicleStatusConfig: Record<string, { label: string; color: string }> = {
   unavailable: { label: "Indisponível", color: "bg-destructive/15 text-destructive border-destructive/30" },
 };
 
+const expenseTypeLabels: Record<string, { label: string; icon: any }> = {
+  maintenance: { label: "Manutenção", icon: Wrench },
+  insurance: { label: "Seguro", icon: Shield },
+  fine: { label: "Multa", icon: AlertCircle },
+  fuel: { label: "Combustível", icon: Car },
+  documentation: { label: "Documentação", icon: FileText },
+  parts: { label: "Peças", icon: Settings },
+  cleaning: { label: "Limpeza", icon: Activity },
+  other: { label: "Outros", icon: DollarSign },
+};
+
+const incidentTypeLabels: Record<string, string> = {
+  accident: "Acidente", breakdown: "Quebra", theft: "Furto/Roubo",
+  vandalism: "Vandalismo", recall: "Recall", other: "Outros",
+};
+
+const severityLabels: Record<string, { label: string; color: string }> = {
+  low: { label: "Baixa", color: "bg-blue-500/10 text-blue-500" },
+  medium: { label: "Média", color: "bg-yellow-500/10 text-yellow-600" },
+  high: { label: "Alta", color: "bg-orange-500/10 text-orange-600" },
+  critical: { label: "Crítica", color: "bg-destructive/10 text-destructive" },
+};
+
+const incidentStatusLabels: Record<string, { label: string; color: string }> = {
+  open: { label: "Aberta", color: "bg-red-500/10 text-red-500" },
+  in_progress: { label: "Em andamento", color: "bg-amber-500/10 text-amber-600" },
+  resolved: { label: "Resolvida", color: "bg-emerald-500/10 text-emerald-600" },
+  closed: { label: "Fechada", color: "bg-muted text-muted-foreground" },
+};
+
+const conditionLabels: Record<string, { label: string; color: string }> = {
+  excellent: { label: "Excelente", color: "text-emerald-500" },
+  good: { label: "Bom", color: "text-blue-500" },
+  fair: { label: "Regular", color: "text-yellow-600" },
+  poor: { label: "Ruim", color: "text-orange-500" },
+  critical: { label: "Crítico", color: "text-destructive" },
+};
+
+// ─── Component ────────────────────────────────────────────────────────
 export default function AdminVehicleDetail() {
   const { vehicleId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [bookings, setBookings] = useState<BookingWithInspections[]>([]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [incidents, setIncidents] = useState<Incident[]>([]);
   const [editingDetails, setEditingDetails] = useState(false);
   const [editForm, setEditForm] = useState<Partial<Vehicle>>({});
+  const [showExpenseForm, setShowExpenseForm] = useState(false);
+  const [showIncidentForm, setShowIncidentForm] = useState(false);
+  const [expenseForm, setExpenseForm] = useState({ type: "maintenance", amount: 0, expense_date: new Date().toISOString().split("T")[0], description: "", supplier: "", is_recurring: false });
+  const [incidentForm, setIncidentForm] = useState({ type: "breakdown", severity: "low", title: "", description: "", incident_date: new Date().toISOString().split("T")[0], estimated_cost: 0 });
 
-  useEffect(() => {
-    loadData();
-  }, [vehicleId]);
+  useEffect(() => { loadData(); }, [vehicleId]);
 
   const loadData = async () => {
     if (!vehicleId) return;
     setLoading(true);
-
-    const [vRes, bRes, iRes] = await Promise.all([
+    const [vRes, bRes, iRes, eRes, incRes] = await Promise.all([
       supabase.from("vehicles").select("*").eq("id", vehicleId).single(),
       supabase.from("bookings").select("*").eq("vehicle_id", vehicleId).order("pickup_date", { ascending: false }),
       supabase.from("vehicle_inspections").select("*").order("created_at", { ascending: false }),
+      supabase.from("vehicle_expenses").select("*").eq("vehicle_id", vehicleId).order("expense_date", { ascending: false }),
+      supabase.from("vehicle_incidents").select("*").eq("vehicle_id", vehicleId).order("incident_date", { ascending: false }),
     ]);
-
-    if (vRes.data) {
-      setVehicle(vRes.data as Vehicle);
-      setEditForm(vRes.data as Vehicle);
-    }
-
+    if (vRes.data) { setVehicle(vRes.data as Vehicle); setEditForm(vRes.data as Vehicle); }
     const allInspections = iRes.data || [];
-    const enriched = (bRes.data || []).map((b: any) => ({
+    setBookings((bRes.data || []).map((b: any) => ({
       ...b,
       checkin: allInspections.find((i: any) => i.booking_id === b.id && i.type === "checkin"),
       checkout: allInspections.find((i: any) => i.booking_id === b.id && i.type === "checkout"),
-    }));
-    setBookings(enriched);
+    })));
+    setExpenses((eRes.data || []) as Expense[]);
+    setIncidents((incRes.data || []) as Incident[]);
     setLoading(false);
   };
 
@@ -116,277 +160,475 @@ export default function AdminVehicleDetail() {
       vin: editForm.vin || null,
       color: editForm.color || null,
       notes: editForm.notes || null,
+      engine_type: editForm.engine_type || null,
+      engine_size: editForm.engine_size || null,
+      doors: editForm.doors || 4,
+      insurance_policy: editForm.insurance_policy || null,
+      insurance_expiry: editForm.insurance_expiry || null,
+      registration_expiry: editForm.registration_expiry || null,
+      last_service_date: editForm.last_service_date || null,
+      next_service_km: editForm.next_service_km || null,
+      tire_condition: editForm.tire_condition || "good",
+      brake_condition: editForm.brake_condition || "good",
+      battery_condition: editForm.battery_condition || "good",
+      body_condition: editForm.body_condition || "good",
     }).eq("id", vehicle.id);
+    if (error) { toast({ title: "Erro ao salvar", variant: "destructive" }); }
+    else { toast({ title: "Dados atualizados!" }); setEditingDetails(false); loadData(); }
+  };
 
-    if (error) {
-      toast({ title: "Erro ao salvar", variant: "destructive" });
-    } else {
-      toast({ title: "Dados atualizados!" });
-      setEditingDetails(false);
+  const addExpense = async () => {
+    if (!vehicleId) return;
+    const { error } = await supabase.from("vehicle_expenses").insert({
+      vehicle_id: vehicleId, ...expenseForm,
+    } as any);
+    if (error) { toast({ title: "Erro ao adicionar gasto", variant: "destructive" }); }
+    else {
+      toast({ title: "Gasto registrado!" });
+      setShowExpenseForm(false);
+      setExpenseForm({ type: "maintenance", amount: 0, expense_date: new Date().toISOString().split("T")[0], description: "", supplier: "", is_recurring: false });
       loadData();
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
+  const deleteExpense = async (id: string) => {
+    if (!confirm("Excluir este gasto?")) return;
+    await supabase.from("vehicle_expenses").delete().eq("id", id);
+    toast({ title: "Gasto excluído" }); loadData();
+  };
 
-  if (!vehicle) {
-    return <p className="text-muted-foreground">Veículo não encontrado.</p>;
-  }
+  const addIncident = async () => {
+    if (!vehicleId || !incidentForm.title) { toast({ title: "Título obrigatório", variant: "destructive" }); return; }
+    const { error } = await supabase.from("vehicle_incidents").insert({
+      vehicle_id: vehicleId, ...incidentForm, status: "open",
+    } as any);
+    if (error) { toast({ title: "Erro ao abrir ocorrência", variant: "destructive" }); }
+    else {
+      toast({ title: "Ocorrência aberta!" });
+      setShowIncidentForm(false);
+      setIncidentForm({ type: "breakdown", severity: "low", title: "", description: "", incident_date: new Date().toISOString().split("T")[0], estimated_cost: 0 });
+      loadData();
+    }
+  };
 
-  // Computed stats
-  const completedBookings = bookings.filter((b) => b.status === "completed");
-  const totalRevenue = bookings.reduce((sum, b) => sum + (b.total_price || 0), 0);
-  const avgRevenue = completedBookings.length > 0 ? totalRevenue / completedBookings.length : 0;
-  const totalDays = bookings.reduce((sum, b) => {
-    const days = Math.ceil(
-      (new Date(b.return_date).getTime() - new Date(b.pickup_date).getTime()) / (1000 * 60 * 60 * 24)
-    );
-    return sum + Math.max(days, 1);
+  const updateIncidentStatus = async (id: string, status: string) => {
+    const update: any = { status };
+    if (status === "resolved" || status === "closed") update.resolved_at = new Date().toISOString();
+    await supabase.from("vehicle_incidents").update(update).eq("id", id);
+    toast({ title: "Status atualizado" }); loadData();
+  };
+
+  const deleteIncident = async (id: string) => {
+    if (!confirm("Excluir esta ocorrência?")) return;
+    await supabase.from("vehicle_incidents").delete().eq("id", id);
+    toast({ title: "Ocorrência excluída" }); loadData();
+  };
+
+  if (loading) return <div className="flex items-center justify-center min-h-[60vh]"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
+  if (!vehicle) return <p className="text-muted-foreground">Veículo não encontrado.</p>;
+
+  // ─── Computed ────────────────
+  const totalRevenue = bookings.reduce((s, b) => s + (b.total_price || 0), 0);
+  const totalExpenses = expenses.reduce((s, e) => s + (e.amount || 0), 0);
+  const totalIncidentCost = incidents.reduce((s, i) => s + (i.actual_cost || i.estimated_cost || 0), 0);
+  const totalCost = (vehicle.purchase_price || 0) + totalExpenses + totalIncidentCost;
+  const netProfit = totalRevenue - totalExpenses - totalIncidentCost;
+  const completedBookings = bookings.filter(b => b.status === "completed");
+  const totalDays = bookings.reduce((s, b) => {
+    const d = Math.ceil((new Date(b.return_date).getTime() - new Date(b.pickup_date).getTime()) / 86400000);
+    return s + Math.max(d, 1);
   }, 0);
+  const daysSinceAcquired = vehicle.acquired_date ? Math.ceil((Date.now() - new Date(vehicle.acquired_date).getTime()) / 86400000) : null;
+  const utilizationRate = daysSinceAcquired && daysSinceAcquired > 0 ? Math.min(((totalDays / daysSinceAcquired) * 100), 100).toFixed(1) : null;
 
   const inspectionsWithOdometer = bookings
-    .filter((b) => b.checkin?.odometer_reading || b.checkout?.odometer_reading)
+    .filter(b => b.checkin?.odometer_reading || b.checkout?.odometer_reading)
     .sort((a, b) => new Date(a.pickup_date).getTime() - new Date(b.pickup_date).getTime());
-
   const lastOdometer = inspectionsWithOdometer.length > 0
-    ? inspectionsWithOdometer[inspectionsWithOdometer.length - 1]?.checkout?.odometer_reading
-      || inspectionsWithOdometer[inspectionsWithOdometer.length - 1]?.checkin?.odometer_reading
+    ? inspectionsWithOdometer[inspectionsWithOdometer.length - 1]?.checkout?.odometer_reading || inspectionsWithOdometer[inspectionsWithOdometer.length - 1]?.checkin?.odometer_reading
     : vehicle.current_odometer;
   const kmTotal = lastOdometer && vehicle.initial_odometer ? lastOdometer - vehicle.initial_odometer : null;
 
-  const totalDamages = bookings.reduce((sum, b) => sum + ((b.checkout?.damages as any[])?.length || 0), 0);
-  const uniqueClients = new Set(bookings.map((b) => b.customer_email || b.customer_name)).size;
-
-  const daysSinceAcquired = vehicle.acquired_date
-    ? Math.ceil((Date.now() - new Date(vehicle.acquired_date).getTime()) / (1000 * 60 * 60 * 24))
-    : null;
-  const utilizationRate = daysSinceAcquired ? ((totalDays / daysSinceAcquired) * 100).toFixed(1) : null;
-
-  const roi = vehicle.purchase_price && vehicle.purchase_price > 0
-    ? ((totalRevenue / vehicle.purchase_price) * 100).toFixed(1)
-    : null;
+  const totalDamages = bookings.reduce((s, b) => s + ((b.checkout?.damages as any[])?.length || 0), 0);
+  const openIncidents = incidents.filter(i => i.status === "open" || i.status === "in_progress").length;
 
   const vs = vehicleStatusConfig[vehicle.status] || vehicleStatusConfig.unavailable;
 
-  // Timeline events
-  const timelineEvents: { date: string; icon: any; title: string; description: string; color: string }[] = [];
+  // Health score (0-100)
+  const conditionScore = (c: string | null) => ({ excellent: 100, good: 80, fair: 50, poor: 25, critical: 0 }[c || "good"] ?? 80);
+  const healthScore = Math.round(
+    (conditionScore(vehicle.tire_condition) + conditionScore(vehicle.brake_condition) +
+     conditionScore(vehicle.battery_condition) + conditionScore(vehicle.body_condition)) / 4
+  );
+  const healthColor = healthScore >= 80 ? "text-emerald-500" : healthScore >= 50 ? "text-yellow-600" : "text-destructive";
 
+  // Timeline
+  const timelineEvents: { date: string; icon: any; title: string; desc: string; color: string }[] = [];
   if (vehicle.acquired_date) {
-    timelineEvents.push({
-      date: vehicle.acquired_date,
-      icon: Car,
-      title: "Veículo adquirido",
-      description: `Entrou na frota com ${vehicle.initial_odometer?.toLocaleString("pt-BR") || 0} km${vehicle.purchase_price ? ` • Valor: $${vehicle.purchase_price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : ""}`,
-      color: "text-primary",
-    });
+    timelineEvents.push({ date: vehicle.acquired_date, icon: Car, title: "Veículo adquirido",
+      desc: `Entrou na frota com ${vehicle.initial_odometer?.toLocaleString("pt-BR") || 0} km${vehicle.purchase_price ? ` • $${vehicle.purchase_price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : ""}`,
+      color: "text-primary" });
   }
-
-  bookings
-    .sort((a, b) => new Date(a.pickup_date).getTime() - new Date(b.pickup_date).getTime())
-    .forEach((b) => {
-      const sc = statusConfig[b.status] || statusConfig.pending;
-      timelineEvents.push({
-        date: b.pickup_date,
-        icon: Calendar,
-        title: `Locação — ${b.customer_name}`,
-        description: `${new Date(b.pickup_date).toLocaleDateString("pt-BR")} → ${new Date(b.return_date).toLocaleDateString("pt-BR")}${b.total_price ? ` • $${b.total_price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : ""} • ${sc.label}`,
-        color: b.status === "completed" ? "text-emerald-500" : b.status === "active" ? "text-blue-500" : "text-muted-foreground",
-      });
-    });
-
+  bookings.sort((a, b) => new Date(a.pickup_date).getTime() - new Date(b.pickup_date).getTime()).forEach(b => {
+    const sc = statusConfig[b.status] || statusConfig.pending;
+    timelineEvents.push({ date: b.pickup_date, icon: Calendar, title: `Locação — ${b.customer_name}`,
+      desc: `${new Date(b.pickup_date).toLocaleDateString("pt-BR")} → ${new Date(b.return_date).toLocaleDateString("pt-BR")}${b.total_price ? ` • $${b.total_price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : ""} • ${sc.label}`,
+      color: b.status === "completed" ? "text-emerald-500" : b.status === "active" || b.status === "in_progress" ? "text-blue-500" : "text-muted-foreground" });
+  });
+  expenses.forEach(e => {
+    const et = expenseTypeLabels[e.type] || expenseTypeLabels.other;
+    timelineEvents.push({ date: e.expense_date, icon: et.icon, title: `${et.label} — $${e.amount.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`,
+      desc: e.description || e.supplier || "", color: "text-orange-500" });
+  });
+  incidents.forEach(i => {
+    timelineEvents.push({ date: i.incident_date, icon: AlertTriangle, title: i.title,
+      desc: `${incidentTypeLabels[i.type] || i.type} • ${severityLabels[i.severity]?.label || i.severity}`,
+      color: i.severity === "critical" || i.severity === "high" ? "text-destructive" : "text-yellow-600" });
+  });
   timelineEvents.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
       {/* Header */}
       <div className="flex items-start gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate("/admin/fleet")} className="mt-1">
-          <ChevronLeft size={20} />
-        </Button>
+        <Button variant="ghost" size="icon" onClick={() => navigate("/admin/fleet")} className="mt-1"><ChevronLeft size={20} /></Button>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-2xl font-bold text-foreground">{vehicle.name}</h1>
             <Badge variant="outline" className={vs.color}>{vs.label}</Badge>
+            {openIncidents > 0 && (
+              <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30 flex items-center gap-1">
+                <AlertTriangle size={11} /> {openIncidents} ocorrência(s) aberta(s)
+              </Badge>
+            )}
           </div>
           <p className="text-sm text-muted-foreground mt-1">
             {vehicle.category} • {vehicle.year} • {vehicle.transmission === "Automatic" ? "Automático" : "Manual"} • {vehicle.fuel}
-            {vehicle.color && ` • ${vehicle.color}`}
-            {vehicle.license_plate && ` • ${vehicle.license_plate}`}
+            {vehicle.color && ` • ${vehicle.color}`} {vehicle.license_plate && ` • ${vehicle.license_plate}`}
           </p>
         </div>
       </div>
 
-      {/* Vehicle image + info cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Image */}
-        {vehicle.image_url && (
-          <Card className="border-border/40 overflow-hidden lg:col-span-1">
-            <img src={vehicle.image_url} alt={vehicle.name} className="w-full h-48 lg:h-full object-cover" />
-          </Card>
-        )}
+      {/* KPI Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[
+          { icon: DollarSign, label: "Receita Total", value: `$${totalRevenue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`, sub: `${bookings.length} locações`, color: "text-emerald-500" },
+          { icon: TrendingDown, label: "Custo Total", value: `$${totalCost.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`, sub: `Compra + gastos + ocorrências`, color: "text-orange-500" },
+          { icon: netProfit >= 0 ? TrendingUp : TrendingDown, label: "Lucro Líquido", value: `$${netProfit.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`, sub: vehicle.purchase_price ? `ROI: ${((netProfit / vehicle.purchase_price) * 100).toFixed(1)}%` : "—", color: netProfit >= 0 ? "text-emerald-500" : "text-destructive" },
+          { icon: Heart, label: "Saúde do Veículo", value: `${healthScore}/100`, sub: healthScore >= 80 ? "Excelente estado" : healthScore >= 50 ? "Atenção necessária" : "Estado crítico", color: healthColor },
+        ].map((s, i) => {
+          const Icon = s.icon;
+          return (
+            <Card key={i} className="border-border/40">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Icon size={14} className={s.color} />
+                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">{s.label}</span>
+                </div>
+                <p className="text-lg font-bold text-foreground leading-tight">{s.value}</p>
+                <p className="text-[11px] text-muted-foreground mt-1">{s.sub}</p>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
 
-        {/* Key info */}
-        <div className={`${vehicle.image_url ? "lg:col-span-2" : "lg:col-span-3"} grid grid-cols-2 md:grid-cols-3 gap-3`}>
-          {[
-            { icon: DollarSign, label: "Valor de Compra", value: vehicle.purchase_price ? `$${vehicle.purchase_price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : "—", sub: roi ? `ROI: ${roi}%` : "Não informado" },
-            { icon: Gauge, label: "Odômetro Entrada", value: vehicle.initial_odometer ? `${vehicle.initial_odometer.toLocaleString("pt-BR")} km` : "—", sub: "Quando entrou na frota" },
-            { icon: Gauge, label: "Odômetro Atual", value: lastOdometer ? `${lastOdometer.toLocaleString("pt-BR")} km` : vehicle.current_odometer ? `${vehicle.current_odometer.toLocaleString("pt-BR")} km` : "—", sub: kmTotal ? `${kmTotal.toLocaleString("pt-BR")} km rodados` : "—" },
-            { icon: DollarSign, label: "Receita Total", value: `$${totalRevenue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`, sub: `Média $${avgRevenue.toFixed(0)}/locação` },
-            { icon: Calendar, label: "Na Frota Há", value: daysSinceAcquired ? `${daysSinceAcquired} dias` : "—", sub: utilizationRate ? `${utilizationRate}% ocupação` : "—" },
-            { icon: BarChart3, label: "Locações", value: bookings.length.toString(), sub: `${uniqueClients} clientes • ${totalDamages} avarias` },
-          ].map((s, i) => {
-            const Icon = s.icon;
-            return (
-              <Card key={i} className="border-border/40">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Icon size={14} className="text-primary" />
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">{s.label}</span>
-                  </div>
-                  <p className="text-lg font-bold text-foreground leading-tight">{s.value}</p>
-                  <p className="text-[11px] text-muted-foreground mt-1">{s.sub}</p>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+      {/* Secondary KPIs */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        {[
+          { icon: Gauge, label: "Odômetro Entrada", value: vehicle.initial_odometer ? `${vehicle.initial_odometer.toLocaleString("pt-BR")} km` : "—" },
+          { icon: Gauge, label: "Odômetro Atual", value: lastOdometer ? `${lastOdometer.toLocaleString("pt-BR")} km` : "—" },
+          { icon: Car, label: "Km Rodados", value: kmTotal ? `${kmTotal.toLocaleString("pt-BR")} km` : "—" },
+          { icon: Calendar, label: "Na Frota", value: daysSinceAcquired ? `${daysSinceAcquired} dias` : "—" },
+          { icon: BarChart3, label: "Ocupação", value: utilizationRate ? `${utilizationRate}%` : "—" },
+        ].map((s, i) => {
+          const Icon = s.icon;
+          return (
+            <Card key={i} className="border-border/40">
+              <CardContent className="p-3">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <Icon size={12} className="text-primary" />
+                  <span className="text-[9px] text-muted-foreground uppercase tracking-wider font-medium">{s.label}</span>
+                </div>
+                <p className="text-sm font-bold text-foreground">{s.value}</p>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="timeline" className="w-full">
-        <TabsList className="bg-muted/50">
+      <Tabs defaultValue="health" className="w-full">
+        <TabsList className="bg-muted/50 flex-wrap h-auto gap-1 p-1">
+          <TabsTrigger value="health">Saúde</TabsTrigger>
+          <TabsTrigger value="expenses">Gastos</TabsTrigger>
+          <TabsTrigger value="incidents">Ocorrências</TabsTrigger>
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
-          <TabsTrigger value="history">Histórico de Locações</TabsTrigger>
+          <TabsTrigger value="history">Locações</TabsTrigger>
           <TabsTrigger value="details">Ficha Técnica</TabsTrigger>
         </TabsList>
 
-        {/* Timeline */}
-        <TabsContent value="timeline" className="mt-4">
-          {timelineEvents.length === 0 ? (
+        {/* ── Health Tab ── */}
+        <TabsContent value="health" className="mt-4 space-y-4">
+          <Card className="border-border/40">
+            <CardContent className="p-6">
+              <h3 className="font-bold text-foreground flex items-center gap-2 mb-4">
+                <Heart size={16} className={healthColor} /> Condição Geral — {healthScore}/100
+              </h3>
+              <div className="w-full h-3 rounded-full bg-muted overflow-hidden mb-6">
+                <div className={`h-full rounded-full transition-all duration-700 ${healthScore >= 80 ? "bg-emerald-500" : healthScore >= 50 ? "bg-yellow-500" : "bg-destructive"}`}
+                  style={{ width: `${healthScore}%` }} />
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { label: "Pneus", key: "tire_condition" },
+                  { label: "Freios", key: "brake_condition" },
+                  { label: "Bateria", key: "battery_condition" },
+                  { label: "Carroceria", key: "body_condition" },
+                ].map(item => {
+                  const val = (vehicle as any)[item.key] || "good";
+                  const cl = conditionLabels[val] || conditionLabels.good;
+                  return (
+                    <div key={item.key} className="text-center p-4 rounded-lg border border-border/30 bg-card/50">
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">{item.label}</p>
+                      <p className={`text-sm font-bold ${cl.color}`}>{cl.label}</p>
+                      <div className="mt-2 w-full h-1.5 rounded-full bg-muted overflow-hidden">
+                        <div className={`h-full rounded-full ${conditionScore(val) >= 80 ? "bg-emerald-500" : conditionScore(val) >= 50 ? "bg-yellow-500" : "bg-destructive"}`}
+                          style={{ width: `${conditionScore(val)}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Maintenance info */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <Card className="border-border/40">
-              <CardContent className="p-8 text-center">
-                <Clock size={32} className="mx-auto text-muted-foreground mb-3" />
-                <p className="text-muted-foreground">Nenhum evento registrado.</p>
+              <CardContent className="p-4">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Última Revisão</p>
+                <p className="font-bold text-foreground">{vehicle.last_service_date ? new Date(vehicle.last_service_date).toLocaleDateString("pt-BR") : "—"}</p>
               </CardContent>
             </Card>
-          ) : (
-            <div className="relative pl-8">
-              <div className="absolute left-[15px] top-2 bottom-2 w-px bg-border" />
-              {timelineEvents.map((ev, i) => {
-                const Icon = ev.icon;
-                return (
-                  <div key={i} className="relative mb-6 last:mb-0">
-                    <div className={`absolute -left-8 w-8 h-8 rounded-full bg-background border-2 border-border flex items-center justify-center`}>
-                      <Icon size={14} className={ev.color} />
-                    </div>
-                    <div className="ml-4">
-                      <p className="text-[11px] text-muted-foreground mb-0.5">
-                        {new Date(ev.date).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}
-                      </p>
-                      <p className="font-semibold text-sm text-foreground">{ev.title}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{ev.description}</p>
-                    </div>
+            <Card className="border-border/40">
+              <CardContent className="p-4">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Próxima Revisão (km)</p>
+                <p className="font-bold text-foreground">{vehicle.next_service_km ? `${vehicle.next_service_km.toLocaleString("pt-BR")} km` : "—"}</p>
+              </CardContent>
+            </Card>
+            <Card className="border-border/40">
+              <CardContent className="p-4">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Avarias em Locações</p>
+                <p className="font-bold text-foreground">{totalDamages} registradas</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Quick stats */}
+          <Card className="border-border/40">
+            <CardContent className="p-6">
+              <h3 className="font-bold text-foreground mb-4">Resumo de Gastos por Categoria</h3>
+              {expenses.length === 0 ? <p className="text-sm text-muted-foreground">Nenhum gasto registrado.</p> : (
+                <div className="space-y-2">
+                  {Object.entries(expenses.reduce((acc, e) => { acc[e.type] = (acc[e.type] || 0) + e.amount; return acc; }, {} as Record<string, number>))
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([type, total]) => {
+                      const et = expenseTypeLabels[type] || expenseTypeLabels.other;
+                      const Icon = et.icon;
+                      const pct = totalExpenses > 0 ? (total / totalExpenses * 100) : 0;
+                      return (
+                        <div key={type} className="flex items-center gap-3">
+                          <Icon size={14} className="text-muted-foreground shrink-0" />
+                          <span className="text-xs text-foreground w-24">{et.label}</span>
+                          <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
+                            <div className="h-full rounded-full bg-primary/60" style={{ width: `${pct}%` }} />
+                          </div>
+                          <span className="text-xs font-bold text-foreground tabular-nums w-24 text-right">${total.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ── Expenses Tab ── */}
+        <TabsContent value="expenses" className="mt-4 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-bold text-foreground">Gastos do Veículo</h3>
+            <Button size="sm" onClick={() => setShowExpenseForm(true)} className="gold-gradient text-primary-foreground">
+              <Plus size={14} className="mr-1" /> Novo Gasto
+            </Button>
+          </div>
+
+          {/* Expense Form Modal */}
+          {showExpenseForm && (
+            <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => setShowExpenseForm(false)}>
+              <div className="bg-card rounded-xl border border-border/50 shadow-2xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-bold text-foreground">Registrar Gasto</h3>
+                  <button onClick={() => setShowExpenseForm(false)} className="text-muted-foreground hover:text-foreground"><X size={18} /></button>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Tipo</label>
+                    <select value={expenseForm.type} onChange={e => setExpenseForm({ ...expenseForm, type: e.target.value })} className="w-full h-9 px-3 rounded-lg border border-border/60 bg-background text-sm text-foreground">
+                      {Object.entries(expenseTypeLabels).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                    </select>
                   </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Valor (USD)</label>
+                    <input type="number" value={expenseForm.amount} onChange={e => setExpenseForm({ ...expenseForm, amount: Number(e.target.value) })} className="w-full h-9 px-3 rounded-lg border border-border/60 bg-background text-sm text-foreground" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Data</label>
+                    <input type="date" value={expenseForm.expense_date} onChange={e => setExpenseForm({ ...expenseForm, expense_date: e.target.value })} className="w-full h-9 px-3 rounded-lg border border-border/60 bg-background text-sm text-foreground" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Descrição</label>
+                    <input value={expenseForm.description} onChange={e => setExpenseForm({ ...expenseForm, description: e.target.value })} className="w-full h-9 px-3 rounded-lg border border-border/60 bg-background text-sm text-foreground" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Fornecedor</label>
+                    <input value={expenseForm.supplier} onChange={e => setExpenseForm({ ...expenseForm, supplier: e.target.value })} className="w-full h-9 px-3 rounded-lg border border-border/60 bg-background text-sm text-foreground" />
+                  </div>
+                  <label className="flex items-center gap-2 text-sm text-foreground">
+                    <input type="checkbox" checked={expenseForm.is_recurring} onChange={e => setExpenseForm({ ...expenseForm, is_recurring: e.target.checked })} className="rounded" />
+                    Gasto recorrente
+                  </label>
+                  <Button onClick={addExpense} className="w-full gold-gradient text-primary-foreground">Registrar</Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {expenses.length === 0 ? (
+            <Card className="border-border/40"><CardContent className="p-8 text-center"><DollarSign size={32} className="mx-auto text-muted-foreground mb-3" /><p className="text-muted-foreground">Nenhum gasto registrado.</p></CardContent></Card>
+          ) : (
+            <div className="space-y-2">
+              {expenses.map(e => {
+                const et = expenseTypeLabels[e.type] || expenseTypeLabels.other;
+                const Icon = et.icon;
+                return (
+                  <Card key={e.id} className="border-border/40">
+                    <CardContent className="p-4 flex items-center gap-4">
+                      <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0"><Icon size={16} className="text-primary" /></div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-foreground text-sm">{et.label}</span>
+                          {e.is_recurring && <Badge variant="outline" className="text-[9px]">Recorrente</Badge>}
+                        </div>
+                        <p className="text-xs text-muted-foreground truncate">{e.description || e.supplier || "—"}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-foreground">${e.amount.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
+                        <p className="text-[10px] text-muted-foreground">{new Date(e.expense_date).toLocaleDateString("pt-BR")}</p>
+                      </div>
+                      <button onClick={() => deleteExpense(e.id)} className="text-muted-foreground/30 hover:text-destructive transition-colors"><Trash2 size={14} /></button>
+                    </CardContent>
+                  </Card>
                 );
               })}
+              <div className="pt-2 border-t border-border/30 flex justify-between items-center">
+                <span className="text-sm font-medium text-muted-foreground">Total de Gastos</span>
+                <span className="text-lg font-bold text-foreground">${totalExpenses.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
+              </div>
             </div>
           )}
         </TabsContent>
 
-        {/* History */}
-        <TabsContent value="history" className="mt-4">
-          {bookings.length === 0 ? (
-            <Card className="border-border/40">
-              <CardContent className="p-8 text-center">
-                <Car size={32} className="mx-auto text-muted-foreground mb-3" />
-                <p className="text-muted-foreground">Nenhuma locação registrada.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-3">
-              {bookings.map((b) => {
-                const days = Math.ceil(
-                  (new Date(b.return_date).getTime() - new Date(b.pickup_date).getTime()) / (1000 * 60 * 60 * 24)
-                );
-                const sc = statusConfig[b.status] || { label: b.status, color: "bg-muted text-muted-foreground", dot: "bg-muted-foreground" };
-                const kmDriven = b.checkin?.odometer_reading && b.checkout?.odometer_reading
-                  ? b.checkout.odometer_reading - b.checkin.odometer_reading : null;
-                const checkoutDamages = (b.checkout?.damages as any[])?.length || 0;
+        {/* ── Incidents Tab ── */}
+        <TabsContent value="incidents" className="mt-4 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-bold text-foreground">Ocorrências</h3>
+            <Button size="sm" onClick={() => setShowIncidentForm(true)} className="bg-destructive/90 text-destructive-foreground hover:bg-destructive">
+              <Plus size={14} className="mr-1" /> Nova Ocorrência
+            </Button>
+          </div>
 
+          {/* Incident Form Modal */}
+          {showIncidentForm && (
+            <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => setShowIncidentForm(false)}>
+              <div className="bg-card rounded-xl border border-border/50 shadow-2xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-bold text-foreground">Abrir Ocorrência</h3>
+                  <button onClick={() => setShowIncidentForm(false)} className="text-muted-foreground hover:text-foreground"><X size={18} /></button>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Título</label>
+                    <input value={incidentForm.title} onChange={e => setIncidentForm({ ...incidentForm, title: e.target.value })} className="w-full h-9 px-3 rounded-lg border border-border/60 bg-background text-sm text-foreground" placeholder="Ex: Pneu furado na I-4" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Tipo</label>
+                      <select value={incidentForm.type} onChange={e => setIncidentForm({ ...incidentForm, type: e.target.value })} className="w-full h-9 px-3 rounded-lg border border-border/60 bg-background text-sm text-foreground">
+                        {Object.entries(incidentTypeLabels).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Severidade</label>
+                      <select value={incidentForm.severity} onChange={e => setIncidentForm({ ...incidentForm, severity: e.target.value })} className="w-full h-9 px-3 rounded-lg border border-border/60 bg-background text-sm text-foreground">
+                        {Object.entries(severityLabels).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Data</label>
+                    <input type="date" value={incidentForm.incident_date} onChange={e => setIncidentForm({ ...incidentForm, incident_date: e.target.value })} className="w-full h-9 px-3 rounded-lg border border-border/60 bg-background text-sm text-foreground" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Descrição</label>
+                    <textarea value={incidentForm.description} onChange={e => setIncidentForm({ ...incidentForm, description: e.target.value })} rows={3} className="w-full px-3 py-2 rounded-lg border border-border/60 bg-background text-sm text-foreground resize-none" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Custo Estimado (USD)</label>
+                    <input type="number" value={incidentForm.estimated_cost} onChange={e => setIncidentForm({ ...incidentForm, estimated_cost: Number(e.target.value) })} className="w-full h-9 px-3 rounded-lg border border-border/60 bg-background text-sm text-foreground" />
+                  </div>
+                  <Button onClick={addIncident} className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90">Abrir Ocorrência</Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {incidents.length === 0 ? (
+            <Card className="border-border/40"><CardContent className="p-8 text-center"><CheckCircle2 size={32} className="mx-auto text-emerald-500 mb-3" /><p className="text-muted-foreground">Nenhuma ocorrência registrada. Tudo certo!</p></CardContent></Card>
+          ) : (
+            <div className="space-y-2">
+              {incidents.map(inc => {
+                const sev = severityLabels[inc.severity] || severityLabels.low;
+                const st = incidentStatusLabels[inc.status] || incidentStatusLabels.open;
                 return (
-                  <Card
-                    key={b.id}
-                    className="border-border/40 hover:border-primary/20 transition-colors cursor-pointer"
-                    onClick={() => navigate(`/admin/bookings/${b.id}`)}
-                  >
+                  <Card key={inc.id} className="border-border/40">
                     <CardContent className="p-4">
-                      <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-                        <div className="flex-1 min-w-0 space-y-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-semibold text-foreground">{b.customer_name}</span>
-                            <Badge variant="outline" className={`text-[10px] ${sc.color}`}>{sc.label}</Badge>
-                          </div>
-                          <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
-                            <span className="flex items-center gap-1">
-                              <Calendar size={11} />
-                              {new Date(b.pickup_date).toLocaleDateString("pt-BR")} → {new Date(b.return_date).toLocaleDateString("pt-BR")}
-                            </span>
-                            <span>{days} dia(s)</span>
-                          </div>
-                          {(b.pickup_location || b.return_location) && (
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <MapPin size={11} />
-                              {b.pickup_location || "—"} → {b.return_location || b.pickup_location || "—"}
-                            </div>
-                          )}
+                      <div className="flex items-start gap-4">
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${sev.color}`}>
+                          <AlertTriangle size={16} />
                         </div>
-                        <div className="flex items-center gap-6 text-sm">
-                          <div className="text-center">
-                            <p className="text-[10px] text-muted-foreground">Valor</p>
-                            <p className="font-bold text-foreground">
-                              ${b.total_price?.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) || "—"}
-                            </p>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-semibold text-foreground text-sm">{inc.title}</span>
+                            <Badge variant="outline" className={`text-[9px] ${sev.color}`}>{sev.label}</Badge>
+                            <Badge variant="outline" className={`text-[9px] ${st.color}`}>{st.label}</Badge>
                           </div>
-                          {kmDriven !== null && (
-                            <div className="text-center">
-                              <p className="text-[10px] text-muted-foreground">Km</p>
-                              <p className="font-bold text-foreground">{kmDriven.toLocaleString("pt-BR")}</p>
-                            </div>
-                          )}
-                          {checkoutDamages > 0 && (
-                            <div className="text-center">
-                              <p className="text-[10px] text-muted-foreground">Avarias</p>
-                              <p className="font-bold text-destructive">{checkoutDamages}</p>
-                            </div>
-                          )}
+                          <p className="text-xs text-muted-foreground mt-0.5">{incidentTypeLabels[inc.type]} • {new Date(inc.incident_date).toLocaleDateString("pt-BR")}</p>
+                          {inc.description && <p className="text-xs text-muted-foreground mt-1">{inc.description}</p>}
+                          {inc.resolution_notes && <p className="text-xs text-emerald-600 mt-1">✓ {inc.resolution_notes}</p>}
+                        </div>
+                        <div className="text-right shrink-0">
+                          {(inc.estimated_cost || 0) > 0 && <p className="font-bold text-foreground text-sm">${(inc.actual_cost || inc.estimated_cost || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>}
                         </div>
                       </div>
-
-                      {/* Inspection row */}
-                      {(b.checkin || b.checkout) && (
-                        <div className="mt-3 pt-3 border-t border-border/20 flex items-center gap-4 text-[11px] text-muted-foreground flex-wrap">
-                          <span className="flex items-center gap-1">
-                            {b.checkin?.completed_at ? <CheckCircle2 size={12} className="text-emerald-500" /> : <Clock size={12} className="text-yellow-500" />}
-                            Entrega: {b.checkin?.completed_at ? "Finalizada" : b.checkin ? "Rascunho" : "Pendente"}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            {b.checkout?.completed_at ? <CheckCircle2 size={12} className="text-emerald-500" /> : <Clock size={12} className="text-yellow-500" />}
-                            Devolução: {b.checkout?.completed_at ? "Finalizada" : b.checkout ? "Rascunho" : "Pendente"}
-                          </span>
-                          {b.checkin?.odometer_reading && (
-                            <span>Odômetro: {b.checkin.odometer_reading.toLocaleString("pt-BR")} km</span>
-                          )}
-                          {b.checkout?.odometer_reading && (
-                            <span>→ {b.checkout.odometer_reading.toLocaleString("pt-BR")} km</span>
-                          )}
-                        </div>
-                      )}
+                      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border/20">
+                        <select value={inc.status} onChange={e => updateIncidentStatus(inc.id, e.target.value)}
+                          className={`text-[10px] font-semibold rounded-md px-2 py-1 border cursor-pointer ${st.color}`}>
+                          {Object.entries(incidentStatusLabels).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                        </select>
+                        <div className="flex-1" />
+                        <button onClick={() => deleteIncident(inc.id)} className="text-muted-foreground/30 hover:text-destructive transition-colors"><Trash2 size={13} /></button>
+                      </div>
                     </CardContent>
                   </Card>
                 );
@@ -395,80 +637,181 @@ export default function AdminVehicleDetail() {
           )}
         </TabsContent>
 
-        {/* Details / Ficha Técnica */}
+        {/* ── Timeline Tab ── */}
+        <TabsContent value="timeline" className="mt-4">
+          {timelineEvents.length === 0 ? (
+            <Card className="border-border/40"><CardContent className="p-8 text-center"><Clock size={32} className="mx-auto text-muted-foreground mb-3" /><p className="text-muted-foreground">Nenhum evento registrado.</p></CardContent></Card>
+          ) : (
+            <div className="relative pl-8">
+              <div className="absolute left-[15px] top-2 bottom-2 w-px bg-border" />
+              {timelineEvents.map((ev, i) => {
+                const Icon = ev.icon;
+                return (
+                  <div key={i} className="relative mb-6 last:mb-0">
+                    <div className="absolute -left-8 w-8 h-8 rounded-full bg-background border-2 border-border flex items-center justify-center"><Icon size={14} className={ev.color} /></div>
+                    <div className="ml-4">
+                      <p className="text-[11px] text-muted-foreground mb-0.5">{new Date(ev.date).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}</p>
+                      <p className="font-semibold text-sm text-foreground">{ev.title}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{ev.desc}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </TabsContent>
+
+        {/* ── History Tab ── */}
+        <TabsContent value="history" className="mt-4">
+          {bookings.length === 0 ? (
+            <Card className="border-border/40"><CardContent className="p-8 text-center"><Car size={32} className="mx-auto text-muted-foreground mb-3" /><p className="text-muted-foreground">Nenhuma locação registrada.</p></CardContent></Card>
+          ) : (
+            <div className="space-y-3">
+              {bookings.map(b => {
+                const days = Math.ceil((new Date(b.return_date).getTime() - new Date(b.pickup_date).getTime()) / 86400000);
+                const sc = statusConfig[b.status] || statusConfig.pending;
+                const kmDriven = b.checkin?.odometer_reading && b.checkout?.odometer_reading ? b.checkout.odometer_reading - b.checkin.odometer_reading : null;
+                return (
+                  <Card key={b.id} className="border-border/40 hover:border-primary/20 transition-colors cursor-pointer" onClick={() => navigate(`/admin/bookings/${b.id}`)}>
+                    <CardContent className="p-4">
+                      <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+                        <div className="flex-1 min-w-0 space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-semibold text-foreground">{b.customer_name}</span>
+                            <Badge variant="outline" className={`text-[10px] ${sc.color}`}>{sc.label}</Badge>
+                          </div>
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <span className="flex items-center gap-1"><Calendar size={11} />{new Date(b.pickup_date).toLocaleDateString("pt-BR")} → {new Date(b.return_date).toLocaleDateString("pt-BR")}</span>
+                            <span>{days} dia(s)</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-6 text-sm">
+                          <div className="text-center">
+                            <p className="text-[10px] text-muted-foreground">Valor</p>
+                            <p className="font-bold text-foreground">${b.total_price?.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) || "—"}</p>
+                          </div>
+                          {kmDriven !== null && <div className="text-center"><p className="text-[10px] text-muted-foreground">Km</p><p className="font-bold text-foreground">{kmDriven.toLocaleString("pt-BR")}</p></div>}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+        </TabsContent>
+
+        {/* ── Details / Ficha Técnica ── */}
         <TabsContent value="details" className="mt-4">
           <Card className="border-border/40">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="font-bold text-foreground flex items-center gap-2">
-                  <Settings size={16} className="text-primary" /> Ficha do Veículo
-                </h3>
+                <h3 className="font-bold text-foreground flex items-center gap-2"><Settings size={16} className="text-primary" /> Ficha Completa do Veículo</h3>
                 {!editingDetails ? (
-                  <Button variant="outline" size="sm" onClick={() => { setEditForm(vehicle); setEditingDetails(true); }}>
-                    <Pencil size={12} className="mr-1" /> Editar
-                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => { setEditForm(vehicle); setEditingDetails(true); }}><Pencil size={12} className="mr-1" /> Editar</Button>
                 ) : (
                   <div className="flex gap-2">
-                    <Button variant="ghost" size="sm" onClick={() => setEditingDetails(false)}>
-                      <X size={12} className="mr-1" /> Cancelar
-                    </Button>
-                    <Button size="sm" onClick={saveDetails} className="gold-gradient text-primary-foreground">
-                      Salvar
-                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => setEditingDetails(false)}><X size={12} className="mr-1" /> Cancelar</Button>
+                    <Button size="sm" onClick={saveDetails} className="gold-gradient text-primary-foreground">Salvar</Button>
                   </div>
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {[
-                  { icon: DollarSign, label: "Valor de Compra (USD)", key: "purchase_price", type: "number", format: (v: any) => v ? `$${Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : "—" },
-                  { icon: Gauge, label: "Odômetro na Aquisição (km)", key: "initial_odometer", type: "number", format: (v: any) => v ? `${Number(v).toLocaleString("pt-BR")} km` : "—" },
-                  { icon: Gauge, label: "Odômetro Atual (km)", key: "current_odometer", type: "number", format: (v: any) => v ? `${Number(v).toLocaleString("pt-BR")} km` : "—" },
-                  { icon: CalendarDays, label: "Data de Aquisição", key: "acquired_date", type: "date", format: (v: any) => v ? new Date(v).toLocaleDateString("pt-BR") : "—" },
-                  { icon: Hash, label: "Placa", key: "license_plate", type: "text", format: (v: any) => v || "—" },
-                  { icon: Hash, label: "Chassi (VIN)", key: "vin", type: "text", format: (v: any) => v || "—" },
-                  { icon: Palette, label: "Cor", key: "color", type: "text", format: (v: any) => v || "—" },
-                ].map((field) => {
-                  const Icon = field.icon;
-                  return (
-                    <div key={field.key} className="space-y-1">
-                      <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                        <Icon size={12} /> {field.label}
-                      </label>
-                      {editingDetails ? (
-                        <input
-                          type={field.type}
-                          value={(editForm as any)[field.key] ?? ""}
-                          onChange={(e) => setEditForm({ ...editForm, [field.key]: field.type === "number" ? Number(e.target.value) : e.target.value })}
-                          className="w-full h-9 px-3 rounded-lg border border-border/60 bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-                        />
-                      ) : (
-                        <p className="text-sm font-medium text-foreground">{field.format((vehicle as any)[field.key])}</p>
-                      )}
-                    </div>
-                  );
-                })}
-
-                <div className="md:col-span-2 space-y-1">
-                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                    <StickyNote size={12} /> Observações
-                  </label>
-                  {editingDetails ? (
-                    <textarea
-                      value={editForm.notes ?? ""}
-                      onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
-                      rows={3}
-                      className="w-full px-3 py-2 rounded-lg border border-border/60 bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
-                    />
-                  ) : (
-                    <p className="text-sm text-foreground">{vehicle.notes || "—"}</p>
-                  )}
-                </div>
+              {/* Identification */}
+              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 mt-2">Identificação</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                {renderField("Placa", "license_plate", "text")}
+                {renderField("Chassi (VIN)", "vin", "text")}
+                {renderField("Cor", "color", "text")}
               </div>
+
+              {/* Financial */}
+              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Financeiro</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                {renderField("Valor de Compra (USD)", "purchase_price", "number", v => v ? `$${Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : "—")}
+                {renderField("Data de Aquisição", "acquired_date", "date", v => v ? new Date(v).toLocaleDateString("pt-BR") : "—")}
+                {renderField("Apólice de Seguro", "insurance_policy", "text")}
+              </div>
+
+              {/* Odometer */}
+              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Odômetro</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                {renderField("Odômetro Aquisição (km)", "initial_odometer", "number", v => v ? `${Number(v).toLocaleString("pt-BR")} km` : "—")}
+                {renderField("Odômetro Atual (km)", "current_odometer", "number", v => v ? `${Number(v).toLocaleString("pt-BR")} km` : "—")}
+                {renderField("Próxima Revisão (km)", "next_service_km", "number", v => v ? `${Number(v).toLocaleString("pt-BR")} km` : "—")}
+              </div>
+
+              {/* Technical */}
+              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Mecânica</h4>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                {renderField("Motor", "engine_type", "text")}
+                {renderField("Cilindrada", "engine_size", "text")}
+                {renderField("Portas", "doors", "number")}
+                {renderField("Última Revisão", "last_service_date", "date", v => v ? new Date(v).toLocaleDateString("pt-BR") : "—")}
+              </div>
+
+              {/* Documents */}
+              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Documentação</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                {renderField("Vencimento Seguro", "insurance_expiry", "date", v => v ? new Date(v).toLocaleDateString("pt-BR") : "—")}
+                {renderField("Vencimento Registro", "registration_expiry", "date", v => v ? new Date(v).toLocaleDateString("pt-BR") : "—")}
+              </div>
+
+              {/* Condition */}
+              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Condição dos Componentes</h4>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                {renderConditionField("Pneus", "tire_condition")}
+                {renderConditionField("Freios", "brake_condition")}
+                {renderConditionField("Bateria", "battery_condition")}
+                {renderConditionField("Carroceria", "body_condition")}
+              </div>
+
+              {/* Notes */}
+              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Observações</h4>
+              {editingDetails ? (
+                <textarea value={editForm.notes ?? ""} onChange={e => setEditForm({ ...editForm, notes: e.target.value })} rows={3}
+                  className="w-full px-3 py-2 rounded-lg border border-border/60 bg-background text-sm text-foreground resize-none" />
+              ) : (
+                <p className="text-sm text-foreground">{vehicle.notes || "—"}</p>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
     </div>
   );
+
+  function renderField(label: string, key: string, type: string, format?: (v: any) => string) {
+    return (
+      <div className="space-y-1">
+        <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{label}</label>
+        {editingDetails ? (
+          <input type={type} value={(editForm as any)[key] ?? ""}
+            onChange={e => setEditForm({ ...editForm, [key]: type === "number" ? Number(e.target.value) : e.target.value })}
+            className="w-full h-9 px-3 rounded-lg border border-border/60 bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30" />
+        ) : (
+          <p className="text-sm font-medium text-foreground">{format ? format((vehicle as any)[key]) : ((vehicle as any)[key] || "—")}</p>
+        )}
+      </div>
+    );
+  }
+
+  function renderConditionField(label: string, key: string) {
+    const val = (vehicle as any)[key] || "good";
+    const cl = conditionLabels[val] || conditionLabels.good;
+    return (
+      <div className="space-y-1">
+        <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{label}</label>
+        {editingDetails ? (
+          <select value={(editForm as any)[key] || "good"}
+            onChange={e => setEditForm({ ...editForm, [key]: e.target.value })}
+            className="w-full h-9 px-3 rounded-lg border border-border/60 bg-background text-sm text-foreground">
+            {Object.entries(conditionLabels).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+          </select>
+        ) : (
+          <p className={`text-sm font-bold ${cl.color}`}>{cl.label}</p>
+        )}
+      </div>
+    );
+  }
 }

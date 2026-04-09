@@ -206,6 +206,128 @@ export type Database = {
         }
         Relationships: []
       }
+      vehicle_expenses: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          expense_date: string
+          id: string
+          is_recurring: boolean | null
+          receipt_url: string | null
+          supplier: string | null
+          type: Database["public"]["Enums"]["expense_type"]
+          updated_at: string
+          vehicle_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          expense_date?: string
+          id?: string
+          is_recurring?: boolean | null
+          receipt_url?: string | null
+          supplier?: string | null
+          type?: Database["public"]["Enums"]["expense_type"]
+          updated_at?: string
+          vehicle_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          expense_date?: string
+          id?: string
+          is_recurring?: boolean | null
+          receipt_url?: string | null
+          supplier?: string | null
+          type?: Database["public"]["Enums"]["expense_type"]
+          updated_at?: string
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_expenses_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vehicle_incidents: {
+        Row: {
+          actual_cost: number | null
+          booking_id: string | null
+          created_at: string
+          description: string | null
+          estimated_cost: number | null
+          id: string
+          incident_date: string
+          photos: Json | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          severity: Database["public"]["Enums"]["incident_severity"]
+          status: Database["public"]["Enums"]["incident_status"]
+          title: string
+          type: Database["public"]["Enums"]["incident_type"]
+          updated_at: string
+          vehicle_id: string
+        }
+        Insert: {
+          actual_cost?: number | null
+          booking_id?: string | null
+          created_at?: string
+          description?: string | null
+          estimated_cost?: number | null
+          id?: string
+          incident_date?: string
+          photos?: Json | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          severity?: Database["public"]["Enums"]["incident_severity"]
+          status?: Database["public"]["Enums"]["incident_status"]
+          title: string
+          type?: Database["public"]["Enums"]["incident_type"]
+          updated_at?: string
+          vehicle_id: string
+        }
+        Update: {
+          actual_cost?: number | null
+          booking_id?: string | null
+          created_at?: string
+          description?: string | null
+          estimated_cost?: number | null
+          id?: string
+          incident_date?: string
+          photos?: Json | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          severity?: Database["public"]["Enums"]["incident_severity"]
+          status?: Database["public"]["Enums"]["incident_status"]
+          title?: string
+          type?: Database["public"]["Enums"]["incident_type"]
+          updated_at?: string
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_incidents_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vehicle_incidents_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vehicle_inspections: {
         Row: {
           accessories_check: Json | null
@@ -272,22 +394,34 @@ export type Database = {
         Row: {
           acquired_date: string | null
           bags: number
+          battery_condition: string | null
+          body_condition: string | null
+          brake_condition: string | null
           category: string
           color: string | null
           created_at: string
           current_odometer: number | null
           daily_price_usd: number
+          doors: number | null
+          engine_size: string | null
+          engine_type: string | null
           features: string[] | null
           fuel: string
           id: string
           image_url: string | null
           initial_odometer: number | null
+          insurance_expiry: string | null
+          insurance_policy: string | null
+          last_service_date: string | null
           license_plate: string | null
           name: string
+          next_service_km: number | null
           notes: string | null
           passengers: number
           purchase_price: number | null
+          registration_expiry: string | null
           status: string
+          tire_condition: string | null
           transmission: string
           updated_at: string
           vin: string | null
@@ -296,22 +430,34 @@ export type Database = {
         Insert: {
           acquired_date?: string | null
           bags?: number
+          battery_condition?: string | null
+          body_condition?: string | null
+          brake_condition?: string | null
           category?: string
           color?: string | null
           created_at?: string
           current_odometer?: number | null
           daily_price_usd?: number
+          doors?: number | null
+          engine_size?: string | null
+          engine_type?: string | null
           features?: string[] | null
           fuel?: string
           id?: string
           image_url?: string | null
           initial_odometer?: number | null
+          insurance_expiry?: string | null
+          insurance_policy?: string | null
+          last_service_date?: string | null
           license_plate?: string | null
           name: string
+          next_service_km?: number | null
           notes?: string | null
           passengers?: number
           purchase_price?: number | null
+          registration_expiry?: string | null
           status?: string
+          tire_condition?: string | null
           transmission?: string
           updated_at?: string
           vin?: string | null
@@ -320,22 +466,34 @@ export type Database = {
         Update: {
           acquired_date?: string | null
           bags?: number
+          battery_condition?: string | null
+          body_condition?: string | null
+          brake_condition?: string | null
           category?: string
           color?: string | null
           created_at?: string
           current_odometer?: number | null
           daily_price_usd?: number
+          doors?: number | null
+          engine_size?: string | null
+          engine_type?: string | null
           features?: string[] | null
           fuel?: string
           id?: string
           image_url?: string | null
           initial_odometer?: number | null
+          insurance_expiry?: string | null
+          insurance_policy?: string | null
+          last_service_date?: string | null
           license_plate?: string | null
           name?: string
+          next_service_km?: number | null
           notes?: string | null
           passengers?: number
           purchase_price?: number | null
+          registration_expiry?: string | null
           status?: string
+          tire_condition?: string | null
           transmission?: string
           updated_at?: string
           vin?: string | null
@@ -358,6 +516,24 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      expense_type:
+        | "maintenance"
+        | "insurance"
+        | "fine"
+        | "fuel"
+        | "documentation"
+        | "parts"
+        | "cleaning"
+        | "other"
+      incident_severity: "low" | "medium" | "high" | "critical"
+      incident_status: "open" | "in_progress" | "resolved" | "closed"
+      incident_type:
+        | "accident"
+        | "breakdown"
+        | "theft"
+        | "vandalism"
+        | "recall"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -486,6 +662,26 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      expense_type: [
+        "maintenance",
+        "insurance",
+        "fine",
+        "fuel",
+        "documentation",
+        "parts",
+        "cleaning",
+        "other",
+      ],
+      incident_severity: ["low", "medium", "high", "critical"],
+      incident_status: ["open", "in_progress", "resolved", "closed"],
+      incident_type: [
+        "accident",
+        "breakdown",
+        "theft",
+        "vandalism",
+        "recall",
+        "other",
+      ],
     },
   },
 } as const
