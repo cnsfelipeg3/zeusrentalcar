@@ -535,6 +535,168 @@ export default function AdminBookings() {
     load();
   };
 
+  // ─── Export Functions ───────────────────────────────────────
+  const exportCSV = useCallback(() => {
+    const headers = ["Cliente", "E-mail", "Veículo", "Retirada", "Horário Ret.", "Devolução", "Horário Dev.", "Local Retirada", "Local Devolução", "Valor", "Status"];
+    const rows = filtered.map((b) => [
+      b.customer_name,
+      b.customer_email || "",
+      b.vehicle_name || "",
+      new Date(b.pickup_date).toLocaleDateString("pt-BR"),
+      b.pickup_time || "",
+      new Date(b.return_date).toLocaleDateString("pt-BR"),
+      b.return_time || "",
+      b.pickup_location || "",
+      b.return_location || "",
+      b.total_price?.toFixed(2) || "0",
+      statusConfig[b.status]?.label || b.status,
+    ]);
+    const csv = [headers, ...rows].map((r) => r.map((c) => `"${c}"`).join(",")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `zeus-reservas-${format(new Date(), "yyyy-MM-dd")}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast({ title: "CSV exportado com sucesso" });
+  }, [filtered]);
+
+  const exportPDF = useCallback(() => {
+    const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+
+    // Header background
+    doc.setFillColor(26, 26, 26);
+    doc.rect(0, 0, pageW, 28, "F");
+
+    // Gold accent line
+    doc.setFillColor(196, 160, 56);
+    doc.rect(0, 28, pageW, 1.5, "F");
+
+    // Zeus branding
+    doc.setTextColor(196, 160, 56);
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("ZEUS RENTAL CAR", 15, 14);
+
+    doc.setTextColor(180, 180, 180);
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    doc.text("Relatório de Reservas", 15, 21);
+
+    // Date & filter info
+    doc.setTextColor(140, 140, 140);
+    doc.setFontSize(7);
+    doc.text(`Gerado em: ${format(new Date(), "dd/MM/yyyy 'às' HH:mm")}`, pageW - 15, 14, { align: "right" });
+    doc.text(`${filtered.length} reservas filtradas de ${bookings.length} total`, pageW - 15, 20, { align: "right" });
+
+    // Table header
+    const startY = 36;
+    const cols = [
+      { label: "Cliente", w: 40 },
+      { label: "Veículo", w: 35 },
+      { label: "Retirada", w: 25 },
+      { label: "Hr. Ret.", w: 15 },
+      { label: "Devolução", w: 25 },
+      { label: "Hr. Dev.", w: 15 },
+      { label: "Local Retirada", w: 40 },
+      { label: "Local Devolução", w: 40 },
+      { label: "Valor", w: 20 },
+      { label: "Status", w: 22 },
+    ];
+    let xOffset = 10;
+
+    // Header row
+    doc.setFillColor(40, 40, 40);
+    doc.rect(10, startY, pageW - 20, 8, "F");
+    doc.setTextColor(196, 160, 56);
+    doc.setFontSize(6.5);
+    doc.setFont("helvetica", "bold");
+    cols.forEach((col) => {
+      doc.text(col.label.toUpperCase(), xOffset + 1.5, startY + 5.5);
+      xOffset += col.w;
+    });
+
+    // Data rows
+    let y = startY + 8;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(6.5);
+
+    filtered.forEach((b, i) => {
+      if (y > pageH - 20) {
+        doc.addPage();
+        y = 15;
+        // Re-draw header on new page
+        doc.setFillColor(40, 40, 40);
+        doc.rect(10, y, pageW - 20, 8, "F");
+        doc.setTextColor(196, 160, 56);
+        doc.setFont("helvetica", "bold");
+        let xH = 10;
+        cols.forEach((col) => {
+          doc.text(col.label.toUpperCase(), xH + 1.5, y + 5.5);
+          xH += col.w;
+        });
+        doc.setFont("helvetica", "normal");
+        y += 8;
+      }
+
+      // Alternating row bg
+      if (i % 2 === 0) {
+        doc.setFillColor(245, 245, 245);
+        doc.rect(10, y, pageW - 20, 7, "F");
+      }
+
+      doc.setTextColor(50, 50, 50);
+      xOffset = 10;
+      const vals = [
+        b.customer_name,
+        b.vehicle_name || "—",
+        new Date(b.pickup_date).toLocaleDateString("pt-BR"),
+        b.pickup_time || "—",
+        new Date(b.return_date).toLocaleDateString("pt-BR"),
+        b.return_time || "—",
+        b.pickup_location || "—",
+        b.return_location || "—",
+        `$${(b.total_price || 0).toFixed(2)}`,
+        statusConfig[b.status]?.label || b.status,
+      ];
+      vals.forEach((val, ci) => {
+        const truncated = val.length > Math.floor(cols[ci].w / 2) ? val.substring(0, Math.floor(cols[ci].w / 2)) + "…" : val;
+        doc.text(truncated, xOffset + 1.5, y + 4.8);
+        xOffset += cols[ci].w;
+      });
+      y += 7;
+    });
+
+    // Footer
+    const totalRevenue = filtered.reduce((s, b) => s + (b.total_price || 0), 0);
+    y += 5;
+    if (y > pageH - 15) { doc.addPage(); y = 15; }
+    doc.setFillColor(26, 26, 26);
+    doc.rect(10, y, pageW - 20, 10, "F");
+    doc.setTextColor(196, 160, 56);
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "bold");
+    doc.text("TOTAL", 15, y + 6.5);
+    doc.text(`$${totalRevenue.toLocaleString("en-US", { minimumFractionDigits: 2 })}`, pageW - 15, y + 6.5, { align: "right" });
+
+    // Page footer
+    const totalPages = doc.getNumberOfPages();
+    for (let p = 1; p <= totalPages; p++) {
+      doc.setPage(p);
+      doc.setTextColor(160, 160, 160);
+      doc.setFontSize(6);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Zeus Rental Car — zeusrentalcar.com`, 15, pageH - 5);
+      doc.text(`Página ${p} de ${totalPages}`, pageW - 15, pageH - 5, { align: "right" });
+    }
+
+    doc.save(`zeus-reservas-${format(new Date(), "yyyy-MM-dd")}.pdf`);
+    toast({ title: "PDF exportado com sucesso" });
+  }, [filtered, bookings.length]);
+
   const viewModes = [
     { key: "table" as const, label: "Lista", icon: List },
     { key: "calendar" as const, label: "Mês", icon: CalendarDays },
