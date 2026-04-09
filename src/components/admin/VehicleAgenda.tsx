@@ -18,7 +18,7 @@ type Booking = {
 };
 
 const statusColors: Record<string, { bg: string; text: string; label: string }> = {
-  pending: { bg: "bg-yellow-500/15", text: "text-yellow-600", label: "Pendente" },
+  pending: { bg: "bg-red-500/10", text: "text-red-400", label: "Pendente" },
   confirmed: { bg: "bg-red-500/15", text: "text-red-500", label: "Reservada" },
   active: { bg: "bg-emerald-500/15", text: "text-emerald-600", label: "Ativa" },
   in_progress: { bg: "bg-amber-500/15", text: "text-amber-600", label: "Em andamento" },
