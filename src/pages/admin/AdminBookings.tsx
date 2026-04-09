@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, Trash2, LogIn, LogOut, GitCompare, CalendarDays, List, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Trash2, LogIn, LogOut, GitCompare, CalendarDays, List, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -13,6 +13,8 @@ type Booking = {
   customer_id: string | null;
   pickup_date: string;
   return_date: string;
+  pickup_time: string | null;
+  return_time: string | null;
   pickup_location: string | null;
   return_location: string | null;
   total_price: number | null;
@@ -25,13 +27,13 @@ type Booking = {
   vehicle_name?: string;
 };
 
-const statusConfig: Record<string, { label: string; color: string; calBg: string; calText: string }> = {
-  pending: { label: "Pendente", color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20", calBg: "bg-yellow-500/15", calText: "text-yellow-700 dark:text-yellow-400" },
-  confirmed: { label: "Confirmada", color: "bg-blue-500/10 text-blue-500 border-blue-500/20", calBg: "bg-blue-500/15", calText: "text-blue-700 dark:text-blue-400" },
-  active: { label: "Ativa", color: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20", calBg: "bg-emerald-500/15", calText: "text-emerald-700 dark:text-emerald-400" },
-  in_progress: { label: "Em andamento", color: "bg-amber-500/10 text-amber-600 border-amber-500/20", calBg: "bg-amber-500/15", calText: "text-amber-700 dark:text-amber-400" },
-  completed: { label: "Concluída", color: "bg-muted text-muted-foreground border-border/30", calBg: "bg-muted", calText: "text-muted-foreground" },
-  cancelled: { label: "Cancelada", color: "bg-red-500/10 text-red-500 border-red-500/20", calBg: "bg-red-500/10", calText: "text-red-600 dark:text-red-400" },
+const statusConfig: Record<string, { label: string; color: string; calBg: string; calText: string; accent: string }> = {
+  pending:     { label: "Pendente",       color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20", calBg: "bg-yellow-500/15", calText: "text-yellow-700 dark:text-yellow-400", accent: "border-l-yellow-500" },
+  confirmed:   { label: "Confirmada",     color: "bg-blue-500/10 text-blue-500 border-blue-500/20",       calBg: "bg-blue-500/15",   calText: "text-blue-700 dark:text-blue-400",     accent: "border-l-blue-500" },
+  active:      { label: "Ativa",          color: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20", calBg: "bg-emerald-500/15", calText: "text-emerald-700 dark:text-emerald-400", accent: "border-l-emerald-500" },
+  in_progress: { label: "Em andamento",   color: "bg-amber-500/10 text-amber-600 border-amber-500/20",    calBg: "bg-amber-500/15",  calText: "text-amber-700 dark:text-amber-400",   accent: "border-l-amber-500" },
+  completed:   { label: "Concluída",      color: "bg-muted text-muted-foreground border-border/30",       calBg: "bg-muted",          calText: "text-muted-foreground",                accent: "border-l-muted-foreground/40" },
+  cancelled:   { label: "Cancelada",      color: "bg-red-500/10 text-red-500 border-red-500/20",          calBg: "bg-red-500/10",     calText: "text-red-600 dark:text-red-400",       accent: "border-l-red-500" },
 };
 
 function getBookingProgress(pickupDate: string, returnDate: string, status: string): number {
@@ -46,8 +48,10 @@ function getBookingProgress(pickupDate: string, returnDate: string, status: stri
 }
 
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+const WEEKDAYS_FULL = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
 
-function CalendarView({ bookings, navigate }: { bookings: (Booking & { vehicle_name?: string })[]; navigate: (path: string) => void }) {
+// ─── Monthly Calendar ───────────────────────────────────────
+function CalendarView({ bookings, navigate }: { bookings: Booking[]; navigate: (path: string) => void }) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const year = currentDate.getFullYear();
@@ -62,13 +66,11 @@ function CalendarView({ bookings, navigate }: { bookings: (Booking & { vehicle_n
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
   const goToday = () => setCurrentDate(new Date());
 
-  // Map bookings to days they span
   const bookingsByDay = useMemo(() => {
     const map: Record<number, Booking[]> = {};
     bookings.forEach((b) => {
       const pickup = new Date(b.pickup_date);
       const ret = new Date(b.return_date);
-      // Check each day in month
       for (let d = 1; d <= daysInMonth; d++) {
         const date = new Date(year, month, d);
         if (date >= new Date(pickup.getFullYear(), pickup.getMonth(), pickup.getDate()) &&
@@ -91,7 +93,6 @@ function CalendarView({ bookings, navigate }: { bookings: (Booking & { vehicle_n
 
   return (
     <div className="space-y-4">
-      {/* Month nav */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <button onClick={prevMonth} className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
@@ -109,10 +110,8 @@ function CalendarView({ bookings, navigate }: { bookings: (Booking & { vehicle_n
         </button>
       </div>
 
-      {/* Calendar grid */}
       <Card className="border-border/30 overflow-hidden">
         <CardContent className="p-0">
-          {/* Header */}
           <div className="grid grid-cols-7 border-b border-border/30 bg-muted/20">
             {WEEKDAYS.map((wd) => (
               <div key={wd} className="px-2 py-2.5 text-center text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
@@ -121,7 +120,6 @@ function CalendarView({ bookings, navigate }: { bookings: (Booking & { vehicle_n
             ))}
           </div>
 
-          {/* Days */}
           <div className="grid grid-cols-7">
             {cells.map((day, i) => {
               const dayBookings = day ? (bookingsByDay[day] || []) : [];
@@ -132,7 +130,7 @@ function CalendarView({ bookings, navigate }: { bookings: (Booking & { vehicle_n
                   key={i}
                   className={`min-h-[110px] border-b border-r border-border/15 p-1.5 transition-colors ${
                     day ? "bg-card/50 hover:bg-muted/30" : "bg-muted/10"
-                  } ${i % 7 === 0 ? "border-l-0" : ""}`}
+                  }`}
                 >
                   {day && (
                     <>
@@ -148,19 +146,23 @@ function CalendarView({ bookings, navigate }: { bookings: (Booking & { vehicle_n
                           const isReturn = new Date(b.return_date).getDate() === day && new Date(b.return_date).getMonth() === month;
                           const vehicleShort = b.vehicle_name ? b.vehicle_name.split(" ").slice(0, 2).join(" ") : "";
                           const customerFirst = b.customer_name.split(" ")[0];
+                          const time = isPickup ? b.pickup_time : isReturn ? b.return_time : null;
                           return (
                             <div
                               key={b.id}
                               onClick={() => navigate(`/admin/bookings/${b.id}`)}
                               className={`text-[9px] leading-tight px-1.5 py-1 rounded-md cursor-pointer transition-all hover:scale-[1.02] hover:shadow-sm border ${sc.calBg} ${sc.calText} border-transparent hover:border-current/20`}
-                              title={`${b.vehicle_name || "—"} • ${b.customer_name} — ${sc.label}${isPickup ? " (Retirada)" : ""}${isReturn ? " (Devolução)" : ""}`}
+                              title={`${b.vehicle_name || "—"} • ${b.customer_name} — ${sc.label}${isPickup ? ` (Retirada ${b.pickup_time || ""})` : ""}${isReturn ? ` (Devolução ${b.return_time || ""})` : ""}`}
                             >
                               <div className="font-bold truncate">
                                 {isPickup && <span className="opacity-60">→ </span>}
                                 {isReturn && <span className="opacity-60">← </span>}
                                 {vehicleShort || "—"}
                               </div>
-                              <div className="opacity-70 truncate">{customerFirst}</div>
+                              <div className="opacity-70 truncate flex items-center gap-0.5">
+                                {customerFirst}
+                                {time && <span className="ml-auto opacity-60">{time}</span>}
+                              </div>
                             </div>
                           );
                         })}
@@ -179,29 +181,227 @@ function CalendarView({ bookings, navigate }: { bookings: (Booking & { vehicle_n
         </CardContent>
       </Card>
 
-      {/* Legend */}
-      <div className="flex flex-wrap gap-3 text-[10px]">
-        {Object.entries(statusConfig).map(([key, val]) => (
-          <div key={key} className="flex items-center gap-1.5">
-            <div className={`w-2.5 h-2.5 rounded-sm ${val.calBg}`} />
-            <span className="text-muted-foreground">{val.label}</span>
-          </div>
-        ))}
-        <div className="flex items-center gap-1.5 ml-2 text-muted-foreground">
-          <span>→ Retirada</span> <span>← Devolução</span>
+      <CalendarLegend />
+    </div>
+  );
+}
+
+// ─── Weekly Calendar ───────────────────────────────────────
+function WeeklyView({ bookings, navigate }: { bookings: Booking[]; navigate: (path: string) => void }) {
+  const [weekStart, setWeekStart] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - d.getDay()); // start on Sunday
+    d.setHours(0, 0, 0, 0);
+    return d;
+  });
+
+  const weekDays = useMemo(() => {
+    const days: Date[] = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(weekStart);
+      d.setDate(d.getDate() + i);
+      days.push(d);
+    }
+    return days;
+  }, [weekStart]);
+
+  const prevWeek = () => {
+    const d = new Date(weekStart);
+    d.setDate(d.getDate() - 7);
+    setWeekStart(d);
+  };
+  const nextWeek = () => {
+    const d = new Date(weekStart);
+    d.setDate(d.getDate() + 7);
+    setWeekStart(d);
+  };
+  const goToday = () => {
+    const d = new Date();
+    d.setDate(d.getDate() - d.getDay());
+    d.setHours(0, 0, 0, 0);
+    setWeekStart(d);
+  };
+
+  const bookingsByDay = useMemo(() => {
+    const map: Record<string, { booking: Booking; isPickup: boolean; isReturn: boolean; isMid: boolean }[]> = {};
+    weekDays.forEach((day) => {
+      const key = day.toISOString().slice(0, 10);
+      map[key] = [];
+    });
+
+    bookings.forEach((b) => {
+      const pickup = new Date(b.pickup_date + "T00:00:00");
+      const ret = new Date(b.return_date + "T00:00:00");
+
+      weekDays.forEach((day) => {
+        const dayMs = day.getTime();
+        const pickupMs = new Date(pickup.getFullYear(), pickup.getMonth(), pickup.getDate()).getTime();
+        const retMs = new Date(ret.getFullYear(), ret.getMonth(), ret.getDate()).getTime();
+
+        if (dayMs >= pickupMs && dayMs <= retMs) {
+          const key = day.toISOString().slice(0, 10);
+          map[key].push({
+            booking: b,
+            isPickup: dayMs === pickupMs,
+            isReturn: dayMs === retMs,
+            isMid: dayMs > pickupMs && dayMs < retMs,
+          });
+        }
+      });
+    });
+    return map;
+  }, [bookings, weekDays]);
+
+  const today = new Date();
+  const todayStr = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString().slice(0, 10);
+
+  const weekEnd = weekDays[6];
+  const rangeLabel = `${weekDays[0].toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })} — ${weekEnd.toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}`;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <button onClick={prevWeek} className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
+            <ChevronLeft size={16} />
+          </button>
+          <h2 className="text-lg font-bold text-foreground min-w-[220px] text-center">
+            {rangeLabel}
+          </h2>
+          <button onClick={nextWeek} className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
+            <ChevronRight size={16} />
+          </button>
         </div>
+        <button onClick={goToday} className="text-xs px-3 py-1.5 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-medium">
+          Hoje
+        </button>
+      </div>
+
+      <div className="grid grid-cols-7 gap-3">
+        {weekDays.map((day, i) => {
+          const key = day.toISOString().slice(0, 10);
+          const isToday = key === todayStr;
+          const entries = bookingsByDay[key] || [];
+
+          return (
+            <div key={key} className="space-y-2">
+              {/* Day header */}
+              <div className={`text-center rounded-lg py-2 ${isToday ? "bg-primary text-primary-foreground" : "bg-muted/30"}`}>
+                <div className="text-[10px] uppercase tracking-wider font-semibold opacity-70">
+                  {WEEKDAYS_FULL[i]}
+                </div>
+                <div className={`text-lg font-bold ${isToday ? "" : "text-foreground"}`}>
+                  {day.getDate()}
+                </div>
+                <div className="text-[10px] opacity-60">
+                  {day.toLocaleDateString("pt-BR", { month: "short" })}
+                </div>
+              </div>
+
+              {/* Bookings for this day */}
+              <div className="space-y-2 min-h-[200px]">
+                {entries.length === 0 && (
+                  <div className="text-[10px] text-muted-foreground/40 text-center py-4">—</div>
+                )}
+                {entries.map(({ booking: b, isPickup, isReturn, isMid }) => {
+                  const sc = statusConfig[b.status] || statusConfig.pending;
+                  const vehicleShort = b.vehicle_name ? b.vehicle_name.split(" ").slice(0, 2).join(" ") : "—";
+                  const customerFirst = b.customer_name.split(" ")[0];
+
+                  return (
+                    <div
+                      key={b.id}
+                      onClick={() => navigate(`/admin/bookings/${b.id}`)}
+                      className={`rounded-lg p-2.5 cursor-pointer transition-all hover:shadow-md hover:scale-[1.01] border-l-[3px] ${sc.accent} ${sc.calBg} ${sc.calText}`}
+                    >
+                      {/* Movement badge */}
+                      {(isPickup || isReturn) && (
+                        <div className="flex items-center gap-1 mb-1.5">
+                          {isPickup && (
+                            <span className="text-[9px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.5 rounded">
+                              → Retirada
+                            </span>
+                          )}
+                          {isReturn && (
+                            <span className="text-[9px] font-bold uppercase tracking-wider bg-orange-500/20 text-orange-600 dark:text-orange-400 px-1.5 py-0.5 rounded">
+                              ← Devolução
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      {isMid && (
+                        <div className="text-[9px] font-medium uppercase tracking-wider opacity-50 mb-1">
+                          Em uso
+                        </div>
+                      )}
+
+                      {/* Vehicle */}
+                      <div className="font-bold text-[11px] truncate">{vehicleShort}</div>
+
+                      {/* Customer */}
+                      <div className="text-[10px] opacity-70 truncate">{customerFirst}</div>
+
+                      {/* Time */}
+                      {(isPickup || isReturn) && (
+                        <div className="flex items-center gap-1 mt-1.5 text-[9px] opacity-60">
+                          <Clock size={9} />
+                          <span>{isPickup ? (b.pickup_time || "—") : (b.return_time || "—")}</span>
+                        </div>
+                      )}
+
+                      {/* Location */}
+                      {isPickup && b.pickup_location && (
+                        <div className="text-[9px] opacity-50 truncate mt-0.5">📍 {b.pickup_location}</div>
+                      )}
+                      {isReturn && b.return_location && (
+                        <div className="text-[9px] opacity-50 truncate mt-0.5">📍 {b.return_location}</div>
+                      )}
+
+                      {/* Price */}
+                      {b.total_price && (
+                        <div className="text-[9px] font-semibold mt-1.5 opacity-80 tabular-nums">
+                          ${b.total_price.toFixed(2)}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <CalendarLegend />
+    </div>
+  );
+}
+
+// ─── Shared Legend ──────────────────────────────────────────
+function CalendarLegend() {
+  return (
+    <div className="flex flex-wrap gap-3 text-[10px]">
+      {Object.entries(statusConfig).map(([key, val]) => (
+        <div key={key} className="flex items-center gap-1.5">
+          <div className={`w-2.5 h-2.5 rounded-sm ${val.calBg}`} />
+          <span className="text-muted-foreground">{val.label}</span>
+        </div>
+      ))}
+      <div className="flex items-center gap-1.5 ml-2 text-muted-foreground">
+        <span>→ Retirada</span> <span>← Devolução</span>
       </div>
     </div>
   );
 }
 
+// ─── Main Component ─────────────────────────────────────────
 export default function AdminBookings() {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("all");
-  const [viewMode, setViewMode] = useState<"table" | "calendar">("table");
+  const [viewMode, setViewMode] = useState<"table" | "calendar" | "week">("table");
 
   const load = async () => {
     setLoading(true);
@@ -239,6 +439,12 @@ export default function AdminBookings() {
 
   const allStatuses = ["all", "pending", "confirmed", "active", "in_progress", "completed", "cancelled"];
 
+  const viewModes = [
+    { key: "table" as const, label: "Lista", icon: List },
+    { key: "calendar" as const, label: "Mês", icon: CalendarDays },
+    { key: "week" as const, label: "Semana", icon: Clock },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -248,26 +454,19 @@ export default function AdminBookings() {
         </div>
         {/* View toggle */}
         <div className="flex items-center bg-muted/50 rounded-lg p-0.5 border border-border/30">
-          <button
-            onClick={() => setViewMode("table")}
-            className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md font-medium transition-all ${
-              viewMode === "table"
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <List size={14} /> Lista
-          </button>
-          <button
-            onClick={() => setViewMode("calendar")}
-            className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md font-medium transition-all ${
-              viewMode === "calendar"
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <CalendarDays size={14} /> Calendário
-          </button>
+          {viewModes.map(({ key, label, icon: Icon }) => (
+            <button
+              key={key}
+              onClick={() => setViewMode(key)}
+              className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md font-medium transition-all ${
+                viewMode === key
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Icon size={14} /> {label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -308,6 +507,8 @@ export default function AdminBookings() {
         </div>
       ) : viewMode === "calendar" ? (
         <CalendarView bookings={filtered} navigate={navigate} />
+      ) : viewMode === "week" ? (
+        <WeeklyView bookings={filtered} navigate={navigate} />
       ) : (
         /* Table */
         <Card className="bg-card/80 border-border/30 overflow-hidden">
@@ -321,6 +522,7 @@ export default function AdminBookings() {
                     <tr className="border-b border-border/30 bg-muted/20">
                       <th className="px-5 py-3 text-left text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Cliente</th>
                       <th className="px-5 py-3 text-left text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Período</th>
+                      <th className="px-5 py-3 text-left text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Horários</th>
                       <th className="px-5 py-3 text-left text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Local</th>
                       <th className="px-5 py-3 text-right text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Valor</th>
                       <th className="px-5 py-3 text-left text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Status</th>
@@ -345,6 +547,16 @@ export default function AdminBookings() {
                           </td>
                           <td className="px-5 py-3.5 text-muted-foreground tabular-nums text-xs">
                             {new Date(b.pickup_date).toLocaleDateString("pt-BR")} → {new Date(b.return_date).toLocaleDateString("pt-BR")}
+                          </td>
+                          <td className="px-5 py-3.5 text-xs text-muted-foreground tabular-nums">
+                            <div className="flex flex-col gap-0.5">
+                              <span className="flex items-center gap-1">
+                                <span className="text-emerald-500 text-[10px]">→</span> {b.pickup_time || "—"}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <span className="text-orange-500 text-[10px]">←</span> {b.return_time || "—"}
+                              </span>
+                            </div>
                           </td>
                           <td className="px-5 py-3.5 text-muted-foreground text-xs max-w-[180px] truncate">{b.pickup_location || "—"}</td>
                           <td className="px-5 py-3.5 text-foreground font-semibold text-right tabular-nums">${b.total_price?.toFixed(2) || "—"}</td>
