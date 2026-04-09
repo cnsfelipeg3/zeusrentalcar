@@ -198,8 +198,13 @@ export default function AdminBookings() {
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase.from("bookings").select("*").order("created_at", { ascending: false });
-    setBookings(data || []);
+    const [bRes, vRes] = await Promise.all([
+      supabase.from("bookings").select("*").order("created_at", { ascending: false }),
+      supabase.from("vehicles").select("id, name"),
+    ]);
+    const vehicleMap: Record<string, string> = {};
+    (vRes.data || []).forEach((v: any) => { vehicleMap[v.id] = v.name; });
+    setBookings((bRes.data || []).map((b: any) => ({ ...b, vehicle_name: b.vehicle_id ? vehicleMap[b.vehicle_id] || "" : "" })));
     setLoading(false);
   };
 
