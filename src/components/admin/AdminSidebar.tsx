@@ -41,8 +41,8 @@ export function AdminSidebar({ onSignOut }: AdminSidebarProps) {
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="px-4 py-4 flex justify-center">
-            <img src={zeusLogo} alt="Zeus" className={collapsed ? "h-8 w-auto" : "h-12 w-auto"} />
+          <SidebarGroupLabel className="px-2 py-6 flex justify-center h-auto">
+            <img src={zeusLogo} alt="Zeus" className={collapsed ? "h-8 w-auto max-w-[40px] object-contain" : "h-14 w-auto max-w-[160px] object-contain"} />
           </SidebarGroupLabel>
 
           <SidebarGroupContent>
