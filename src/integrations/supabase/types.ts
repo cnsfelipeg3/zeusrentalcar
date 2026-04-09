@@ -200,6 +200,7 @@ export type Database = {
           id: string
           is_active: boolean
           notes: string | null
+          permissions: Json | null
           phone: string | null
           position: string | null
           role: string
@@ -214,6 +215,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           notes?: string | null
+          permissions?: Json | null
           phone?: string | null
           position?: string | null
           role?: string
@@ -228,6 +230,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           notes?: string | null
+          permissions?: Json | null
           phone?: string | null
           position?: string | null
           role?: string
