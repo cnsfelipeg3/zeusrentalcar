@@ -205,7 +205,7 @@ export default function AdminFleet() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((v) => (
-            <Card key={v.id} className="bg-card/50 border-border/40 hover:border-primary/20 transition-colors overflow-hidden">
+            <Card key={v.id} className="bg-card/50 border-border/40 hover:border-primary/20 transition-colors overflow-hidden cursor-pointer" onClick={() => navigate(`/admin/fleet/${v.id}`)}>
               {v.image_url && (
                 <div className="h-40 bg-muted/30 overflow-hidden">
                   <img src={v.image_url} alt={v.name} className="w-full h-full object-cover" />

@@ -26,6 +26,7 @@ import AdminLive from "./pages/admin/AdminLive.tsx";
 import AdminInspection from "./pages/admin/AdminInspection.tsx";
 import AdminInspectionCompare from "./pages/admin/AdminInspectionCompare.tsx";
 import AdminVehicleHistory from "./pages/admin/AdminVehicleHistory.tsx";
+import AdminVehicleDetail from "./pages/admin/AdminVehicleDetail.tsx";
 import AdminFleetReport from "./pages/admin/AdminFleetReport.tsx";
 import AdminBookingDetail from "./pages/admin/AdminBookingDetail.tsx";
 import BookingConfirmed from "./pages/BookingConfirmed.tsx";
@@ -74,6 +75,7 @@ const App = () => (
                 <Route path="inspection/:bookingId" element={<AdminInspection />} />
                 <Route path="inspection/compare/:bookingId" element={<AdminInspectionCompare />} />
                 <Route path="vehicle-history/:vehicleId" element={<AdminVehicleHistory />} />
+                <Route path="fleet/:vehicleId" element={<AdminVehicleDetail />} />
                 <Route path="report" element={<AdminFleetReport />} />
               </Route>
 
