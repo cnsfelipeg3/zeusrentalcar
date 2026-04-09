@@ -47,7 +47,7 @@ function getBookingProgress(pickupDate: string, returnDate: string, status: stri
 
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
-function CalendarView({ bookings, navigate }: { bookings: Booking[]; navigate: (path: string) => void }) {
+function CalendarView({ bookings, navigate }: { bookings: (Booking & { vehicle_name?: string })[]; navigate: (path: string) => void }) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const year = currentDate.getFullYear();
