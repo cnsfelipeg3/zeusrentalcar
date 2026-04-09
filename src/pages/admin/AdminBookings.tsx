@@ -409,6 +409,8 @@ type Filters = {
   pickupLocation: string;
   returnLocation: string;
   vehicle: string;
+  dateFrom: Date | undefined;
+  dateTo: Date | undefined;
   sortBy: SortField;
   sortDir: SortDir;
 };
@@ -418,6 +420,8 @@ const defaultFilters: Filters = {
   pickupLocation: "all",
   returnLocation: "all",
   vehicle: "all",
+  dateFrom: undefined,
+  dateTo: undefined,
   sortBy: "created_at",
   sortDir: "desc",
 };
