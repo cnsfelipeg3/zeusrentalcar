@@ -51,7 +51,8 @@ type Incident = {
 type BookingWithInspections = {
   id: string; customer_name: string; customer_email: string | null;
   pickup_date: string; return_date: string; pickup_location: string | null;
-  return_location: string | null; total_price: number | null;
+  return_location: string | null; pickup_time: string | null; return_time: string | null;
+  total_price: number | null;
   status: string; created_at: string; checkin?: any; checkout?: any;
 };
 
