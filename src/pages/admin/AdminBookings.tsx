@@ -395,13 +395,43 @@ function CalendarLegend() {
   );
 }
 
+// ─── Filter types ───────────────────────────────────────────
+type SortField = "created_at" | "pickup_date" | "return_date" | "total_price" | "customer_name";
+type SortDir = "asc" | "desc";
+
+type Filters = {
+  status: string;
+  pickupLocation: string;
+  returnLocation: string;
+  vehicle: string;
+  sortBy: SortField;
+  sortDir: SortDir;
+};
+
+const defaultFilters: Filters = {
+  status: "all",
+  pickupLocation: "all",
+  returnLocation: "all",
+  vehicle: "all",
+  sortBy: "created_at",
+  sortDir: "desc",
+};
+
+const sortLabels: Record<SortField, string> = {
+  created_at: "Data de criação",
+  pickup_date: "Data de retirada",
+  return_date: "Data de devolução",
+  total_price: "Valor",
+  customer_name: "Nome do cliente",
+};
+
 // ─── Main Component ─────────────────────────────────────────
 export default function AdminBookings() {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [filters, setFilters] = useState<Filters>(defaultFilters);
   const [viewMode, setViewMode] = useState<"table" | "calendar" | "week">("table");
 
   const load = async () => {
@@ -418,12 +448,56 @@ export default function AdminBookings() {
 
   useEffect(() => { load(); }, []);
 
-  const filtered = bookings.filter((b) => {
-    const matchSearch = b.customer_name.toLowerCase().includes(search.toLowerCase()) ||
-      (b.customer_email || "").toLowerCase().includes(search.toLowerCase());
-    const matchStatus = statusFilter === "all" || b.status === statusFilter;
-    return matchSearch && matchStatus;
-  });
+  // Derive unique locations & vehicles for filter options
+  const filterOptions = useMemo(() => {
+    const pickupLocs = new Set<string>();
+    const returnLocs = new Set<string>();
+    const vehicles = new Set<string>();
+    bookings.forEach((b) => {
+      if (b.pickup_location) pickupLocs.add(b.pickup_location);
+      if (b.return_location) returnLocs.add(b.return_location);
+      if (b.vehicle_name) vehicles.add(b.vehicle_name);
+    });
+    return {
+      pickupLocations: Array.from(pickupLocs).sort(),
+      returnLocations: Array.from(returnLocs).sort(),
+      vehicles: Array.from(vehicles).sort(),
+    };
+  }, [bookings]);
+
+  // Filter + sort
+  const filtered = useMemo(() => {
+    let result = bookings.filter((b) => {
+      const matchSearch = b.customer_name.toLowerCase().includes(search.toLowerCase()) ||
+        (b.customer_email || "").toLowerCase().includes(search.toLowerCase()) ||
+        (b.vehicle_name || "").toLowerCase().includes(search.toLowerCase());
+      const matchStatus = filters.status === "all" || b.status === filters.status;
+      const matchPickup = filters.pickupLocation === "all" || b.pickup_location === filters.pickupLocation;
+      const matchReturn = filters.returnLocation === "all" || b.return_location === filters.returnLocation;
+      const matchVehicle = filters.vehicle === "all" || b.vehicle_name === filters.vehicle;
+      return matchSearch && matchStatus && matchPickup && matchReturn && matchVehicle;
+    });
+
+    result.sort((a, b) => {
+      const dir = filters.sortDir === "asc" ? 1 : -1;
+      switch (filters.sortBy) {
+        case "pickup_date": return dir * (new Date(a.pickup_date).getTime() - new Date(b.pickup_date).getTime());
+        case "return_date": return dir * (new Date(a.return_date).getTime() - new Date(b.return_date).getTime());
+        case "total_price": return dir * ((a.total_price || 0) - (b.total_price || 0));
+        case "customer_name": return dir * a.customer_name.localeCompare(b.customer_name);
+        default: return dir * (new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+      }
+    });
+
+    return result;
+  }, [bookings, search, filters]);
+
+  const activeFilterCount = [
+    filters.status !== "all",
+    filters.pickupLocation !== "all",
+    filters.returnLocation !== "all",
+    filters.vehicle !== "all",
+  ].filter(Boolean).length;
 
   const updateStatus = async (id: string, status: string) => {
     await supabase.from("bookings").update({ status }).eq("id", id);
@@ -438,20 +512,30 @@ export default function AdminBookings() {
     load();
   };
 
-  const allStatuses = ["all", "pending", "confirmed", "active", "in_progress", "completed", "cancelled"];
-
   const viewModes = [
     { key: "table" as const, label: "Lista", icon: List },
     { key: "calendar" as const, label: "Mês", icon: CalendarDays },
     { key: "week" as const, label: "Semana", icon: Clock },
   ];
 
+  const FilterOption = ({ label, value, current, onChange }: { label: string; value: string; current: string; onChange: (v: string) => void }) => (
+    <button
+      onClick={() => onChange(value)}
+      className={`flex items-center justify-between w-full text-left px-3 py-1.5 rounded-md text-xs transition-colors ${
+        current === value ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+      }`}
+    >
+      <span className="truncate">{label}</span>
+      {current === value && <Check size={12} className="shrink-0 ml-2" />}
+    </button>
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground tracking-tight">Reservas</h1>
-          <p className="text-sm text-muted-foreground mt-1">{bookings.length} reservas no total</p>
+          <p className="text-sm text-muted-foreground mt-1">{bookings.length} reservas • {filtered.length} exibidas</p>
         </div>
         {/* View toggle */}
         <div className="flex items-center bg-muted/50 rounded-lg p-0.5 border border-border/30">
@@ -471,35 +555,167 @@ export default function AdminBookings() {
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
+      {/* Smart Filters Bar */}
+      <div className="flex items-center gap-2 flex-wrap">
+        {/* Search */}
+        <div className="relative flex-1 min-w-[200px]">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por nome ou e-mail..."
+            placeholder="Buscar cliente, e-mail ou veículo..."
             className="w-full h-9 pl-9 pr-3 rounded-lg border border-border/40 bg-card/50 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all"
           />
         </div>
-        <div className="flex gap-1.5 flex-wrap">
-          {allStatuses.map((s) => {
-            const active = statusFilter === s;
-            return (
-              <button
-                key={s}
-                onClick={() => setStatusFilter(s)}
-                className={`text-[10px] px-3 py-1.5 rounded-md font-semibold uppercase tracking-wider transition-all ${
-                  active
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "bg-card/50 text-muted-foreground hover:text-foreground border border-border/30 hover:border-border/60"
-                }`}
-              >
-                {s === "all" ? "Todos" : statusConfig[s]?.label || s}
-              </button>
-            );
-          })}
-        </div>
+
+        {/* Filters Popover */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className={`flex items-center gap-1.5 h-9 px-3.5 rounded-lg border text-xs font-medium transition-all ${
+              activeFilterCount > 0
+                ? "border-primary/40 bg-primary/10 text-primary"
+                : "border-border/40 bg-card/50 text-muted-foreground hover:text-foreground hover:border-border/60"
+            }`}>
+              <SlidersHorizontal size={14} />
+              Filtros
+              {activeFilterCount > 0 && (
+                <span className="w-4.5 h-4.5 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center ml-0.5">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[320px] p-0" align="end">
+            <div className="p-3 border-b border-border/30 flex items-center justify-between">
+              <span className="text-xs font-bold text-foreground">Filtrar reservas</span>
+              {activeFilterCount > 0 && (
+                <button
+                  onClick={() => setFilters(defaultFilters)}
+                  className="text-[10px] text-primary hover:text-primary/80 font-medium flex items-center gap-1"
+                >
+                  <X size={10} /> Limpar filtros
+                </button>
+              )}
+            </div>
+            <div className="p-3 space-y-4 max-h-[400px] overflow-y-auto">
+              {/* Status */}
+              <div>
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Status</p>
+                <div className="space-y-0.5">
+                  <FilterOption label="Todos" value="all" current={filters.status} onChange={(v) => setFilters({ ...filters, status: v })} />
+                  {Object.entries(statusConfig).map(([key, val]) => (
+                    <FilterOption key={key} label={val.label} value={key} current={filters.status} onChange={(v) => setFilters({ ...filters, status: v })} />
+                  ))}
+                </div>
+              </div>
+
+              {/* Pickup Location */}
+              {filterOptions.pickupLocations.length > 0 && (
+                <div>
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Local de Retirada</p>
+                  <div className="space-y-0.5">
+                    <FilterOption label="Todos" value="all" current={filters.pickupLocation} onChange={(v) => setFilters({ ...filters, pickupLocation: v })} />
+                    {filterOptions.pickupLocations.map((loc) => (
+                      <FilterOption key={loc} label={loc} value={loc} current={filters.pickupLocation} onChange={(v) => setFilters({ ...filters, pickupLocation: v })} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Return Location */}
+              {filterOptions.returnLocations.length > 0 && (
+                <div>
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Local de Devolução</p>
+                  <div className="space-y-0.5">
+                    <FilterOption label="Todos" value="all" current={filters.returnLocation} onChange={(v) => setFilters({ ...filters, returnLocation: v })} />
+                    {filterOptions.returnLocations.map((loc) => (
+                      <FilterOption key={loc} label={loc} value={loc} current={filters.returnLocation} onChange={(v) => setFilters({ ...filters, returnLocation: v })} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Vehicle */}
+              {filterOptions.vehicles.length > 0 && (
+                <div>
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Veículo</p>
+                  <div className="space-y-0.5">
+                    <FilterOption label="Todos" value="all" current={filters.vehicle} onChange={(v) => setFilters({ ...filters, vehicle: v })} />
+                    {filterOptions.vehicles.map((v) => (
+                      <FilterOption key={v} label={v} value={v} current={filters.vehicle} onChange={(vl) => setFilters({ ...filters, vehicle: vl })} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </PopoverContent>
+        </Popover>
+
+        {/* Sort Popover */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className="flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-border/40 bg-card/50 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-border/60 transition-all">
+              <ArrowUpDown size={14} />
+              {sortLabels[filters.sortBy]}
+              <span className="text-[9px] opacity-60">{filters.sortDir === "desc" ? "↓" : "↑"}</span>
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[220px] p-0" align="end">
+            <div className="p-3 border-b border-border/30">
+              <span className="text-xs font-bold text-foreground">Ordenar por</span>
+            </div>
+            <div className="p-2 space-y-0.5">
+              {(Object.entries(sortLabels) as [SortField, string][]).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => setFilters({
+                    ...filters,
+                    sortBy: key,
+                    sortDir: filters.sortBy === key ? (filters.sortDir === "desc" ? "asc" : "desc") : "desc",
+                  })}
+                  className={`flex items-center justify-between w-full text-left px-3 py-1.5 rounded-md text-xs transition-colors ${
+                    filters.sortBy === key ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  }`}
+                >
+                  <span>{label}</span>
+                  {filters.sortBy === key && (
+                    <span className="text-[10px] font-bold">{filters.sortDir === "desc" ? "↓ Recente" : "↑ Antigo"}</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
+
+        {/* Active filter chips */}
+        {activeFilterCount > 0 && (
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {filters.status !== "all" && (
+              <span className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-primary/10 text-primary font-medium">
+                {statusConfig[filters.status]?.label}
+                <button onClick={() => setFilters({ ...filters, status: "all" })} className="hover:text-primary/70"><X size={10} /></button>
+              </span>
+            )}
+            {filters.pickupLocation !== "all" && (
+              <span className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-primary/10 text-primary font-medium">
+                Retirada: {filters.pickupLocation}
+                <button onClick={() => setFilters({ ...filters, pickupLocation: "all" })} className="hover:text-primary/70"><X size={10} /></button>
+              </span>
+            )}
+            {filters.returnLocation !== "all" && (
+              <span className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-primary/10 text-primary font-medium">
+                Devolução: {filters.returnLocation}
+                <button onClick={() => setFilters({ ...filters, returnLocation: "all" })} className="hover:text-primary/70"><X size={10} /></button>
+              </span>
+            )}
+            {filters.vehicle !== "all" && (
+              <span className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-primary/10 text-primary font-medium">
+                {filters.vehicle}
+                <button onClick={() => setFilters({ ...filters, vehicle: "all" })} className="hover:text-primary/70"><X size={10} /></button>
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       {loading ? (
