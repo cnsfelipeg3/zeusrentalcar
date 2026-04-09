@@ -150,8 +150,8 @@ export default function VehicleAgenda({ bookings }: { bookings: Booking[] }) {
               return (
                 <div
                   key={day}
-                  className={`aspect-square p-1 sm:p-1.5 rounded-lg border transition-colors relative group ${bgClass} ${
-                    today_ ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""
+                  className={`aspect-square p-1 sm:p-1.5 rounded-lg border-2 transition-colors relative group ${bgClass} ${
+                    today_ ? "border-primary shadow-[0_0_0_1px_hsl(var(--primary)/0.3)]" : ""
                   }`}
                 >
                   <span
