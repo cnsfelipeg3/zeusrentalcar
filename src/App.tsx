@@ -79,6 +79,8 @@ const App = () => (
                 <Route path="vehicle-history/:vehicleId" element={<AdminVehicleHistory />} />
                 <Route path="fleet/:vehicleId" element={<AdminVehicleDetail />} />
                 <Route path="report" element={<AdminFleetReport />} />
+                <Route path="finance" element={<AdminFinance />} />
+                <Route path="team" element={<AdminTeam />} />
               </Route>
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
