@@ -232,20 +232,20 @@ export default function AdminFleet() {
                     <span className="text-lg font-bold text-primary">${v.daily_price_usd}/dia</span>
                     <div className="flex gap-2">
                       <button
-                        onClick={() => navigate(`/admin/vehicle-history/${v.id}`)}
+                        onClick={(e) => { e.stopPropagation(); navigate(`/admin/vehicle-history/${v.id}`); }}
                         className="text-muted-foreground hover:text-primary transition-colors"
                         title="Histórico de Locações"
                       >
                         <History size={14} />
                       </button>
                       <button
-                        onClick={() => { setEditing(v); setIsNew(false); }}
+                        onClick={(e) => { e.stopPropagation(); setEditing(v); setIsNew(false); }}
                         className="text-muted-foreground hover:text-primary transition-colors"
                       >
                         <Pencil size={14} />
                       </button>
                       <button
-                        onClick={() => deleteVehicle(v.id)}
+                        onClick={(e) => { e.stopPropagation(); deleteVehicle(v.id); }}
                         className="text-muted-foreground hover:text-destructive transition-colors"
                       >
                         <Trash2 size={14} />
