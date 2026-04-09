@@ -484,7 +484,19 @@ export default function AdminBookings() {
       const matchPickup = filters.pickupLocation === "all" || b.pickup_location === filters.pickupLocation;
       const matchReturn = filters.returnLocation === "all" || b.return_location === filters.returnLocation;
       const matchVehicle = filters.vehicle === "all" || b.vehicle_name === filters.vehicle;
-      return matchSearch && matchStatus && matchPickup && matchReturn && matchVehicle;
+
+      let matchDateFrom = true;
+      if (filters.dateFrom) {
+        const pickupDate = new Date(b.pickup_date);
+        matchDateFrom = pickupDate >= filters.dateFrom;
+      }
+      let matchDateTo = true;
+      if (filters.dateTo) {
+        const pickupDate = new Date(b.pickup_date);
+        matchDateTo = pickupDate <= filters.dateTo;
+      }
+
+      return matchSearch && matchStatus && matchPickup && matchReturn && matchVehicle && matchDateFrom && matchDateTo;
     });
 
     result.sort((a, b) => {
@@ -506,6 +518,8 @@ export default function AdminBookings() {
     filters.pickupLocation !== "all",
     filters.returnLocation !== "all",
     filters.vehicle !== "all",
+    !!filters.dateFrom,
+    !!filters.dateTo,
   ].filter(Boolean).length;
 
   const updateStatus = async (id: string, status: string) => {
