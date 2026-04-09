@@ -358,7 +358,7 @@ export default function AdminVehicleDetail() {
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="health" className="w-full">
+      <Tabs defaultValue="agenda" className="w-full">
         <TabsList className="bg-muted/50 flex-wrap h-auto gap-1 p-1">
           <TabsTrigger value="agenda">Agenda</TabsTrigger>
           <TabsTrigger value="health">Saúde</TabsTrigger>
