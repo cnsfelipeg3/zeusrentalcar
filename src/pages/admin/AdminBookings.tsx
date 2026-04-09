@@ -22,6 +22,7 @@ type Booking = {
   extra_driver: boolean | null;
   vehicle_id: string | null;
   created_at: string;
+  vehicle_name?: string;
 };
 
 const statusConfig: Record<string, { label: string; color: string; calBg: string; calText: string }> = {
