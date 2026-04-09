@@ -1,10 +1,15 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, Trash2, LogIn, LogOut, GitCompare, CalendarDays, List, ChevronLeft, ChevronRight, Clock, SlidersHorizontal, ArrowUpDown, X, Check } from "lucide-react";
+import { Search, Trash2, LogIn, LogOut, GitCompare, CalendarDays, List, ChevronLeft, ChevronRight, Clock, SlidersHorizontal, ArrowUpDown, X, Check, Download, FileText, FileSpreadsheet, CalendarIcon } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import jsPDF from "jspdf";
 
 type Booking = {
   id: string;
