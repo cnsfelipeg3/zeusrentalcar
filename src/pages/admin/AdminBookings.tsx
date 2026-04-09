@@ -904,9 +904,10 @@ export default function AdminBookings() {
         {/* Sort Popover */}
         <Popover>
           <PopoverTrigger asChild>
-            <button className="flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-border/40 bg-card/50 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-border/60 transition-all">
-              <ArrowUpDown size={14} />
-              {sortLabels[filters.sortBy]}
+            <button className="flex items-center gap-1.5 h-8 sm:h-9 px-2.5 sm:px-3.5 rounded-lg border border-border/40 bg-card/50 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-border/60 transition-all">
+              <ArrowUpDown size={13} />
+              <span className="hidden sm:inline">{sortLabels[filters.sortBy]}</span>
+              <span className="sm:hidden">Ordenar</span>
               <span className="text-[9px] opacity-60">{filters.sortDir === "desc" ? "↓" : "↑"}</span>
             </button>
           </PopoverTrigger>
