@@ -357,7 +357,7 @@ const FleetSection = () => {
                   className="group relative overflow-hidden rounded-2xl cursor-pointer hover-lift border border-border/10 hover:border-primary/20"
                   onClick={() => setSelectedVehicle(v)}
                 >
-                  <div className="relative h-[22rem] sm:h-[24rem] overflow-hidden">
+                  <div className="relative h-64 overflow-hidden">
                     <img
                       src={v.coverImage}
                       alt={v.name}
@@ -367,27 +367,26 @@ const FleetSection = () => {
                       width={1280}
                       height={720}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-80" />
 
                     {v.preparing && (
                       <div className="absolute top-4 right-4 z-10">
-                        <span className="bg-primary/90 text-primary-foreground text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg backdrop-blur-sm shadow-lg">
+                        <span className="bg-primary/90 text-primary-foreground text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg backdrop-blur-sm shadow-lg">
                           Em preparação
                         </span>
                       </div>
                     )}
+                  </div>
 
-                    <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 pt-16">
-                      <h3 className="text-xl sm:text-2xl font-black uppercase tracking-wider text-foreground">{v.name}</h3>
-                      <p className="text-sm text-muted-foreground italic font-light mt-1.5">{vehicleT?.subtitle}</p>
-                      <div className="flex items-center gap-5 mt-3.5 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1.5">
-                          <Users size={14} className="text-primary" /> {v.passengers} pass.
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                          <Briefcase size={14} className="text-primary" /> {v.luggage} malas
-                        </span>
-                      </div>
+                  <div className="bg-card px-5 py-4 border-t border-border/40">
+                    <h3 className="text-lg font-black uppercase tracking-wider text-foreground">{v.name}</h3>
+                    <p className="text-xs text-primary font-medium italic mt-1">{vehicleT?.subtitle}</p>
+                    <div className="flex items-center gap-5 mt-3 text-xs text-muted-foreground">
+                      <span className="flex items-center gap-1.5">
+                        <Users size={14} className="text-primary" /> {v.passengers} pass.
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <Briefcase size={14} className="text-primary" /> {v.luggage} malas
+                      </span>
                     </div>
                   </div>
                 </motion.div>
