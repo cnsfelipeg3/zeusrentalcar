@@ -14,6 +14,7 @@ import {
   Trash2, Activity, Heart, AlertCircle, Ban
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import VehicleAgenda from "@/components/admin/VehicleAgenda";
 
 // ─── Types ────────────────────────────────────────────────────────────
 type Vehicle = {
