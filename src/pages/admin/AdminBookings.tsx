@@ -1,10 +1,15 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, Trash2, LogIn, LogOut, GitCompare, CalendarDays, List, ChevronLeft, ChevronRight, Clock, SlidersHorizontal, ArrowUpDown, X, Check } from "lucide-react";
+import { Search, Trash2, LogIn, LogOut, GitCompare, CalendarDays, List, ChevronLeft, ChevronRight, Clock, SlidersHorizontal, ArrowUpDown, X, Check, Download, FileText, FileSpreadsheet, CalendarIcon } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import jsPDF from "jspdf";
 
 type Booking = {
   id: string;
@@ -404,6 +409,8 @@ type Filters = {
   pickupLocation: string;
   returnLocation: string;
   vehicle: string;
+  dateFrom: Date | undefined;
+  dateTo: Date | undefined;
   sortBy: SortField;
   sortDir: SortDir;
 };
@@ -413,6 +420,8 @@ const defaultFilters: Filters = {
   pickupLocation: "all",
   returnLocation: "all",
   vehicle: "all",
+  dateFrom: undefined,
+  dateTo: undefined,
   sortBy: "created_at",
   sortDir: "desc",
 };
@@ -475,7 +484,19 @@ export default function AdminBookings() {
       const matchPickup = filters.pickupLocation === "all" || b.pickup_location === filters.pickupLocation;
       const matchReturn = filters.returnLocation === "all" || b.return_location === filters.returnLocation;
       const matchVehicle = filters.vehicle === "all" || b.vehicle_name === filters.vehicle;
-      return matchSearch && matchStatus && matchPickup && matchReturn && matchVehicle;
+
+      let matchDateFrom = true;
+      if (filters.dateFrom) {
+        const pickupDate = new Date(b.pickup_date);
+        matchDateFrom = pickupDate >= filters.dateFrom;
+      }
+      let matchDateTo = true;
+      if (filters.dateTo) {
+        const pickupDate = new Date(b.pickup_date);
+        matchDateTo = pickupDate <= filters.dateTo;
+      }
+
+      return matchSearch && matchStatus && matchPickup && matchReturn && matchVehicle && matchDateFrom && matchDateTo;
     });
 
     result.sort((a, b) => {
@@ -497,6 +518,8 @@ export default function AdminBookings() {
     filters.pickupLocation !== "all",
     filters.returnLocation !== "all",
     filters.vehicle !== "all",
+    !!filters.dateFrom,
+    !!filters.dateTo,
   ].filter(Boolean).length;
 
   const updateStatus = async (id: string, status: string) => {
@@ -511,6 +534,168 @@ export default function AdminBookings() {
     toast({ title: "Reserva excluída" });
     load();
   };
+
+  // ─── Export Functions ───────────────────────────────────────
+  const exportCSV = useCallback(() => {
+    const headers = ["Cliente", "E-mail", "Veículo", "Retirada", "Horário Ret.", "Devolução", "Horário Dev.", "Local Retirada", "Local Devolução", "Valor", "Status"];
+    const rows = filtered.map((b) => [
+      b.customer_name,
+      b.customer_email || "",
+      b.vehicle_name || "",
+      new Date(b.pickup_date).toLocaleDateString("pt-BR"),
+      b.pickup_time || "",
+      new Date(b.return_date).toLocaleDateString("pt-BR"),
+      b.return_time || "",
+      b.pickup_location || "",
+      b.return_location || "",
+      b.total_price?.toFixed(2) || "0",
+      statusConfig[b.status]?.label || b.status,
+    ]);
+    const csv = [headers, ...rows].map((r) => r.map((c) => `"${c}"`).join(",")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `zeus-reservas-${format(new Date(), "yyyy-MM-dd")}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast({ title: "CSV exportado com sucesso" });
+  }, [filtered]);
+
+  const exportPDF = useCallback(() => {
+    const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+
+    // Header background
+    doc.setFillColor(26, 26, 26);
+    doc.rect(0, 0, pageW, 28, "F");
+
+    // Gold accent line
+    doc.setFillColor(196, 160, 56);
+    doc.rect(0, 28, pageW, 1.5, "F");
+
+    // Zeus branding
+    doc.setTextColor(196, 160, 56);
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("ZEUS RENTAL CAR", 15, 14);
+
+    doc.setTextColor(180, 180, 180);
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    doc.text("Relatório de Reservas", 15, 21);
+
+    // Date & filter info
+    doc.setTextColor(140, 140, 140);
+    doc.setFontSize(7);
+    doc.text(`Gerado em: ${format(new Date(), "dd/MM/yyyy 'às' HH:mm")}`, pageW - 15, 14, { align: "right" });
+    doc.text(`${filtered.length} reservas filtradas de ${bookings.length} total`, pageW - 15, 20, { align: "right" });
+
+    // Table header
+    const startY = 36;
+    const cols = [
+      { label: "Cliente", w: 40 },
+      { label: "Veículo", w: 35 },
+      { label: "Retirada", w: 25 },
+      { label: "Hr. Ret.", w: 15 },
+      { label: "Devolução", w: 25 },
+      { label: "Hr. Dev.", w: 15 },
+      { label: "Local Retirada", w: 40 },
+      { label: "Local Devolução", w: 40 },
+      { label: "Valor", w: 20 },
+      { label: "Status", w: 22 },
+    ];
+    let xOffset = 10;
+
+    // Header row
+    doc.setFillColor(40, 40, 40);
+    doc.rect(10, startY, pageW - 20, 8, "F");
+    doc.setTextColor(196, 160, 56);
+    doc.setFontSize(6.5);
+    doc.setFont("helvetica", "bold");
+    cols.forEach((col) => {
+      doc.text(col.label.toUpperCase(), xOffset + 1.5, startY + 5.5);
+      xOffset += col.w;
+    });
+
+    // Data rows
+    let y = startY + 8;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(6.5);
+
+    filtered.forEach((b, i) => {
+      if (y > pageH - 20) {
+        doc.addPage();
+        y = 15;
+        // Re-draw header on new page
+        doc.setFillColor(40, 40, 40);
+        doc.rect(10, y, pageW - 20, 8, "F");
+        doc.setTextColor(196, 160, 56);
+        doc.setFont("helvetica", "bold");
+        let xH = 10;
+        cols.forEach((col) => {
+          doc.text(col.label.toUpperCase(), xH + 1.5, y + 5.5);
+          xH += col.w;
+        });
+        doc.setFont("helvetica", "normal");
+        y += 8;
+      }
+
+      // Alternating row bg
+      if (i % 2 === 0) {
+        doc.setFillColor(245, 245, 245);
+        doc.rect(10, y, pageW - 20, 7, "F");
+      }
+
+      doc.setTextColor(50, 50, 50);
+      xOffset = 10;
+      const vals = [
+        b.customer_name,
+        b.vehicle_name || "—",
+        new Date(b.pickup_date).toLocaleDateString("pt-BR"),
+        b.pickup_time || "—",
+        new Date(b.return_date).toLocaleDateString("pt-BR"),
+        b.return_time || "—",
+        b.pickup_location || "—",
+        b.return_location || "—",
+        `$${(b.total_price || 0).toFixed(2)}`,
+        statusConfig[b.status]?.label || b.status,
+      ];
+      vals.forEach((val, ci) => {
+        const truncated = val.length > Math.floor(cols[ci].w / 2) ? val.substring(0, Math.floor(cols[ci].w / 2)) + "…" : val;
+        doc.text(truncated, xOffset + 1.5, y + 4.8);
+        xOffset += cols[ci].w;
+      });
+      y += 7;
+    });
+
+    // Footer
+    const totalRevenue = filtered.reduce((s, b) => s + (b.total_price || 0), 0);
+    y += 5;
+    if (y > pageH - 15) { doc.addPage(); y = 15; }
+    doc.setFillColor(26, 26, 26);
+    doc.rect(10, y, pageW - 20, 10, "F");
+    doc.setTextColor(196, 160, 56);
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "bold");
+    doc.text("TOTAL", 15, y + 6.5);
+    doc.text(`$${totalRevenue.toLocaleString("en-US", { minimumFractionDigits: 2 })}`, pageW - 15, y + 6.5, { align: "right" });
+
+    // Page footer
+    const totalPages = doc.getNumberOfPages();
+    for (let p = 1; p <= totalPages; p++) {
+      doc.setPage(p);
+      doc.setTextColor(160, 160, 160);
+      doc.setFontSize(6);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Zeus Rental Car — zeusrentalcar.com`, 15, pageH - 5);
+      doc.text(`Página ${p} de ${totalPages}`, pageW - 15, pageH - 5, { align: "right" });
+    }
+
+    doc.save(`zeus-reservas-${format(new Date(), "yyyy-MM-dd")}.pdf`);
+    toast({ title: "PDF exportado com sucesso" });
+  }, [filtered, bookings.length]);
 
   const viewModes = [
     { key: "table" as const, label: "Lista", icon: List },
@@ -531,27 +716,45 @@ export default function AdminBookings() {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">Reservas</h1>
-          <p className="text-sm text-muted-foreground mt-1">{bookings.length} reservas • {filtered.length} exibidas</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">Reservas</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">{bookings.length} reservas • {filtered.length} exibidas</p>
         </div>
-        {/* View toggle */}
-        <div className="flex items-center bg-muted/50 rounded-lg p-0.5 border border-border/30">
-          {viewModes.map(({ key, label, icon: Icon }) => (
-            <button
-              key={key}
-              onClick={() => setViewMode(key)}
-              className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md font-medium transition-all ${
-                viewMode === key
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Icon size={14} /> {label}
-            </button>
-          ))}
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Export */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="flex items-center gap-1.5 h-8 sm:h-9 px-3 rounded-lg border border-border/40 bg-card/50 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-border/60 transition-all">
+                <Download size={13} /> <span className="hidden sm:inline">Exportar</span>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[180px] p-1.5" align="end">
+              <button onClick={exportCSV} className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-md text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                <FileSpreadsheet size={14} /> Exportar CSV
+              </button>
+              <button onClick={exportPDF} className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-md text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                <FileText size={14} /> Exportar PDF
+              </button>
+            </PopoverContent>
+          </Popover>
+          {/* View toggle */}
+          <div className="flex items-center bg-muted/50 rounded-lg p-0.5 border border-border/30">
+            {viewModes.map(({ key, label, icon: Icon }) => (
+              <button
+                key={key}
+                onClick={() => setViewMode(key)}
+                className={`flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs px-2 sm:px-3 py-1.5 rounded-md font-medium transition-all ${
+                  viewMode === key
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Icon size={13} /> <span className="hidden sm:inline">{label}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -647,6 +850,53 @@ export default function AdminBookings() {
                   </div>
                 </div>
               )}
+
+              {/* Date Range */}
+              <div>
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Período de Retirada</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button className={cn(
+                        "h-8 px-2.5 rounded-md border text-[10px] flex items-center gap-1.5 transition-colors w-full",
+                        filters.dateFrom ? "border-primary/30 text-primary" : "border-border/30 text-muted-foreground"
+                      )}>
+                        <CalendarIcon size={11} />
+                        {filters.dateFrom ? format(filters.dateFrom, "dd/MM/yy") : "De"}
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={filters.dateFrom}
+                        onSelect={(d) => setFilters({ ...filters, dateFrom: d })}
+                        className={cn("p-3 pointer-events-auto")}
+                        locale={ptBR}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button className={cn(
+                        "h-8 px-2.5 rounded-md border text-[10px] flex items-center gap-1.5 transition-colors w-full",
+                        filters.dateTo ? "border-primary/30 text-primary" : "border-border/30 text-muted-foreground"
+                      )}>
+                        <CalendarIcon size={11} />
+                        {filters.dateTo ? format(filters.dateTo, "dd/MM/yy") : "Até"}
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="end">
+                      <Calendar
+                        mode="single"
+                        selected={filters.dateTo}
+                        onSelect={(d) => setFilters({ ...filters, dateTo: d })}
+                        className={cn("p-3 pointer-events-auto")}
+                        locale={ptBR}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
             </div>
           </PopoverContent>
         </Popover>
@@ -654,9 +904,10 @@ export default function AdminBookings() {
         {/* Sort Popover */}
         <Popover>
           <PopoverTrigger asChild>
-            <button className="flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-border/40 bg-card/50 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-border/60 transition-all">
-              <ArrowUpDown size={14} />
-              {sortLabels[filters.sortBy]}
+            <button className="flex items-center gap-1.5 h-8 sm:h-9 px-2.5 sm:px-3.5 rounded-lg border border-border/40 bg-card/50 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-border/60 transition-all">
+              <ArrowUpDown size={13} />
+              <span className="hidden sm:inline">{sortLabels[filters.sortBy]}</span>
+              <span className="sm:hidden">Ordenar</span>
               <span className="text-[9px] opacity-60">{filters.sortDir === "desc" ? "↓" : "↑"}</span>
             </button>
           </PopoverTrigger>
@@ -712,6 +963,18 @@ export default function AdminBookings() {
               <span className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-primary/10 text-primary font-medium">
                 {filters.vehicle}
                 <button onClick={() => setFilters({ ...filters, vehicle: "all" })} className="hover:text-primary/70"><X size={10} /></button>
+              </span>
+            )}
+            {filters.dateFrom && (
+              <span className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-primary/10 text-primary font-medium">
+                De: {format(filters.dateFrom, "dd/MM/yy")}
+                <button onClick={() => setFilters({ ...filters, dateFrom: undefined })} className="hover:text-primary/70"><X size={10} /></button>
+              </span>
+            )}
+            {filters.dateTo && (
+              <span className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-primary/10 text-primary font-medium">
+                Até: {format(filters.dateTo, "dd/MM/yy")}
+                <button onClick={() => setFilters({ ...filters, dateTo: undefined })} className="hover:text-primary/70"><X size={10} /></button>
               </span>
             )}
           </div>
