@@ -382,10 +382,10 @@ const FleetSection = () => {
                     <p className="text-xs text-primary font-medium italic mt-1">{vehicleT?.subtitle}</p>
                     <div className="flex items-center gap-5 mt-3 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1.5">
-                        <Users size={14} className="text-primary" /> {v.passengers} pass.
+                        <Users size={14} className="text-primary" /> {v.passengers} {v.passengers === 1 ? "passageiro" : "passageiros"}
                       </span>
                       <span className="flex items-center gap-1.5">
-                        <Briefcase size={14} className="text-primary" /> {v.luggage} malas
+                        <Briefcase size={14} className="text-primary" /> {v.luggage} {v.luggage === 1 ? "mala" : "malas"}
                       </span>
                     </div>
                   </div>
