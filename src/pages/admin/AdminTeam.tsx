@@ -116,7 +116,7 @@ export default function AdminTeam() {
   const load = async () => {
     setLoading(true);
     const { data } = await supabase.from("team_members").select("*").order("created_at", { ascending: false });
-    setMembers((data as TeamMember[]) || []);
+    setMembers(((data || []) as unknown as TeamMember[]));
     setLoading(false);
   };
 
