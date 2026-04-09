@@ -369,6 +369,11 @@ export default function AdminVehicleDetail() {
           <TabsTrigger value="details">Ficha Técnica</TabsTrigger>
         </TabsList>
 
+        {/* ── Agenda Tab ── */}
+        <TabsContent value="agenda" className="mt-4">
+          <VehicleAgenda bookings={bookings} />
+        </TabsContent>
+
         {/* ── Health Tab ── */}
         <TabsContent value="health" className="mt-4 space-y-4">
           <Card className="border-border/40">
