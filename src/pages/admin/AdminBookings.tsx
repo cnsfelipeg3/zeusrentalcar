@@ -965,6 +965,18 @@ export default function AdminBookings() {
                 <button onClick={() => setFilters({ ...filters, vehicle: "all" })} className="hover:text-primary/70"><X size={10} /></button>
               </span>
             )}
+            {filters.dateFrom && (
+              <span className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-primary/10 text-primary font-medium">
+                De: {format(filters.dateFrom, "dd/MM/yy")}
+                <button onClick={() => setFilters({ ...filters, dateFrom: undefined })} className="hover:text-primary/70"><X size={10} /></button>
+              </span>
+            )}
+            {filters.dateTo && (
+              <span className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-primary/10 text-primary font-medium">
+                Até: {format(filters.dateTo, "dd/MM/yy")}
+                <button onClick={() => setFilters({ ...filters, dateTo: undefined })} className="hover:text-primary/70"><X size={10} /></button>
+              </span>
+            )}
           </div>
         )}
       </div>
