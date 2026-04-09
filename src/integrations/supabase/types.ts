@@ -270,51 +270,75 @@ export type Database = {
       }
       vehicles: {
         Row: {
+          acquired_date: string | null
           bags: number
           category: string
+          color: string | null
           created_at: string
+          current_odometer: number | null
           daily_price_usd: number
           features: string[] | null
           fuel: string
           id: string
           image_url: string | null
+          initial_odometer: number | null
+          license_plate: string | null
           name: string
+          notes: string | null
           passengers: number
+          purchase_price: number | null
           status: string
           transmission: string
           updated_at: string
+          vin: string | null
           year: number | null
         }
         Insert: {
+          acquired_date?: string | null
           bags?: number
           category?: string
+          color?: string | null
           created_at?: string
+          current_odometer?: number | null
           daily_price_usd?: number
           features?: string[] | null
           fuel?: string
           id?: string
           image_url?: string | null
+          initial_odometer?: number | null
+          license_plate?: string | null
           name: string
+          notes?: string | null
           passengers?: number
+          purchase_price?: number | null
           status?: string
           transmission?: string
           updated_at?: string
+          vin?: string | null
           year?: number | null
         }
         Update: {
+          acquired_date?: string | null
           bags?: number
           category?: string
+          color?: string | null
           created_at?: string
+          current_odometer?: number | null
           daily_price_usd?: number
           features?: string[] | null
           fuel?: string
           id?: string
           image_url?: string | null
+          initial_odometer?: number | null
+          license_plate?: string | null
           name?: string
+          notes?: string | null
           passengers?: number
+          purchase_price?: number | null
           status?: string
           transmission?: string
           updated_at?: string
+          vin?: string | null
           year?: number | null
         }
         Relationships: []
