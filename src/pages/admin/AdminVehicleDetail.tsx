@@ -181,7 +181,7 @@ export default function AdminVehicleDetail() {
     if (!vehicleId) return;
     const { error } = await supabase.from("vehicle_expenses").insert({
       vehicle_id: vehicleId, ...expenseForm,
-    });
+    } as any);
     if (error) { toast({ title: "Erro ao adicionar gasto", variant: "destructive" }); }
     else {
       toast({ title: "Gasto registrado!" });
@@ -201,7 +201,7 @@ export default function AdminVehicleDetail() {
     if (!vehicleId || !incidentForm.title) { toast({ title: "Título obrigatório", variant: "destructive" }); return; }
     const { error } = await supabase.from("vehicle_incidents").insert({
       vehicle_id: vehicleId, ...incidentForm, status: "open",
-    });
+    } as any);
     if (error) { toast({ title: "Erro ao abrir ocorrência", variant: "destructive" }); }
     else {
       toast({ title: "Ocorrência aberta!" });
