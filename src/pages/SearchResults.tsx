@@ -142,7 +142,7 @@ const SearchResults = () => {
                   className="group relative overflow-hidden rounded-xl border border-border/40 bg-card/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 cursor-pointer"
                 >
                   {/* Image */}
-                  <div className="relative h-52 overflow-hidden">
+                  <div className="relative h-64 overflow-hidden">
                     <img
                       src={v.coverImage}
                       alt={v.name}
