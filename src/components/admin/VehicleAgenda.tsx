@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, Calendar, Circle } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, Circle, MapPin, Clock } from "lucide-react";
 
 type Booking = {
   id: string;
