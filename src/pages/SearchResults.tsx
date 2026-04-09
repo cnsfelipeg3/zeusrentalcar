@@ -153,15 +153,15 @@ const SearchResults = () => {
 
                     {/* Availability badge */}
                     <div className="absolute top-3 left-3">
-                      <span className="flex items-center gap-1 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md backdrop-blur-sm">
-                        <Check size={10} />
+                      <span className="flex items-center gap-1.5 bg-emerald-500/90 text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg shadow-lg backdrop-blur-sm">
+                        <Check size={12} strokeWidth={3} />
                         Disponível
                       </span>
                     </div>
 
                     {v.preparing && (
                       <div className="absolute top-3 right-3">
-                        <span className="bg-primary/90 text-primary-foreground text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md backdrop-blur-sm">
+                        <span className="bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg shadow-lg backdrop-blur-sm">
                           Em preparação
                         </span>
                       </div>
