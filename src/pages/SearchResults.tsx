@@ -149,7 +149,7 @@ const SearchResults = () => {
                       className="w-full h-full object-cover object-[center_40%] transition-transform duration-700 group-hover:scale-110"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-60" />
+                    {/* no fade overlay */}
 
                     {/* Availability badge */}
                     <div className="absolute top-3 left-3">
