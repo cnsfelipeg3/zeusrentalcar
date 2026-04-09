@@ -28,9 +28,11 @@ export type Database = {
           notes: string | null
           pickup_date: string
           pickup_location: string | null
+          pickup_time: string | null
           plan_id: string | null
           return_date: string
           return_location: string | null
+          return_time: string | null
           status: string
           total_price: number | null
           updated_at: string
@@ -49,9 +51,11 @@ export type Database = {
           notes?: string | null
           pickup_date: string
           pickup_location?: string | null
+          pickup_time?: string | null
           plan_id?: string | null
           return_date: string
           return_location?: string | null
+          return_time?: string | null
           status?: string
           total_price?: number | null
           updated_at?: string
@@ -70,9 +74,11 @@ export type Database = {
           notes?: string | null
           pickup_date?: string
           pickup_location?: string | null
+          pickup_time?: string | null
           plan_id?: string | null
           return_date?: string
           return_location?: string | null
+          return_time?: string | null
           status?: string
           total_price?: number | null
           updated_at?: string
