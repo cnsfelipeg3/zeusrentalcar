@@ -2,13 +2,15 @@ import { useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, Calendar, Circle } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, Circle, MapPin, Clock } from "lucide-react";
 
 type Booking = {
   id: string;
   customer_name: string;
   pickup_date: string;
   return_date: string;
+  pickup_time: string | null;
+  return_time: string | null;
   pickup_location: string | null;
   return_location: string | null;
   total_price: number | null;
@@ -16,8 +18,8 @@ type Booking = {
 };
 
 const statusColors: Record<string, { bg: string; text: string; label: string }> = {
-  pending: { bg: "bg-yellow-500/15", text: "text-yellow-600", label: "Pendente" },
-  confirmed: { bg: "bg-blue-500/15", text: "text-blue-500", label: "Confirmada" },
+  pending: { bg: "bg-red-500/10", text: "text-red-400", label: "Pendente" },
+  confirmed: { bg: "bg-red-500/15", text: "text-red-500", label: "Reservada" },
   active: { bg: "bg-emerald-500/15", text: "text-emerald-600", label: "Ativa" },
   in_progress: { bg: "bg-amber-500/15", text: "text-amber-600", label: "Em andamento" },
   completed: { bg: "bg-muted", text: "text-muted-foreground", label: "Concluída" },
@@ -140,7 +142,7 @@ export default function VehicleAgenda({ bookings }: { bookings: Booking[] }) {
                 type === "rented"
                   ? "bg-amber-500/20 border-amber-500/40"
                   : type === "reserved"
-                    ? "bg-blue-500/15 border-blue-500/30"
+                    ? "bg-red-500/15 border-red-500/30"
                     : type === "past"
                       ? "bg-muted/50 border-border/30"
                       : "bg-background border-border/20 hover:border-primary/30";
@@ -148,8 +150,8 @@ export default function VehicleAgenda({ bookings }: { bookings: Booking[] }) {
               return (
                 <div
                   key={day}
-                  className={`aspect-square p-0.5 sm:p-1 rounded-md border transition-colors relative group ${bgClass} ${
-                    today_ ? "ring-2 ring-primary/50 ring-offset-1 ring-offset-background" : ""
+                  className={`aspect-square p-1 sm:p-1.5 rounded-lg border transition-colors relative group ${bgClass} ${
+                    today_ ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""
                   }`}
                 >
                   <span
@@ -169,19 +171,36 @@ export default function VehicleAgenda({ bookings }: { bookings: Booking[] }) {
                       })}
                     </div>
                   )}
-                  {/* Tooltip on hover */}
                   {dayBookings.length > 0 && (
-                    <div className="hidden group-hover:block absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 rounded-lg bg-popover border border-border shadow-lg">
+                    <div className="hidden group-hover:block absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 p-2.5 rounded-lg bg-popover border border-border shadow-xl">
                       {dayBookings.map((b) => {
                         const sc = statusColors[b.status] || statusColors.pending;
                         return (
-                          <div key={b.id} className="text-[10px] mb-1 last:mb-0">
-                            <span className={`font-semibold ${sc.text}`}>{sc.label}</span>
-                            <p className="text-foreground font-medium truncate">{b.customer_name}</p>
-                            <p className="text-muted-foreground">
-                              {new Date(b.pickup_date).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })} →{" "}
-                              {new Date(b.return_date).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}
-                            </p>
+                          <div key={b.id} className="text-[10px] mb-2 last:mb-0 space-y-0.5">
+                            <div className="flex items-center justify-between">
+                              <span className={`font-bold ${sc.text}`}>{sc.label}</span>
+                              {b.total_price && (
+                                <span className="text-primary font-semibold">${b.total_price.toLocaleString("pt-BR")}</span>
+                              )}
+                            </div>
+                            <p className="text-foreground font-semibold truncate">{b.customer_name}</p>
+                            <div className="flex items-center gap-1 text-muted-foreground">
+                              <Clock size={8} className="shrink-0" />
+                              <span>
+                                {new Date(b.pickup_date).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}
+                                {b.pickup_time ? ` ${b.pickup_time}` : ""} →{" "}
+                                {new Date(b.return_date).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}
+                                {b.return_time ? ` ${b.return_time}` : ""}
+                              </span>
+                            </div>
+                            {(b.pickup_location || b.return_location) && (
+                              <div className="flex items-start gap-1 text-muted-foreground">
+                                <MapPin size={8} className="shrink-0 mt-0.5" />
+                                <span className="truncate">
+                                  {b.pickup_location || "—"} → {b.return_location || "—"}
+                                </span>
+                              </div>
+                            )}
                           </div>
                         );
                       })}
@@ -193,11 +212,11 @@ export default function VehicleAgenda({ bookings }: { bookings: Booking[] }) {
           </div>
 
           {/* Legend */}
-          <div className="flex flex-wrap gap-3 mt-4 pt-3 border-t border-border/30">
+          <div className="flex flex-wrap gap-4 mt-4 pt-3 border-t border-border/30">
             {[
               { color: "bg-emerald-500/30 border-emerald-500/50", label: "Disponível" },
               { color: "bg-amber-500/30 border-amber-500/50", label: "Alugado" },
-              { color: "bg-blue-500/25 border-blue-500/40", label: "Reservado" },
+              { color: "bg-red-500/25 border-red-500/40", label: "Reservado" },
               { color: "bg-muted border-border/40", label: "Concluída" },
             ].map((l) => (
               <div key={l.label} className="flex items-center gap-1.5">
