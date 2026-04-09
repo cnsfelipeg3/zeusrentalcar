@@ -29,6 +29,8 @@ import AdminVehicleHistory from "./pages/admin/AdminVehicleHistory.tsx";
 import AdminVehicleDetail from "./pages/admin/AdminVehicleDetail.tsx";
 import AdminFleetReport from "./pages/admin/AdminFleetReport.tsx";
 import AdminBookingDetail from "./pages/admin/AdminBookingDetail.tsx";
+import AdminFinance from "./pages/admin/AdminFinance.tsx";
+import AdminTeam from "./pages/admin/AdminTeam.tsx";
 import BookingConfirmed from "./pages/BookingConfirmed.tsx";
 import CustomerRegistration from "./pages/CustomerRegistration.tsx";
 
