@@ -1,4 +1,4 @@
-import { LayoutDashboard, Car, CalendarRange, Users, LogOut, Settings, Radio, BarChart3 } from "lucide-react";
+import { LayoutDashboard, Car, CalendarRange, Users, LogOut, Settings, Radio, BarChart3, DollarSign, UsersRound } from "lucide-react";
 import zeusLogo from "@/assets/zeus-logo-hd.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
